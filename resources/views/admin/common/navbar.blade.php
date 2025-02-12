@@ -9,7 +9,7 @@
     <ul class="navbar-nav ml-auto">
         <li class="nav-item dropdown user-menu">
             @php
-                $user = Auth::user();
+            $user = Auth::user();
             @endphp
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
                 <img src="{{ asset('/admin/dist/img/avatar5.png') }}" class="user-image img-circle elevation-2" alt="User Image">
@@ -26,9 +26,9 @@
                     </p>
                 </li>
                 <!-- Menu Footer-->
-                <li class="user-footer">
+                <li class="user-footer" style="text-align: center; width: 100%;">
                     {{--<a href="#" class="btn btn-default btn-flat">Profile</a>--}}
-                    <a href="{{ route('admin.logout') }}" class="btn btn-default btn-flat float-right">Đăng xuất</a>
+                    <a href="{{ route('admin.logout') }}" class="btn btn-default btn-flat" style="width: 80%; font-size: 14px; padding: 6px 12px;">Đăng xuất</a>
                 </li>
             </ul>
         </li>

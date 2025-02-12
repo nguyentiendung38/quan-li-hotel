@@ -19,8 +19,11 @@
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
-<body class="hold-transition login-page">
-<!-- /.login-box -->
+<body class="hold-transition login-page"
+      style="background: linear-gradient(#081C08F5, #081C08F5),
+                     url('{{ asset('page/images/logo.jpg') }}') no-repeat center center fixed;
+             background-size: cover;">
+             <!-- /.login-box -->
 @yield('content')
 <!-- jQuery -->
 <script src="{!! asset('admin/plugins/jquery/jquery.min.js') !!}"></script>
