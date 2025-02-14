@@ -62,17 +62,23 @@ class LoginController extends Controller
     {
         $data = $request->except('_token');
         $user = $this->user->getInfoEmail($data['email']);
-
+        
         if (!$user) {
-            return redirect()->back()->with('danger', 'Thông tin tài khoản không tồn tại');
+            // Trả về trang cũ với session danger
+            return redirect()->back()
+                ->with('danger', 'Sorry, looks like there are some errors detected, please try again.');
         }
-
+    
         if (Auth::attempt($data)) {
-            return redirect()->route('admin.home');
+            // Đăng nhập thành công -> Hiển thị popup success
+            return view('admin.auth.login')->with('showSuccess', true);
         }
-        return redirect()->back()->with('danger', 'Đăng nhập thất bại.');
+    
+        // Đăng nhập sai password -> session danger
+        return redirect()->back()
+            ->with('danger', 'Sorry, looks like there are some errors detected, please try again.');
     }
-
+    
     public function logout()
     {
         Auth::logout();

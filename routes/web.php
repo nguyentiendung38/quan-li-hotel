@@ -25,8 +25,6 @@ use App\Http\Controllers\Page\ArticleController as PageArticleController;
 use App\Http\Controllers\Page\TourController as PageTourController;
 use App\Http\Controllers\Page\HotelController as PageHotelController;
 use App\Http\Controllers\Page\CommentController as PageCommentController;
-
-
 Route::get('/clear-cache', function() {
     $exitCode = Artisan::call('cache:clear');
     // return what you want
@@ -45,7 +43,24 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin'], function() {
         Route::post('/register', [RegisterController::class, 'postRegister']);
         Route::get('/logout', [LoginController::class, 'logout'])->name('admin.logout');
         Route::get('/forgot/password', [ForgotPasswordController::class, 'forgotPassword'])->name('admin.forgot.password');
+
+        // Thêm route cho reset password
+        Route::get('/password/reset/{token}', [ForgotPasswordController::class, 'showResetForm'])
+             ->name('password.reset');
+        // Thêm route thực hiện reset mật khẩu
+        Route::post('/password/reset', [ForgotPasswordController::class, 'resetPassword'])
+             ->name('admin.password.reset.post');
+        Route::get('/password/sent', function () {
+            return view('admin.auth.password-sent');
+        })->name('admin.password.sent');
     });
+
+    Route::get('password/forgot', function () {
+        return view('admin.auth.forgot-password');
+    })->name('admin.password.request');
+
+    Route::post('password/email', [App\Http\Controllers\Admin\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])
+        ->name('admin.password.email');
 
     Route::group(['middleware' =>['auth']], function() {
         Route::get('/home', [HomeController::class, 'index'])->name('admin.home')->middleware('permission:truy-cap-he-thong|full-quyen-quan-ly');
@@ -187,6 +202,17 @@ Route::group(['namespace' => 'Page'], function() {
     Route::get('/khach-san/{id}/{slug}.html', [PageHotelController::class, 'detail'])->name('hotel.detail');
     Route::post('/comment', [PageCommentController::class, 'comment'])->name('comment');
 
+});
+
+Route::get('/test-email', function () {
+    $details = [
+        'title' => 'Test Email',
+        'body' => 'This is a test email.'
+    ];
+
+    Mail::to('nguyendunghk789@gmail.com')->send(new \App\Mail\TestEmail($details));
+
+    return 'Email sent';
 });
 
 
