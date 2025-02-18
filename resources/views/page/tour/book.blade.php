@@ -153,8 +153,7 @@
                         <p>Số người tham gia : {{ $tour->t_number_guests }}</p>
                         <p>Đã đăng ký : {{ $tour->t_number_registered }}</p>
                         <div class="phoneWrap">
-                            <div class="hotline">0909.189.888</div>
-                            <div class="hotline">0903.933.788</div>
+                            <div class="hotline">0773.398.244</div>
                         </div>
                     </div>
                     <div class="col-md-12">
