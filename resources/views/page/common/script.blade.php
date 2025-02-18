@@ -22,8 +22,10 @@
 <script src="{{ asset('page/js/google-map.js') }}"></script>
 <!-- toastr -->
 <script src="{!! asset('admin/plugins/toastr/toastr.min.js') !!}"></script>
-<!--Start of Fchat.vn--><script type="text/javascript" src="https://cdn.fchat.vn/assets/embed/webchat.js?id=66de69238aaf195fa5158224" async="async"></script><!--End of Fchat.vn-->
-<script>
+  <!---Start TaggoAI--->
+  <script async data-taggo-botid="67b40efd2a4dbd193757845e" src="https://widget.taggo.chat/v2.js"></script>
+  <!---End TaggoAI--->
+  <script>
     var urlComment = '{{ route('comment') }}';
 
     $(function () {
@@ -69,3 +71,65 @@
       fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
   </script>
+   <style>
+    /* CSS cho icon Zalo */
+    .zalo-chat-icon {
+      position: fixed;
+      top: 500px;
+      right: 10px;
+      z-index: 1000;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      animation: shake 1s ease-in-out 3;
+    }
+    
+    .zalo-chat-icon img {
+      width: 50px;
+      height: 50px;
+    }
+
+    /* CSS cho icon Facebook */
+    .fb-chat-icon {
+      position: fixed;
+      top: 560px;
+      right: 10px;
+      z-index: 1001;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      animation: shake 1s ease-in-out 3;
+    }
+
+    .fb-chat-icon img {
+      width: 50px;
+      height: 50px;
+    }
+    
+  </style>
+</head>
+<body>
+
+  <!-- Icon Zalo -->
+  <div class="zalo-chat-icon" onclick="openZaloChat()">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1024px-Icon_of-Zalo.svg.png" alt="Chat Zalo">
+  </div>
+
+  <!-- Icon Facebook (đặt nằm trên icon Zalo) -->
+  <div class="fb-chat-icon" onclick="openFbChat()">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Chat Facebook">
+  </div>
+
+  <!-- Nhúng SDK của Zalo (nếu cần) -->
+  <script src="https://sp.zalo.me/plugins/sdk.js"></script>
+
+  <script>
+    function openZaloChat() {
+      window.open("https://zalo.me/0773398244", "_blank");
+    }
+  
+    function openFbChat() {
+      window.open("https://www.facebook.com/congtydulichtourshue/", "_blank"); // Thay URL bằng trang Facebook của khách sạn bạn
+    }
+  </script>
+  
