@@ -1,12 +1,14 @@
-<footer class="ftco-footer bg-bottom ftco-no-pt" style="background-image: url({{ asset('page/images/bg_3.jpg') }});">
-    <div class="container">
+<footer class="ftco-footer bg-bottom ftco-no-pt" 
+        style="background-image: url({{ asset('page/images/bg_3.jpg') }}); 
+               background-color:#00B2BF; 
+               background-blend-mode: multiply;">    <div class="container">
         <div class="row mb-5">
             <div class="col-md pt-5">
                 <div class="ftco-footer-widget pt-md-5 mb-4">
                     <h2 class="ftco-heading-2">Giới thiệu</h2>
-                    <p>Website Fun Travel cho phép đặt các tour du lịch trong vào ngoài nước.</p>
+                    <p>Website Fun Travel cho phép đặt các tour du lịch trong vào ngoài nước.luôn không ngừng đẩy mạnh hoạt động và phát triển, cả về sản phẩm, dịch vụ và đội ngũ, nhằm đáp ứng tốt nhất nhu cầu của khách hàng.</p>
                     <ul class="ftco-footer-social list-unstyled float-md-left float-lft">
-                        <li class="ftco-animate"><a href="https://www.facebook.com/nguyenkkhanhtv"><span
+                        <li class="ftco-animate"><a href="https://www.facebook.com/congtydulichtourshue/"><span
                                     class="fa fa-facebook"></span></a></li>
                         <li class="ftco-animate"><a href="https://www.instagram.com/"><span
                                     class="fa fa-instagram"></span></a></li>

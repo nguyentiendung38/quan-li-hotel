@@ -83,11 +83,19 @@ class TourController extends Controller
     public function postBookTour(BookTourRequest $request, $id)
     {
         $tour = Tour::find($id);
-        $numberUser = $request->b_number_adults + $request->b_number_children + $request->b_number_child6 + $request->b_number_child2;
+        if (!$tour) {
+            return redirect()->back()->with('error', 'Tour không tồn tại');
+        }
+    
+        // Tính tổng số người đặt
+        $numberUser = $request->b_number_adults 
+                    + $request->b_number_children 
+                    + $request->b_number_child6 
+                    + $request->b_number_child2;
         if (($tour->t_number_registered + $numberUser) > $tour->t_number_guests) {
             return redirect()->back()->with('error', 'Số lượng người đăng ký đã vượt quá giới hạn');
         }
-
+    
         \DB::beginTransaction();
         try {
             $params = $request->except(['_token']);
@@ -95,53 +103,64 @@ class TourController extends Controller
             $params['b_tour_id'] = $id;
             $params['b_user_id'] = $user->id;
             $params['b_status'] = 1;
-            $params['b_price_adults']= $tour->t_price_adults -( $tour->t_price_adults* $tour->t_sale/100);
-            $params['b_price_children']=$tour->t_price_children -( $tour->t_price_children* $tour->t_sale/100); 
-            $params['b_price_child6']=($tour->t_price_children -( $tour->t_price_children* $tour->t_sale/100))*50/100;
-            $params['b_price_child2']=($tour->t_price_children -( $tour->t_price_children* $tour->t_sale/100))*25/100;
-
-            $priceAdults = ($tour->t_price_adults -( $tour->t_price_adults* $tour->t_sale/100)) * $params['b_number_adults'];
-            $priceChildren = ($tour->t_price_children -( $tour->t_price_children* $tour->t_sale/100)) * $params['b_number_children']; 
-            $priceChild6 = (($tour->t_price_children -( $tour->t_price_children* $tour->t_sale/100))*50/100) * $params['b_number_child6'];
-            $priceChild2 = (($tour->t_price_children -( $tour->t_price_children* $tour->t_sale/100))*25/100) * $params['b_number_child2'];
-            // dd($priceChild6);
-            // $params['b_price_adults'] = ($tour->t_price_adults - ($tour->t_price_adults * $tour->t_sale / 100)) * $params['b_number_adults'];
-            // $params['b_price_children'] = ($tour->t_price_children - ($tour->t_price_children * $tour->t_sale / 100)) * $params['b_number_children'];
-            // $params['b_price_child6'] = (($tour->t_price_children - ($tour->t_price_children * $tour->t_sale / 100)) * 50 / 100) * $params['b_number_child6'];
-            // $params['b_price_child2'] = (($tour->t_price_children - ($tour->t_price_children * $tour->t_sale / 100)) * 25 / 100) * $params['b_number_child2'];
-            $params['b_total_money']  =  $priceAdults + $priceChildren + $priceChild6 + $priceChild2;
-            // dd($params['b_total_money']);
+    
+            // Tính giá trên 1 người cho từng đối tượng
+            $params['b_price_adults']   = $tour->t_price_adults - ($tour->t_price_adults * $tour->t_sale / 100);
+            $params['b_price_children'] = $tour->t_price_children - ($tour->t_price_children * $tour->t_sale / 100);
+            $params['b_price_child6']   = ($tour->t_price_children - ($tour->t_price_children * $tour->t_sale / 100)) * 50 / 100;
+            $params['b_price_child2']   = ($tour->t_price_children - ($tour->t_price_children * $tour->t_sale / 100)) * 25 / 100;
+    
+            // Tính tổng tiền (nhân với số lượng người tương ứng)
+            $priceAdults   = $params['b_price_adults']   * $params['b_number_adults'];
+            $priceChildren = $params['b_price_children'] * $params['b_number_children'];
+            $priceChild6   = $params['b_price_child6']   * $params['b_number_child6'];
+            $priceChild2   = $params['b_price_child2']   * $params['b_number_child2'];
+            $params['b_total_money'] = $priceAdults + $priceChildren + $priceChild6 + $priceChild2;
+    
+            // Lưu record đặt tour
             $book = BookTour::create($params);
             if ($book) {
-                $tour->t_follow = $tour->t_follow + $numberUser;
+                // Cập nhật số lượng người đã đăng ký của tour
+                $tour->t_follow += $numberUser;
                 $tour->save();
             }
             \DB::commit();
-
-            if($request->submit =='Thanh toán online'){
-                return redirect()->route('get.from.payment',$book->id);
+    
+            // Nếu người dùng chọn "Thanh toán online" thì chuyển hướng sang trang VNPay
+            if ($request->submit == 'Thanh toán online') {
+                return redirect()->route('get.from.payment', $book->id);
             }
-            // $mail = $user->email;
-            // Mail::send('emailtn', compact('book', 'tour', 'user'), function ($email) use ($mail) {
-            //     $email->subject('Thông tin xác nhận đơn Booking');
-            //     $email->to($mail);
-            // });
-            return redirect()->route('page.home')->with('success', 'Cám ơn bạn đã đặt tour chúng tôi sẽ liên hệ sớm để xác nhận.');
-        } catch (\Exception $exception) {
+    
+            return redirect()->route('page.home')->with('success', 'Cám ơn bạn đã đặt tour, chúng tôi sẽ liên hệ sớm.');
+        } catch (Exception $exception) {
             \DB::rollBack();
+            dd($exception->getMessage());
             return redirect()->back()->with('error', 'Đã xảy ra lỗi khi lưu dữ liệu');
         }
     }
+    
 
     public function getFromPayMent($id){
         $book = BookTour::find($id);
+        if (!$book) {
+            return redirect()->back()->with('danger', 'Đã xảy ra lỗi, không thể thanh toán online');
+        }
         $totalMoney = $book->b_total_money;
-        
-        if(!$book){
-            return redirect()->back()->with('danger','Đã xảy ra lỗi không thể thanh toán online');
-        }   
-        session(['book_id'=>$book->id]);
-        return view('page.vnpay.index',compact('book','totalMoney'));
+        // Lưu book_id vào session (nếu cần dùng sau này, ví dụ ở hàm trả về)
+        session(['book_id' => $book->id]);
+        return view('page.vnpay.index', compact('book', 'totalMoney'));
+    }
+
+    public function getFromOnepay($id)
+    {
+        $book = BookTour::find($id);
+        if (!$book) {
+            return redirect()->back()->with('danger', 'Đã xảy ra lỗi, không thể thanh toán online');
+        }
+        $totalMoney = $book->b_total_money;
+        // Lưu book_id vào session (nếu cần dùng sau này)
+        session(['book_id' => $book->id]);
+        return view('page.onepay.index', compact('book', 'totalMoney'));
     }
 
     public function createPayMent(Request $request){
@@ -242,5 +261,15 @@ class TourController extends Controller
     public function loi()
     {
         return redirect()->back()->with('error', 'Số lượng người đăng ký đã vượt quá giới hạn');
+    }
+
+    public function createOnepayPayment(Request $request)
+    {
+        // Xử lý thông tin thanh toán Onepay ở đây.
+        // Ví dụ: lấy book_id, amount,... và chuyển hướng đến cổng thanh toán Onepay.
+        $bookId = $request->book_id;
+        $amount = $request->amount;
+        // ...logic gửi dữ liệu đến Onepay...
+        dd("Onepay payment processing for book_id: $bookId, amount: $amount");
     }
 }
