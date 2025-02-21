@@ -75,7 +75,7 @@
     /* CSS cho icon Zalo */
     .zalo-chat-icon {
       position: fixed;
-      top: 500px;
+      top: 350px;
       right: 10px;
       z-index: 1000;
       padding: 10px;
@@ -92,7 +92,7 @@
     /* CSS cho icon Facebook */
     .fb-chat-icon {
       position: fixed;
-      top: 560px;
+      top: 410px;
       right: 10px;
       z-index: 1001;
       padding: 10px;
@@ -129,7 +129,7 @@
     }
   
     function openFbChat() {
-      window.open("https://www.facebook.com/congtydulichtourshue/", "_blank"); // Thay URL bằng trang Facebook của khách sạn bạn
+      window.open("https://www.facebook.com/congtydulichtourshue/", "_blank");
     }
   </script>
   
