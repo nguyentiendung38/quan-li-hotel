@@ -234,7 +234,6 @@
                 Cảm ơn quý khách đã đặt dịch vụ du lịch với <strong>Chudu24</strong>.
                 Xin vui lòng kiểm tra kỹ chi tiết đặt dịch vụ dưới đây và chọn phương thức thanh toán.
             </p>
-
             <!-- Thông tin khách hàng -->
             <h2 class="section-title">Thông tin của quý khách</h2>
             <table>
@@ -255,7 +254,6 @@
                     <td>{{ $book->b_address }}</td>
                 </tr>
             </table>
-
             <!-- Thông tin đặt tour -->
             <h2 class="section-title">Thông tin đặt tour</h2>
             <table>
@@ -315,28 +313,17 @@
             <div class="payment-method">
                 <h3>Chọn phương thức thanh toán</h3>
                 <label class="method-item">
-                    <input type="radio" name="payment_type" value="ATM" checked>
-                    <span>Thẻ nội địa (ATM &amp; QR CODE)</span>
-                    <p>Quý khách vui lòng thanh toán bằng Thẻ nội địa (ATM &amp; QR Code) qua cổng thanh toán ONEPAY, xin vui lòng click vào nút “Thanh Toán ngay” dưới đây để tiến hành thanh toán.</p>
-                </label>
-                <label class="method-item">
-                    <input type="radio" name="payment_type" value="VISA">
-                    <span>Thẻ quốc tế (VISA/MASTER)</span>
-                    <p>Quý khách vui lòng thanh toán bằng Thẻ quốc tế (Visa/Master) qua cổng thanh toán ONEPAY, xin vui lòng click vào nút “Thanh Toán ngay” dưới đây để tiến hành thanh toán.</p>
-                </label>
-                <label class="method-item">
                     <input type="radio" name="payment_type" value="VNPAY">
                     <span>Thanh toán qua VNPAY</span>
                     <p>Quý khách có thể thanh toán qua VNPAY bằng cách quét mã QR hoặc sử dụng tài khoản ngân hàng liên kết với VNPAY.</p>
                 </label>
-                <label class="method-item">
-                    <input type="radio" name="payment_type" value="E-Wallet">
-                    <span>Ví điện tử (Momo, ZaloPay,...)</span>
-                    <p>Quý khách có thể thanh toán qua các ví điện tử phổ biến như Momo, ZaloPay, ViettelPay bằng cách quét mã QR.</p>
-                </label>
                 <!-- Nút thanh toán -->
                 <div style="margin-top: 20px; text-align: center;">
-                    <button class="btn-pay-now">Thanh Toán ngay</button>
+                    <form action="{{ route('payment.online') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="amount" value="{{ $totalMoney }}">
+                        <button type="submit" name="redirect" class="btn-pay-now">Thanh Toán ngay</button>
+                    </form>
                 </div>
             </div>
         </div>

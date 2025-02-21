@@ -196,7 +196,9 @@ Route::group(['namespace' => 'Page'], function() {
 
     Route::get('/{id}/thanhtoan.html', [PageTourController::class, 'getFromPayMent'])->name('get.from.payment');
     Route::post('/post/payment', [PageTourController::class, 'createPayMent'])->name('post.payment');
+    Route::post('payment/online', [App\Http\Controllers\Page\TourController::class, 'createPayMent'])->name('payment.online');
     Route::get('vnpay/return', [PageTourController::class, 'vnPayReturn'])->name('vnpay.return');
+    Route::post('vnpay/create', [App\Http\Controllers\Page\TourController::class, 'createPayMent'])->name('vnpay.create');
     Route::get('/tour/{id}/{slug}.html', [PageTourController::class, 'detail'])->name('tour.detail');
     Route::get('/khach-san.html', [PageHotelController::class, 'index'])->name('hotel');
     Route::get('/khach-san/{id}/{slug}.html', [PageHotelController::class, 'detail'])->name('hotel.detail');
