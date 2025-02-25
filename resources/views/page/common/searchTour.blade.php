@@ -1,7 +1,7 @@
 <form action="{{ route('tour') }}" class="search-property-1">
     <div class="row no-gutters">
         <div class="col-md d-flex">
-            <div class="form-group p-4 border-0">
+            <div class="form-group p-2 border-0">
                 <label for="#">Tour</label>
                 <div class="form-field">
                     <div class="icon"><span class="fa fa-search"></span></div>
@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="col-md d-flex">
-            <div class="form-group p-4">
+            <div class="form-group p-2">
                 <label for="#">Ngày Khởi Hành</label>
                 <div class="form-field">
                     <div class="icon"><span class="fa fa-calendar"></span></div>
@@ -19,7 +19,7 @@
             </div>
         </div>
         <div class="col-md d-flex">
-            <div class="form-group p-4">
+            <div class="form-group p-2">
                 <label for="#">Ngày Trở Về</label>
                 <div class="form-field">
                     <div class="icon"><span class="fa fa-calendar"></span></div>
@@ -28,7 +28,7 @@
             </div>
         </div>
         <div class="col-md d-flex">
-            <div class="form-group p-4">
+            <div class="form-group p-2">
                 <label for="#">Khoảng giá</label>
                 <div class="form-field">
                     <div class="select-wrap">

@@ -1,7 +1,7 @@
 <form action="{{ route('hotel') }}" class="search-property-1">
     <div class="row no-gutters">
         <div class="col-lg d-flex">
-            <div class="form-group p-4 border-0">
+            <div class="form-group p-2 border-0">
                 <label for="#">Khách sạn</label>
                 <div class="form-field">
                     <div class="icon"><span class="fa fa-search"></span></div>
@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="col-lg d-flex">
-            <div class="form-group p-4">
+            <div class="form-group p-2">
                 <label for="#">Địa điểm</label>
                 <div class="form-field">
                     <div class="select-wrap">
@@ -26,7 +26,7 @@
             </div>
         </div>
         <div class="col-lg d-flex">
-            <div class="form-group p-4">
+            <div class="form-group p-2">
                 <label for="#">Khoảng giá</label>
                 <div class="form-field">
                     <div class="select-wrap">
