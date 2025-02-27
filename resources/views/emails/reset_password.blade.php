@@ -1,5 +1,5 @@
 @component('mail::message')
-# Xin chào!
+# Xin chào {{ $userName ?? '' }}!
 
 Bạn nhận được email này vì đã yêu cầu đặt lại mật khẩu cho tài khoản của bạn.
 
