@@ -11,6 +11,8 @@ use App\Models\User;
 use App\Models\BookTour;
 use App\Models\Tour;
 use Mail;
+use Illuminate\Support\Facades\Password;
+use App\Mail\PagePasswordResetEmail;
 
 class AccountController extends Controller
 {
@@ -74,6 +76,42 @@ class AccountController extends Controller
         }
     }
 
+    // Update method to send password reset link email with custom mailable
+    public function sendResetLinkEmail(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return back()->withErrors(['email' => 'Không tồn tại email này']);
+        }
+        $token = Password::broker('users')->createToken($user);
+        Mail::to($user->email)->send(new PagePasswordResetEmail($token));
+        return back()->with('status', 'Chúng tôi đã gửi liên kết đặt lại mật khẩu đến email của bạn.');
+    }
+
+    // Updated method to handle password resetting using the token from the reset form
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required|confirmed|min:6',
+            'token'    => 'required'
+        ]);
+        
+        $credentials = $request->only('email', 'password', 'password_confirmation', 'token');
+        $response = Password::broker('users')->reset($credentials, function($user, $password) {
+            $user->password = bcrypt($password);
+            $user->save();
+        });
+        
+        if ($response === Password::PASSWORD_RESET) {
+            // Redirect to home page after successful password reset
+            return redirect()->route('page.home')
+                             ->with('success', 'Mật khẩu đã được đặt lại. Vui lòng đăng nhập lại.');
+        }
+        
+        return redirect()->back()->withErrors(['email' => 'Có lỗi xảy ra khi đặt lại mật khẩu']);
+    }
 
     public function cancelTour($id)
     {

@@ -187,6 +187,21 @@ Route::group(['namespace' => 'Page'], function () {
         Route::post('cancel/order/tour/{status}/{id}', [AccountController::class, 'updateStatus'])->name('post.cancel.order.tour');
     });
 
+    Route::get('account/forgot-password', [AccountController::class, 'forgotPassword'])
+        ->name('account.forgot.password');
+    
+    // Add POST route for forgot password
+    Route::post('account/forgot-password', [AccountController::class, 'sendResetLinkEmail'])
+        ->name('account.forgot.password.post');
+
+    // NEW: Add a route for the page password reset form
+    Route::get('password/reset/{token}', [\App\Http\Controllers\Page\Auth\ResetPasswordController::class, 'showResetForm'])
+        ->name('page.password.reset');
+
+    // NEW: Route to handle password update from the reset form
+    Route::post('password/reset', [\App\Http\Controllers\Page\AccountController::class, 'resetPassword'])
+        ->name('account.password.update');
+
     Route::get('/', [PageHomeController::class, 'index'])->name('page.home');
     Route::get('/loi', [PageTourController::class, 'loi'])->name('loi.loi');
     Route::get('/tin-tuc.html', [PageArticleController::class, 'index'])->name('articles.index');
