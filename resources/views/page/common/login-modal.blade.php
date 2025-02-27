@@ -49,12 +49,7 @@
                 <!-- Đoạn văn đăng ký -->
                 <p class="text-center" style="font-size: 0.85rem; margin-top: 1rem;">
                     Bạn chưa có tài khoản?
-                    <a href="#"
-                        data-dismiss="modal"
-                        data-toggle="modal"
-                        data-target="#registerModal">
-                        Đăng ký ngay
-                    </a>
+                    <a href="#" data-dismiss="modal" data-toggle="modal" data-target="#registerModal">Đăng ký ngay</a>
                 </p>
             </div>
         </div>
@@ -105,25 +100,103 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Thông Báo Đặt Lại Mật Khẩu -->
+<div class="modal fade" id="resetPasswordRequestModal" tabindex="-1" role="dialog" aria-labelledby="resetPasswordRequestModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 450px;">
+        <div class="modal-content" style="border-radius: 20px;">
+            <!-- Header -->
+            <div class="modal-header" style="border-bottom: none;">
+                <h5 class="modal-title w-100 text-center" id="resetPasswordRequestModalTitle"
+                    style="font-size: 1.3rem; font-weight: bold;">
+                    Đã gửi yêu cầu đặt lại mật khẩu
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="outline: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <!-- Body -->
+            <div class="modal-body">
+                <p class="text-center" style="font-size: 0.9rem;">
+                    Chúng tôi đã gửi liên kết đặt lại mật khẩu tới email của bạn.
+                </p>
+                <div class="text-center mt-4">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal"
+                        style="font-size: 0.9rem; border-radius: 4px;">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Error -->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 450px;">
+        <div class="modal-content" style="border-radius: 20px; border: none;">
+            <!-- Body -->
+            <div class="modal-body" style="padding: 2rem; text-align: center;">
+                <!-- Biểu tượng chấm than trong vòng tròn -->
+                <div style="width: 80px; height: 80px; border-radius: 50%; background-color: #fff3e0; margin: 0 auto 1rem auto;display: flex;align-items: center;justify-content: center;">
+                    <span style="font-size: 2rem; color: #f8aa35;">!</span>
+                </div>
+                <!-- Thông báo lỗi -->
+                <p style="font-size: 1rem; color: #555;">
+                    Thông tin đăng nhập không chính xác, vui lòng kiểm tra lại
+                </p>
+                <!-- Nút đóng modal -->
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="errorModalOkButton"
+                    style="margin-top: 1.5rem; font-size: 0.9rem; border-radius: 4px;">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-$(document).ready(function() {
-    // Khi nhấn vào "Quên mật khẩu"
-    $('#forgotPasswordLink').on('click', function(e) {
-        e.preventDefault();
-        if ($('#loginModal').hasClass('show')) {
-            $('#loginModal').modal('hide');
-            $('#loginModal').one('hidden.bs.modal', function() {
+    $(document).ready(function() {
+        // Khi nhấn vào "Quên mật khẩu"
+        $('#forgotPasswordLink').on('click', function(e) {
+            e.preventDefault();
+            if ($('#loginModal').hasClass('show')) {
+                $('#loginModal').modal('hide');
+                $('#loginModal').one('hidden.bs.modal', function() {
+                    $('#forgotPasswordModal').modal('show');
+                });
+            } else {
                 $('#forgotPasswordModal').modal('show');
+            }
+        });
+        $('#forgotPasswordModal').on('hidden.bs.modal', function() {
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+        });
+
+        // Hiển thị modal lỗi nếu có thông báo lỗi
+        @if(session('danger'))
+        $('#errorModal').modal('show');
+        @endif
+
+        // Khi nhấn vào nút OK trong modal lỗi
+        $('#errorModalOkButton').on('click', function() {
+            $('#errorModal').modal('hide');
+            $('#errorModal').one('hidden.bs.modal', function() {
+                $('#loginModal').modal('show');
             });
-        } else {
-            $('#forgotPasswordModal').modal('show');
-        }
+        });
+
+        // Hiển thị modal thông báo đặt lại mật khẩu nếu có thông báo thành công
+        @if(session('status'))
+        $('#resetPasswordRequestModal').modal('show');
+        @endif
+
+        // Khi nhấn vào nút OK trong modal thông báo đặt lại mật khẩu
+        $('#resetPasswordRequestModal').on('hidden.bs.modal', function() {
+            $('#loginModal').modal('show');
+        });
     });
-    $('#forgotPasswordModal').on('hidden.bs.modal', function () {
-        $('body').removeClass('modal-open');
-        $('.modal-backdrop').remove();
-    });
-});
 </script>
