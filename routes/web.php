@@ -146,7 +146,7 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin'], function () {
             Route::get('/create', [HotelController::class, 'create'])->name('hotel.create')->middleware('permission:them-moi-khach-san|full-quyen-quan-ly');
             Route::post('/create', [HotelController::class, 'store'])->name('hotel.store');
             Route::get('/update/{id}', [HotelController::class, 'edit'])->name('hotel.update')->middleware('permission:chinh-sua-khach-san|full-quyen-quan-ly');
-            Route::post('/update/{id}', [HotelController::class, 'update']);
+            Route::put('/update/{id}', [HotelController::class, 'update'])->name('hotel.update');
             Route::get('/delete/{id}', [HotelController::class, 'delete'])->name('hotel.delete')->middleware('permission:xoa-khach-san|full-quyen-quan-ly');
         });
 

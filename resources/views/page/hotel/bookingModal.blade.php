@@ -73,7 +73,7 @@
                                     {{ $hotel->h_name }}
                                 </div>
                                 <div style="margin-top: 0.5rem;">
-                                    <img src="{{ $hotel->h_image ? asset(pare_url_file($hotel->h_image)) : asset('admin/dist/img/no-image.png') }}"
+                                    <img src="{{ $hotel->h_image ? asset($hotel->h_image) : asset('admin/dist/img/no-image.png') }}"
                                         alt="{{ $hotel->h_name }}"
                                         style="width: 100%; max-height: 200px; object-fit: cover;">
                                 </div>

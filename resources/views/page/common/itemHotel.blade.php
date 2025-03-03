@@ -1,8 +1,19 @@
 <div class="{{ !isset($itemHotel) ? 'col-md-4' : '' }} ftco-animate fadeInUp ftco-animated {{ isset($itemHotel) ? $itemHotel : '' }}">
     <div class="project-wrap hotel">
         <a href="{{ route('hotel.detail', ['id' => $hotel->id, 'slug' => safeTitle($hotel->h_name)]) }}"
-           class="img" style="background-image: url({{ $hotel->h_image ? asset($hotel->h_image) : asset('admin/dist/img/no-image.png') }});">
-            <span class="price">{{ number_format($hotel->h_price,0,',','.') }} vnd</span>
+            class="img" style="background-image: url({{ $hotel->h_image ? asset($hotel->h_image) : asset('admin/dist/img/no-image.png') }});">
+            @if($hotel->h_sale > 0)
+            <span class="price">Sale {{ $hotel->h_sale }}%</span>
+            <span class="price" style="margin-left:100px">
+                {{ number_format($hotel->h_price - ($hotel->h_price * $hotel->h_sale / 100), 0, ',', '.') }} vnd
+                <br>
+                <span style="text-decoration: line-through; margin-left:35px; color:#ddd">
+                    {{ number_format($hotel->h_price, 0, ',', '.') }} vnd
+                </span>
+            </span>
+            @else
+            <span class="price">{{ number_format($hotel->h_price, 0, ',', '.') }} vnd</span>
+            @endif
         </a>
         <div class="text p-4">
             <h3>

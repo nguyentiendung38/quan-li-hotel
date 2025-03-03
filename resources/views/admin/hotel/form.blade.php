@@ -13,7 +13,9 @@
                             <label for="inputEmail3" class="control-label default">Tên khách sạn <sup class="text-danger">(*)</sup></label>
                             <div>
                                 <input type="text" class="form-control" placeholder="Tên khách sạn" name="h_name" value="{{ old('h_name', isset($hotel) ? $hotel->h_name : '') }}">
-                                <span class="text-danger "><p class="mg-t-5">{{ $errors->first('h_name') }}</p></span>
+                                <span class="text-danger ">
+                                    <p class="mg-t-5">{{ $errors->first('h_name') }}</p>
+                                </span>
                             </div>
                         </div>
 
@@ -24,15 +26,16 @@
                                     <select class="custom-select" name="h_location_id">
                                         <option value="">Chọn địa điểm</option>
                                         @foreach($locations as $location)
-                                            <option
-                                                {{ old('h_location_id', isset($hotel->h_location_id) ? $hotel->h_location_id : '') == $location->id ? 'selected="selected"' : '' }}
-                                                value="{{ $location->id }}"
-                                            >
-                                                {{ $location->l_name }}
-                                            </option>
+                                        <option
+                                            {{ old('h_location_id', isset($hotel->h_location_id) ? $hotel->h_location_id : '') == $location->id ? 'selected="selected"' : '' }}
+                                            value="{{ $location->id }}">
+                                            {{ $location->l_name }}
+                                        </option>
                                         @endforeach
                                     </select>
-                                    <span class="text-danger"><p class="mg-t-5">{{ $errors->first('h_location_id') }}</p></span>
+                                    <span class="text-danger">
+                                        <p class="mg-t-5">{{ $errors->first('h_location_id') }}</p>
+                                    </span>
                                 </div>
                             </div>
                             <div class="col-sm-12 col-md-6">
@@ -40,15 +43,16 @@
                                     <label>Trạng thái</label>
                                     <select class="custom-select" name="h_status">
                                         @foreach($status as $key => $statu)
-                                            <option
-                                                {{ old('h_status', isset($hotel->h_status) ? $hotel->h_status : '') == $key ? 'selected="selected"' : '' }}
-                                                value="{{ $key }}"
-                                            >
-                                                {{ $statu }}
-                                            </option>
+                                        <option
+                                            {{ old('h_status', isset($hotel->h_status) ? $hotel->h_status : '') == $key ? 'selected="selected"' : '' }}
+                                            value="{{ $key }}">
+                                            {{ $statu }}
+                                        </option>
                                         @endforeach
                                     </select>
-                                    <span class="text-danger"><p class="mg-t-5">{{ $errors->first('h_status') }}</p></span>
+                                    <span class="text-danger">
+                                        <p class="mg-t-5">{{ $errors->first('h_status') }}</p>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -57,7 +61,9 @@
                             <label for="inputEmail3" class="control-label default">Địa chỉ <sup class="text-danger">(*)</sup></label>
                             <div>
                                 <input type="text" class="form-control" placeholder="Địa chỉ" name="h_address" value="{{ old('h_address', isset($hotel) ? $hotel->h_address : '') }}">
-                                <span class="text-danger "><p class="mg-t-5">{{ $errors->first('h_address') }}</p></span>
+                                <span class="text-danger ">
+                                    <p class="mg-t-5">{{ $errors->first('h_address') }}</p>
+                                </span>
                             </div>
                         </div>
 
@@ -65,7 +71,9 @@
                             <label for="inputEmail3" class="control-label default">Số điện thoại <sup class="text-danger">(*)</sup></label>
                             <div>
                                 <input type="text" class="form-control" placeholder="Số điện thoại" name="h_phone" value="{{ old('h_phone', isset($hotel) ? $hotel->h_phone : '') }}">
-                                <span class="text-danger "><p class="mg-t-5">{{ $errors->first('h_phone') }}</p></span>
+                                <span class="text-danger ">
+                                    <p class="mg-t-5">{{ $errors->first('h_phone') }}</p>
+                                </span>
                             </div>
                         </div>
 
@@ -73,7 +81,9 @@
                             <label for="inputEmail3" class="control-label default">Giá <sup class="text-danger">(*)</sup></label>
                             <div>
                                 <input type="number" class="form-control" placeholder="Giá" name="h_price" value="{{ old('h_price', isset($hotel) ? $hotel->h_price : '') }}">
-                                <span class="text-danger "><p class="mg-t-5">{{ $errors->first('h_price') }}</p></span>
+                                <span class="text-danger ">
+                                    <p class="mg-t-5">{{ $errors->first('h_price') }}</p>
+                                </span>
                             </div>
                         </div>
 
@@ -81,7 +91,9 @@
                             <label for="inputEmail3" class="control-label default">Giảm giá</label>
                             <div>
                                 <input type="number" max="100" class="form-control" placeholder="Giảm giá" name="h_sale" value="{{ old('h_sale', isset($hotel) ? $hotel->h_sale : '') }}">
-                                <span class="text-danger "><p class="mg-t-5">{{ $errors->first('h_sale') }}</p></span>
+                                <span class="text-danger ">
+                                    <p class="mg-t-5">{{ $errors->first('h_sale') }}</p>
+                                </span>
                             </div>
                         </div>
 
@@ -93,7 +105,7 @@
                                     ckeditor(h_description);
                                 </script>
                                 @if ($errors->first('h_description'))
-                                    <span class="text-danger">{{ $errors->first('h_description') }}</span>
+                                <span class="text-danger">{{ $errors->first('h_description') }}</span>
                                 @endif
                             </div>
                         </div>
@@ -106,7 +118,7 @@
                                     ckeditor(h_content);
                                 </script>
                                 @if ($errors->first('h_content'))
-                                    <span class="text-danger">{{ $errors->first('h_content') }}</span>
+                                <span class="text-danger">{{ $errors->first('h_content') }}</span>
                                 @endif
                             </div>
                         </div>
@@ -138,14 +150,16 @@
                                 <span class="input-group-btn">
                                     <button class="btn btn-default btn-choose" type="button">Chọn tệp</button>
                                 </span>
-                                <input type="text" class="form-control" placeholder='Không có tệp nào ...'/>
+                                <input type="text" class="form-control" placeholder='Không có tệp nào ...' />
                                 <span class="input-group-btn"></span>
                             </div>
-                            <span class="text-danger "><p class="mg-t-5">{{ $errors->first('h_image') }}</p></span>
+                            <span class="text-danger ">
+                                <p class="mg-t-5">{{ $errors->first('h_image') }}</p>
+                            </span>
                             @if(isset($hotel) && !empty($hotel->h_image))
-                                <img src="{{ asset(pare_url_file($hotel->h_image)) }}" alt="" class="margin-auto-div img-rounded" id="image_render" style="height: 150px; width:100%;">
+                            <img src="{{ asset($hotel->h_image) }}" alt="" class="margin-auto-div img-rounded" id="image_render" style="height: 150px; width:100%;">
                             @else
-                                <img src="{{ asset('admin/dist/img/no-image.png') }}" alt="" class="margin-auto-div img-rounded" id="image_render" style="height: 150px; width:100%;">
+                            <img src="{{ asset('admin/dist/img/no-image.png') }}" alt="" class="margin-auto-div img-rounded" id="image_render" style="height: 150px; width:100%;">
                             @endif
                         </div>
                     </div>
