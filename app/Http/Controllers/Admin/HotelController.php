@@ -28,10 +28,11 @@ class HotelController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-        $hotels = Hotel::with('location')->orderByDesc('id')->paginate(NUMBER_PAGINATION);
+        // Fetch hotels data
+        $hotels = Hotel::paginate(10); // Adjust the query as needed
+
         return view('admin.hotel.index', compact('hotels'));
     }
 
@@ -54,18 +55,27 @@ class HotelController extends Controller
      */
     public function store(HotelRequest $request)
     {
-        //
+        $data = $request->all();
+        if ($request->hasFile('h_image')) {
+            $file = $request->file('h_image');
+            $destinationPath = public_path('uploads/hotels');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $file->move($destinationPath, $filename);
+            $data['h_image'] = 'uploads/hotels/' . $filename;
+        }
         \DB::beginTransaction();
         try {
-            $this->hotel->createOrUpdate($request);
+            Hotel::create($data);
             \DB::commit();
-            return redirect()->back()->with('success', 'Lưu dữ liệu thành công');
+            return redirect()->route('hotel.index')->with('success', 'Lưu dữ liệu thành công');
         } catch (\Exception $exception) {
             \DB::rollBack();
             return redirect()->back()->with('error', 'Đã xảy ra lỗi khi lưu dữ liệu');
         }
     }
-
     /**
      * Show the form for editing the specified resource.
      *
@@ -93,12 +103,23 @@ class HotelController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->all();
+        if ($request->hasFile('h_image')) {
+            $file = $request->file('h_image');
+            $destinationPath = public_path('uploads/hotels');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $file->move($destinationPath, $filename);
+            $data['h_image'] = 'uploads/hotels/' . $filename;
+        }
         \DB::beginTransaction();
         try {
-            $this->hotel->createOrUpdate($request, $id);
+            $hotel = Hotel::findOrFail($id);
+            $hotel->update($data);
             \DB::commit();
-            return redirect()->back()->with('success', 'Lưu dữ liệu thành công');
+            return redirect()->route('hotel.index')->with('success', 'Lưu dữ liệu thành công');
         } catch (\Exception $exception) {
             \DB::rollBack();
             return redirect()->back()->with('error', 'Đã xảy ra lỗi khi lưu dữ liệu');

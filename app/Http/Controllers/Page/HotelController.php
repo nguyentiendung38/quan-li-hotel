@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Hotel;
 use App\Models\Location;
+use App\Models\BookRoom;
 
 class HotelController extends Controller
 {
@@ -50,5 +51,32 @@ class HotelController extends Controller
     public function bookTour()
     {
         return view('page.tour.book');
+    }
+
+    public function postBookRoom(Request $request, $id, $slug)
+    {
+        $hotel = Hotel::findOrFail($id);
+
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:15',
+            'address' => 'required|string|max:255',
+            'checkin_date' => 'required|date',
+            'checkout_date' => 'required|date',
+            'nights' => 'required|integer',
+            'rooms' => 'required|integer',
+            'guests' => 'required|integer',
+            'email' => 'required|email',
+            'agreePolicy' => 'required'
+        ]);
+
+        $data['hotel_id'] = $hotel->id;
+        $data['user_id'] = auth()->id();
+        $data['total_price'] = $hotel->h_price * $data['nights'] * $data['rooms'];
+        $data['status'] = 0; // Trạng thái "Tiếp nhận"
+
+        BookRoom::create($data);
+
+        return redirect()->route('hotel.detail', ['id' => $hotel->id, 'slug' => $slug])->with('success', 'Đặt phòng thành công!');
     }
 }

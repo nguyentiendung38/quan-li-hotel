@@ -44,7 +44,7 @@ class Tour extends Model
         3 => 'Đã hoàn tất'
     ];
 
-    public function createOrUpdate($request , $id ='')
+    public function createOrUpdate($request, $id = '')
     {
         $params = $request->except(['images', '_token', 'submit']);
 
@@ -62,7 +62,7 @@ class Tour extends Model
         return $this->create($params);
     }
 
-    public function location ()
+    public function location()
     {
         return $this->belongsTo(Location::class, 't_location_id', 'id')->where('l_status', 1);
     }

@@ -141,6 +141,30 @@
                             </div>
                             <!-- /.info-box -->
                         </div>
+                        <div class="col-md-3 col-sm-6 col-12">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-info"><i class="fas fa-bed"></i></span>
+
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Tổng số phòng</span>
+                                    <span class="info-box-number">{{ number_format($totalRooms) }}</span>
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-12">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-success"><i class="fas fa-bed"></i></span>
+
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Phòng đã đặt</span>
+                                    <span class="info-box-number">{{ number_format($bookedRooms) }}</span>
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                        </div>
                     </div>
                 </div>
                 <div class="card-body">

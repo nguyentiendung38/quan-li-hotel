@@ -144,7 +144,7 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin'], function () {
         Route::group(['prefix' => 'hotel'], function () {
             Route::get('/', [HotelController::class, 'index'])->name('hotel.index')->middleware('permission:danh-sach-khach-san|full-quyen-quan-ly');
             Route::get('/create', [HotelController::class, 'create'])->name('hotel.create')->middleware('permission:them-moi-khach-san|full-quyen-quan-ly');
-            Route::post('/create', [HotelController::class, 'store']);
+            Route::post('/create', [HotelController::class, 'store'])->name('hotel.store');
             Route::get('/update/{id}', [HotelController::class, 'edit'])->name('hotel.update')->middleware('permission:chinh-sua-khach-san|full-quyen-quan-ly');
             Route::post('/update/{id}', [HotelController::class, 'update']);
             Route::get('/delete/{id}', [HotelController::class, 'delete'])->name('hotel.delete')->middleware('permission:xoa-khach-san|full-quyen-quan-ly');
@@ -160,6 +160,14 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin'], function () {
             Route::get('/', [CommentController::class, 'index'])->name('comment.index')->middleware('permission:danh-sach-binh-luan|full-quyen-quan-ly');
             Route::get('/update/{status}/{id}', [CommentController::class, 'updateStatus'])->name('comment.update.status');
             Route::get('/delete/{id}', [CommentController::class, 'delete'])->name('comment.delete')->middleware('permission:xoa-binh-luan|full-quyen-quan-ly');
+        });
+
+        // Route cho danh sách đặt phòng
+        Route::group(['prefix' => 'book-room'], function () {
+            Route::get('/', [App\Http\Controllers\Admin\BookRoomController::class, 'index'])->name('book.room.index');
+            Route::post('/create', [App\Http\Controllers\Admin\BookRoomController::class, 'store'])->name('post.book.room');
+            Route::get('/delete/{id}', [App\Http\Controllers\Admin\BookRoomController::class, 'delete'])->name('book.room.delete');
+            Route::get('/update-status/{status}/{id}', [App\Http\Controllers\Admin\BookRoomController::class, 'updateStatus'])->name('book.room.update.status');
         });
     });
 });
@@ -220,7 +228,7 @@ Route::group(['namespace' => 'Page'], function () {
     Route::post('vnpay/create', [App\Http\Controllers\Page\TourController::class, 'createPayMent'])->name('vnpay.create');
     Route::get('/tour/{id}/{slug}.html', [PageTourController::class, 'detail'])->name('tour.detail');
     Route::get('/khach-san.html', [PageHotelController::class, 'index'])->name('hotel');
-    Route::get('/khach-san/{id}/{slug}.html', [PageHotelController::class, 'detail'])->name('hotel.detail');
+    Route::get('/khach-san/{id}/{slug?}.html', [PageHotelController::class, 'detail'])->name('hotel.detail');
     Route::post('/comment', [PageCommentController::class, 'comment'])->name('comment');
 });
 

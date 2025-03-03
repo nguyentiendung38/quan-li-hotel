@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Payment extends Model
 {
+    use HasFactory;
+
     protected $table = 'payments';
 
     protected $fillable = [
@@ -18,6 +20,12 @@ class Payment extends Model
         'vnp_response_code',
         'p_code_vnpay',
         'p_code_bank',
-        'p_time'
+        'p_time',
+        'book_room_id'
     ];
+
+    public function bookRoom()
+    {
+        return $this->belongsTo(BookRoom::class);
+    }
 }
