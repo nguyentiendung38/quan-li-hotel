@@ -107,7 +107,7 @@
         <div class="row justify-content-center pb-4">
             <div class="col-md-12 heading-section text-center ftco-animate">
                 <span class="subheading">Danh sách</span>
-                <h2 class="mb-4">Địa điểm du lịch</h2>
+                <h2 class="mb-4">Khám phá Cố đô Huế</h2>
             </div>
         </div>
     </div>
@@ -145,11 +145,9 @@
         </div>
         <div class="row">
             @if($tours->count() > 0)
-
             @foreach($tours as $tour)
             @include('page.common.itemTour', compact('tour'))
             @endforeach
-
             @endif
         </div>
     </div>

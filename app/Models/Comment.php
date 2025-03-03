@@ -28,7 +28,7 @@ class Comment extends Model
         'cm_user_id',
         'cm_article_id',
         'cm_hotel_id',
-        'cm_tour_id',
+        'cm_tour_id', // Ensure this column is included
         'cm_content',
         'cm_images',
     ];
@@ -41,5 +41,15 @@ class Comment extends Model
     public function replies()
     {
         return $this->hasMany(self::class, 'cm_reply_id', 'id');
+    }
+
+    public function tour()
+    {
+        return $this->belongsTo(Tour::class, 'cm_tour_id', 'id');
+    }
+
+    public function hotel()
+    {
+        return $this->belongsTo(Hotel::class, 'cm_hotel_id', 'id');
     }
 }

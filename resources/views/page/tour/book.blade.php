@@ -173,7 +173,7 @@
                                 <td style="width: 10%;">Gi&aacute;&nbsp;</td>
                                 <td style="width: 20%;">{{ number_format($tour->t_price_adults-($tour->t_price_adults*$tour->t_sale/100),0,',','.') }} vnd</td>
                                 <td style="width: 20%;">{{ number_format($tour->t_price_children-($tour->t_price_children*$tour->t_sale/100),0,',','.') }} vnd</td>
-                                <td style="width: 20%;">{{ number_format(($tour->t_price_children-($tour->t_price_children*$tour->t_sale/100))*50/100,0,',','.') }} vnd}</td>
+                                <td style="width: 20%;">{{ number_format(($tour->t_price_children-($tour->t_price_children*$tour->t_sale/100))*50/100,0,',','.') }} vnd</td>
                                 <td style="width: 20%;">{{ number_format(($tour->t_price_children-($tour->t_price_children*$tour->t_sale/100))*25/100,0,',','.') }} vnd</td>
                             </tr>
                         </tbody>

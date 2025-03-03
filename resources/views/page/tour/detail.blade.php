@@ -27,7 +27,7 @@
                         <img src="{{ $tour->t_image ? asset(pare_url_file($tour->t_image)) : asset('admin/dist/img/no-image.png') }}" alt="" class="img-fluid">
                     </div>
                     <div class="content">
-                        <h2 class="mb-3 mt-5">#1. Điểm nhấn của hành trình</h2>
+                        <h2 class="mb-3 mt-5">1. Điểm nhấn của hành trình</h2>
                         <table class="table table-bordered">
                             <tr>
                                 <td width="30%">Hành trình </td>
@@ -71,13 +71,13 @@
                                
                             </tr>
                         </table>
-                        <h2 class="mb-3 mt-5">#2. Lịch trình</h2>
+                        <h2 class="mb-3 mt-5">2. Lịch trình</h2>
                         <div class="tour_detail">
                         <p>
                             {!! $tour->t_description !!}
                         </p>
                       
-                        <h2 class="mb-3 mt-5">#3. Giới thiệu tour</h2>
+                        <h2 class="mb-3 mt-5">3. Giới thiệu tour</h2>
                         <p>
                             {!! $tour->t_content !!}
                         </p>
