@@ -24,7 +24,7 @@
             </div>
             <div class="col-lg-8 ftco-animate fadeInUp ftco-animated">
                 <p>
-                    <img src="{{ $hotel->h_image ? asset(pare_url_file($hotel->h_image)) : asset('admin/dist/img/no-image.png') }}" alt="{{ $hotel->h_name }}" class="img-fluid" style="width: 100%">
+                    <img src="{{ $hotel->h_image ? asset($hotel->h_image) : asset('admin/dist/img/no-image.png') }}" alt="{{ $hotel->h_name }}" class="img-fluid" style="width: 100%">
                 </p>
                 <h2 class="mb-3 mt-5">#1. Thông tin liên hệ</h2>
                 <table class="table table-bordered">
