@@ -8,22 +8,26 @@ use App\Models\Location;
 use App\Models\Tour;
 use App\Models\Article;
 use App\Models\Comment;
+use App\Models\Hotel;
 use Mail;
+
 class HomeController extends Controller
 {
     //
     public function index()
     { 
         
-        $locations = Location::with('tours')->active()->get();
-        $articles = Article::orderBy('id')->limit(6)->get();
-        $tours = Tour::orderBy('t_start_date')->limit(6)->get();
-        $comments = Comment::with('user')->where('cm_status', 2)->limit(10)->get();
+        $locations = Location::all();
+        $articles = Article::latest()->limit(3)->get();
+        $tours = Tour::latest()->limit(3)->get();
+        $comments = Comment::latest()->limit(3)->get();
+        $newHotels = Hotel::orderByDesc('created_at')->limit(3)->get();
         $viewData = [
             'locations' => $locations,
             'articles' => $articles,
             'tours' => $tours,
-            'comments' => $comments
+            'comments' => $comments,
+            'newHotels' => $newHotels
         ];
         return view('page.home.index', $viewData);
     }
