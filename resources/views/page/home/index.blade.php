@@ -153,6 +153,25 @@
     </div>
 </section>
 
+<!-- NEW: Khách sạn mới nhất section -->
+<section class="ftco-section no-padding-top">
+    <div class="container">
+        <div class="row justify-content-center pb-4">
+            <div class="col-md-12 heading-section text-center ftco-animate">
+                <span class="subheading">Khách Sạn</span>
+                <h2 class="mb-4">Khách sạn mới nhất</h2>
+            </div>
+        </div>
+        <div class="row">
+            @if($newHotels->count() > 0)
+            @foreach($newHotels as $hotel)
+            @include('page.common.itemHotel', compact('hotel'))
+            @endforeach
+            @endif
+        </div>
+    </div>
+</section>
+
 <section class="ftco-section ftco-about img" style="background-image: url({{ asset('page/images/bg_99.jpg') }});">
     <div class="overlay"></div>
     <div class="container py-md-5">

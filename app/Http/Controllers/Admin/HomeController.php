@@ -140,6 +140,7 @@ class HomeController extends Controller
             $arrmoney[] = (int)$total;
         }
         $tours = Tour::orderByDesc('t_follow')->limit(3)->get();
+        $newHotels = Hotel::orderByDesc('created_at')->limit(3)->get();
         $totalRooms = Hotel::sum('h_rooms');
         $bookedRooms = BookRoom::sum('rooms');
         $totalHotels = Hotel::count();
@@ -149,6 +150,7 @@ class HomeController extends Controller
             'bookTour' => $bookTour,
             'tour' => $tour,
             'tours' => $tours,
+            'newHotels' => $newHotels,
             'totalMoneyDay' => $totalMoneyDay,
             'totalMoneyMonth' => $totalMoneyMonth,
             'totalMoneyYear' => $totalMoneyYear,
