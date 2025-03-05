@@ -24,7 +24,9 @@ class BookRoom extends Model
         'total_price',
         'status',
         'note',
-        'coupon' // Add coupon to fillable attributes
+        'coupon',
+        'room_code',
+        'booking_code'
     ];
 
     public function hotel()
