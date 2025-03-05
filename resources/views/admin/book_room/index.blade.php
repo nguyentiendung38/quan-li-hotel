@@ -17,7 +17,6 @@
         </div>
     </div>
 </section>
-
 <!-- FORM TÌM KIẾM -->
 <section class="content">
     <div class="container-fluid">
@@ -113,6 +112,7 @@
                                     <th>Tên khách sạn</th>
                                     <th>Thông tin khách hàng</th>
                                     <th>Dữ liệu đặt phòng</th>
+                                    <th>Hình thức thanh toán</th>
                                     <th>Trạng thái</th>
                                     <th class="text-center">Hành động</th>
                                 </tr>
@@ -123,7 +123,7 @@
                                 @foreach($bookRooms as $bookRoom)
                                 <tr>
                                     <td class="text-center" style="vertical-align: middle;">{{ $i }}</td>
-                                    <td style="vertical-align: middle;">
+                                    <td style="vertical-align: middle; white-space: normal; word-break: break-all; max-width: 150px;">
                                         {{ $bookRoom->hotel->h_name ?? '---' }}
                                     </td>
                                     <td style="vertical-align: middle;">
@@ -139,6 +139,20 @@
                                         <p><b>Số phòng:</b> {{ $bookRoom->rooms }}</p>
                                         <p><b>Số người:</b> {{ $bookRoom->guests }}</p>
                                         <p><b>Mã giảm giá:</b> {{ $bookRoom->coupon ?? '---' }}</p>
+                                        <p><b>Tổng tiền:</b> {{ number_format($bookRoom->total_price_with_discount, 0, ',', '.') }} VNĐ</p>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        @if($bookRoom->payment)
+                                        <ul>
+                                            <li>Ngân hàng: {{ $bookRoom->payment->p_code_bank }}</li>
+                                            <li>Mã thanh toán: {{ $bookRoom->payment->p_code_vnpay }}</li>
+                                            <li>Tổng tiền: {{ number_format($bookRoom->payment->p_money / 100,0,',','.') }} VNĐ</li>
+                                            <li>Nội dung: {{ $bookRoom->payment->p_note }}</li>
+                                            <li>Thời gian: {{ date('Y-m-d H:i', strtotime($bookRoom->payment->p_time)) }}</li>
+                                        </ul>
+                                        @else
+                                        Thanh toán thường
+                                        @endif
                                     </td>
                                     <td class="text-center" style="vertical-align: middle;">
                                         <!-- Áp dụng classStatus và status để hiển thị nút -->
@@ -174,7 +188,7 @@
                                 @endforeach
                                 @else
                                 <tr>
-                                    <td colspan="6" class="text-center">Không có dữ liệu</td>
+                                    <td colspan="7" class="text-center">Không có dữ liệu</td>
                                 </tr>
                                 @endif
                             </tbody>
@@ -191,4 +205,27 @@
         </div>
     </div>
 </section>
+@endsection
+@section('script')
+<script>
+    $(document).ready(function() {
+        $('.update_book_room').on('click', function() {
+            var url = $(this).attr('url');
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        alert('Đã xảy ra lỗi khi cập nhật trạng thái');
+                    }
+                },
+                error: function() {
+                    alert('Đã xảy ra lỗi khi cập nhật trạng thái');
+                }
+            });
+        });
+    });
+</script>
 @endsection

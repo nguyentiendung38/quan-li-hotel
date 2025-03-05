@@ -84,7 +84,6 @@ class BookRoomController extends Controller
         }
     }
 
-
     /**
      * Xóa một đặt phòng
      */
@@ -113,7 +112,7 @@ class BookRoomController extends Controller
     {
         $bookRoom = BookRoom::find($id);
         if (!$bookRoom) {
-            return redirect()->back()->with('error', 'Dữ liệu không tồn tại');
+            return response()->json(['success' => false, 'message' => 'Dữ liệu không tồn tại']);
         }
 
         DB::beginTransaction();
@@ -121,10 +120,10 @@ class BookRoomController extends Controller
             $bookRoom->status = $status;
             $bookRoom->save();
             DB::commit();
-            return redirect()->route('book.room.index')->with('success', 'Cập nhật trạng thái thành công');
+            return response()->json(['success' => true, 'message' => 'Cập nhật trạng thái thành công']);
         } catch (\Exception $exception) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Đã xảy ra lỗi khi cập nhật trạng thái');
+            return response()->json(['success' => false, 'message' => 'Đã xảy ra lỗi khi cập nhật trạng thái']);
         }
     }
 }

@@ -23,7 +23,8 @@ class BookRoom extends Model
         'guests',
         'total_price',
         'status',
-        'note'
+        'note',
+        'coupon' // Add coupon to fillable attributes
     ];
 
     public function hotel()
@@ -39,5 +40,14 @@ class BookRoom extends Model
     public function payment()
     {
         return $this->hasOne(Payment::class);
+    }
+
+    public function getTotalPriceWithDiscountAttribute()
+    {
+        $totalPrice = $this->total_price;
+        if ($this->coupon) {
+            $totalPrice *= 0.95; // Apply 5% discount
+        }
+        return $totalPrice;
     }
 }

@@ -142,6 +142,7 @@ class HomeController extends Controller
         $tours = Tour::orderByDesc('t_follow')->limit(3)->get();
         $totalRooms = Hotel::sum('h_rooms');
         $bookedRooms = BookRoom::sum('rooms');
+        $totalHotels = Hotel::count();
         $viewData = [
             'user' => $user,
             'article' => $article,
@@ -158,6 +159,7 @@ class HomeController extends Controller
             'arrmoney' => json_encode($arrmoney),
             'totalRooms' => $totalRooms,
             'bookedRooms' => $bookedRooms,
+            'totalHotels' => $totalHotels,
         ];
         return view('admin.home.index', $viewData);
     }
