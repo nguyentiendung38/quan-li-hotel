@@ -25,6 +25,8 @@ use App\Http\Controllers\Page\ArticleController as PageArticleController;
 use App\Http\Controllers\Page\TourController as PageTourController;
 use App\Http\Controllers\Page\HotelController as PageHotelController;
 use App\Http\Controllers\Page\CommentController as PageCommentController;
+use App\Http\Controllers\Admin\BookRoomController;
+
 
 Route::get('/clear-cache', function () {
     $exitCode = Artisan::call('cache:clear');
@@ -168,6 +170,7 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin'], function () {
             Route::post('/create', [App\Http\Controllers\Admin\BookRoomController::class, 'store'])->name('post.book.room');
             Route::get('/delete/{id}', [App\Http\Controllers\Admin\BookRoomController::class, 'delete'])->name('book.room.delete');
             Route::get('/update-status/{status}/{id}', [App\Http\Controllers\Admin\BookRoomController::class, 'updateStatus'])->name('book.room.update.status');
+            Route::post('/dat-phong/{id}/{slug}', [BookRoomController::class, 'store'])->name('post.book.room');
         });
     });
 });
@@ -197,7 +200,7 @@ Route::group(['namespace' => 'Page'], function () {
 
     Route::get('account/forgot-password', [AccountController::class, 'forgotPassword'])
         ->name('account.forgot.password');
-    
+
     // Add POST route for forgot password
     Route::post('account/forgot-password', [AccountController::class, 'sendResetLinkEmail'])
         ->name('account.forgot.password.post');

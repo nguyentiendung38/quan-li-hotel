@@ -26,7 +26,7 @@
                 <p>
                     <img src="{{ $hotel->h_image ? asset($hotel->h_image) : asset('admin/dist/img/no-image.png') }}" alt="{{ $hotel->h_name }}" class="img-fluid" style="width: 100%">
                 </p>
-                <h2 class="mb-3 mt-5">#1. Thông tin liên hệ</h2>
+                <h2 class="mb-3 mt-5">1. Thông tin liên hệ</h2>
                 <table class="table table-bordered">
                     <tr>
                         <td width="30%">Địa điểm </td>
@@ -45,9 +45,9 @@
                         <td>{{ number_format($hotel->h_price,0,',','.') }} vnđ</td>
                     </tr>
                 </table>
-                <h2 class="mb-3 mt-5">#2. Mô tả</h2>
+                <h2 class="mb-3 mt-5">2. Mô tả</h2>
                 {!! $hotel->h_description !!}
-                <h2 class="mb-3 mt-5">#3. Nội dung</h2>
+                <h2 class="mb-3 mt-5">3. Nội dung</h2>
                 {!! $hotel->h_content !!}
                 <div class="pt-5 mt-5 py-5" style="border-top: 1px solid #ccc;">
                     <h3 class="mb-5" style="font-size: 20px; font-weight: bold;">Danh sách bình luận</h3>

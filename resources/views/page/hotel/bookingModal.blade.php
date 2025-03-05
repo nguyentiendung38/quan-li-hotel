@@ -14,6 +14,8 @@
             <div class="modal-body" style="padding: 1.5rem;">
                 <form action="{{ route('post.book.room', ['id' => $hotel->id, 'slug' => Str::slug($hotel->h_name)]) }}" method="POST">
                     @csrf
+                    <!-- Hidden input to pass hotel_id -->
+                    <input type="hidden" name="hotel_id" value="{{ $hotel->id }}">
                     <div class="row">
                         <!-- Cột Trái: Thông tin liên hệ -->
                         <div class="col-md-6 mb-4">
