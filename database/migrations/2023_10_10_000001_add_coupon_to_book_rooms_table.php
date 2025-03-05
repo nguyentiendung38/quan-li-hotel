@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddCmTourIdToCommentsTable extends Migration
+class AddCouponToBookRoomsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddCmTourIdToCommentsTable extends Migration
      */
     public function up()
     {
-        Schema::table('comments', function (Blueprint $table) {
-            $table->unsignedBigInteger('cm_tour_id')->nullable()->after('cm_hotel_id');
+        Schema::table('book_rooms', function (Blueprint $table) {
+            $table->string('coupon')->nullable()->after('email');
         });
     }
 
@@ -25,8 +25,8 @@ class AddCmTourIdToCommentsTable extends Migration
      */
     public function down()
     {
-        Schema::table('comments', function (Blueprint $table) {
-            $table->dropColumn('cm_tour_id');
+        Schema::table('book_rooms', function (Blueprint $table) {
+            $table->dropColumn('coupon');
         });
     }
 }
