@@ -30,7 +30,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <form action="">
+                <form action="{{ route('book.room.index') }}" method="GET">
                     <div class="row">
                         <!-- Tìm theo tên khách sạn -->
                         <div class="col-sm-12 col-md-3">
@@ -209,6 +209,8 @@
 @section('script')
 <script>
     $(document).ready(function() {
+        // Clear search input fields on page load to hide previous search criteria
+        $('form[action="{{ route("book.room.index") }}"] input[type="text"]').val('');
         $('.update_book_room').on('click', function() {
             var url = $(this).attr('url');
             $.ajax({

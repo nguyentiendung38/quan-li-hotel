@@ -8,6 +8,8 @@ use App\Models\BookRoom;
 use App\Models\Hotel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Mail\BookingConfirmed;
+use Illuminate\Support\Facades\Mail;
 
 class BookRoomController extends Controller
 {
@@ -16,8 +18,27 @@ class BookRoomController extends Controller
      */
     public function index(Request $request)
     {
-        // Lấy danh sách đặt phòng kèm quan hệ với khách sạn
-        $bookRooms = BookRoom::with('hotel')->orderByDesc('id')->paginate(10);
+        $query = BookRoom::with('hotel');
+
+        if ($request->filled('hotel_name')) {
+            $query->whereHas('hotel', function ($q) use ($request) {
+                $q->where('h_name', 'like', '%' . $request->hotel_name . '%');
+            });
+        }
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+        if ($request->filled('email')) {
+            $query->where('email', 'like', '%' . $request->email . '%');
+        }
+        if ($request->filled('phone')) {
+            $query->where('phone', 'like', '%' . $request->phone . '%');
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $bookRooms = $query->orderByDesc('id')->paginate(10);
 
         // Define status texts and CSS classes
         $status = [
@@ -70,6 +91,10 @@ class BookRoomController extends Controller
 
         // Tính tổng tiền: tổng tiền = số đêm * số phòng * giá phòng
         $data['total_price'] = $data['nights'] * $data['rooms'] * $roomPrice;
+        // Generate room_code using a random two-digit number
+        $data['room_code'] = 'MaPhong' . str_pad(rand(1, 100), 2, '0', STR_PAD_LEFT);
+        // Generate booking_code in a similar format
+        $data['booking_code'] = 'MaDatPhong' . str_pad(rand(1, 100), 2, '0', STR_PAD_LEFT);
 
         // Lưu dữ liệu vào cơ sở dữ liệu trong transaction để đảm bảo toàn vẹn
         \DB::beginTransaction();
@@ -120,6 +145,14 @@ class BookRoomController extends Controller
             $bookRoom->status = $status;
             $bookRoom->save();
             DB::commit();
+            // When status becomes 1 (Đã xác nhận), send booking confirmation
+            if ($status == 1) {
+                Mail::to($bookRoom->email)->send(new BookingConfirmed($bookRoom));
+            }
+            // When status becomes 2 (Đã thanh toán), send payment confirmation
+            if ($status == 2) {
+                Mail::to($bookRoom->email)->send(new \App\Mail\BookingPaid($bookRoom));
+            }
             return response()->json(['success' => true, 'message' => 'Cập nhật trạng thái thành công']);
         } catch (\Exception $exception) {
             DB::rollBack();
