@@ -56,6 +56,8 @@ class HotelController extends Controller
     public function store(HotelRequest $request)
     {
         $data = $request->all();
+        // Explicitly save room type
+        $data['h_room_type'] = $request->input('h_room_type');
         if ($request->hasFile('h_image')) {
             $file = $request->file('h_image');
             $destinationPath = public_path('uploads/hotels');
@@ -104,6 +106,8 @@ class HotelController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->all();
+        // Explicitly save room type
+        $data['h_room_type'] = $request->input('h_room_type');
         if ($request->hasFile('h_image')) {
             $file = $request->file('h_image');
             $destinationPath = public_path('uploads/hotels');

@@ -16,14 +16,30 @@
             @endif
         </a>
         <div class="text p-4">
+            <!-- Added icon before hotel title -->
             <h3>
+                <span class="fa fa-building" style="margin-right: 5px;"></span>
                 <a href="{{ route('hotel.detail', ['id' => $hotel->id, 'slug' => safeTitle($hotel->h_name)]) }}" title="{{ $hotel->h_name }}">
                     {{ the_excerpt($hotel->h_name, 100) }}
                 </a>
             </h3>
-            <p class="location"><span class="fa fa-map-marker" style="margin-right: 10px"></span>{{ isset($hotel->location) ? $hotel->location->l_name : '' }}</p>
-            <p>{!! the_excerpt($hotel->h_description, 200) !!}</p>
-            <p><a href="{{ route('hotel.detail', ['id' => $hotel->id, 'slug' => safeTitle($hotel->h_name)]) }}" title="{{ $hotel->h_name }}" class="btn btn-primary">Xem thêm</a></p>
+            <!-- Dòng hiển thị vị trí -->
+            <p class="location">
+                <span class="fa fa-map-marker" style="margin-right: 10px;"></span>
+                {{ isset($hotel->location) ? $hotel->location->l_name : '' }}
+            </p>
+            <!-- Thông tin booking hiển thị giống vị trí -->
+            <p class="location mb-0">
+                <span class="fa fa-user" style="margin-right: 10px;"></span>
+                Loại phòng: {{ $hotel->h_rooms ?? '0' }}
+            </p>
+            <p class="location mb-0">
+                <span class="fa fa-user" style="margin-right: 10px;"></span>
+                Đã đặt: {{ $hotel->bookRooms->sum('rooms') ?? '0' }}
+            </p>
+            <p class="text-center">
+                <a href="{{ route('hotel.detail', ['id' => $hotel->id, 'slug' => safeTitle($hotel->h_name)]) }}" title="{{ $hotel->h_name }}" class="btn btn-primary">Xem thêm</a>
+            </p>
         </div>
     </div>
 </div>
