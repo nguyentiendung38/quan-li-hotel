@@ -33,6 +33,7 @@ class Hotel extends Model
         'h_end_date',
         'h_location_id',
         'h_user_id ',
+        'h_rooms',
     ];
 
     public function location ()
@@ -70,5 +71,10 @@ class Hotel extends Model
     public function comments()
     {
         return $this->hasMany(Comment::class, 'cm_hotel_id', 'id');
+    }
+
+    public function bookRooms()
+    {
+        return $this->hasMany(BookRoom::class, 'hotel_id', 'id');
     }
 }

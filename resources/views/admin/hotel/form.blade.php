@@ -2,7 +2,7 @@
     <form role="form" action="{{ isset($hotel) ? route('hotel.update', $hotel->id) : route('hotel.store') }}" method="post" enctype="multipart/form-data">
         @csrf
         @if(isset($hotel))
-            @method('PUT')
+        @method('PUT')
         @endif
         <div class="row">
             <div class="col-md-9">
@@ -96,7 +96,28 @@
                                 </span>
                             </div>
                         </div>
-
+                        <!-- Thêm trường Loại phòng -->
+                        <div class="form-group {{ $errors->first('h_rooms') ? 'has-error' : '' }}">
+                            <label for="inputRoomType" class="control-label default">Loại phòng <sup class="text-danger">(*)</sup></label>
+                            <div>
+                                <select class="custom-select" name="h_rooms">
+                                    <option value="">Chọn loại phòng</option>
+                                    @foreach(($roomTypes ?? []) as $roomType)
+                                    <option value="{{ $roomType->id }}"
+                                        {{ old('h_rooms', isset($hotel) ? $hotel->h_rooms : '') == $roomType->id ? 'selected="selected"' : '' }}>
+                                        {{ $roomType->name }}
+                                    </option>
+                                    @endforeach
+                                    <option value="Double" {{ old('h_rooms', isset($hotel) ? $hotel->h_rooms : '') == 'Double' ? 'selected="selected"' : '' }}>Double</option>
+                                    <option value="Tripple" {{ old('h_rooms', isset($hotel) ? $hotel->h_rooms : '') == 'Tripple' ? 'selected="selected"' : '' }}>Tripple</option>
+                                    <option value="Queen" {{ old('h_rooms', isset($hotel) ? $hotel->h_rooms : '') == 'Queen' ? 'selected="selected"' : '' }}>Queen</option>
+                                    <option value="Vip" {{ old('h_rooms', isset($hotel) ? $hotel->h_rooms : '') == 'Vip' ? 'selected="selected"' : '' }}>Vip</option>
+                                </select>
+                                <span class="text-danger">
+                                    <p class="mg-t-5">{{ $errors->first('h_rooms') }}</p>
+                                </span>
+                            </div>
+                        </div>
                         <div class="form-group {{ $errors->first('h_description') ? 'has-error' : '' }} ">
                             <label for="inputEmail3" class="control-label default">Mô tả</label>
                             <div>

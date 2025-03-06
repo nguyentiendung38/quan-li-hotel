@@ -79,7 +79,17 @@
             </div> <!-- .col-md-8 -->
             <div class="col-lg-4 sidebar ">
                 <div class="register-tour">
-                    <p class="price-tour">Giá từ : <span>{{ number_format($hotel->h_price, 0, ',', '.') }}</span> vnd</p>
+                    @if($hotel->h_sale > 0)
+                        <p class="price-tour">
+                            Giá Phòng :
+                            <span>
+                                {{ number_format($hotel->h_price - ($hotel->h_price * $hotel->h_sale / 100), 0, ',', '.') }}
+                            </span> vnđ<br>
+                            <del>{{ number_format($hotel->h_price, 0, ',', '.') }} vnđ</del>
+                        </p>
+                    @else
+                        <p class="price-tour">Giá từ : <span>{{ number_format($hotel->h_price, 0, ',', '.') }}</span> vnđ</p>
+                    @endif
                     <a href="#" class="btn btn-primary py-3 px-4" style="width: 40%; margin-right: 10%;">Liên hệ</a>
                     <a href="#" class="btn btn-secondary py-3 px-4" style="width: 40%;" data-toggle="modal" data-target="#bookingModal">Đặt phòng</a>
                 </div>
