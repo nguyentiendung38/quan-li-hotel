@@ -56,28 +56,33 @@ class HotelController extends Controller
     public function store(HotelRequest $request)
     {
         $data = $request->all();
-        // Explicitly save room type
         $data['h_room_type'] = $request->input('h_room_type');
+
+        // Xử lý ảnh đại diện
         if ($request->hasFile('h_image')) {
             $file = $request->file('h_image');
-            $destinationPath = public_path('uploads/hotels');
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0755, true);
-            }
             $filename = time() . '.' . $file->getClientOriginalExtension();
-            $file->move($destinationPath, $filename);
+            $file->move(public_path('uploads/hotels'), $filename);
             $data['h_image'] = 'uploads/hotels/' . $filename;
         }
-        \DB::beginTransaction();
-        try {
-            Hotel::create($data);
-            \DB::commit();
-            return redirect()->route('hotel.index')->with('success', 'Lưu dữ liệu thành công');
-        } catch (\Exception $exception) {
-            \DB::rollBack();
-            return redirect()->back()->with('error', 'Đã xảy ra lỗi khi lưu dữ liệu');
+
+        // Xử lý album ảnh
+        $albumImages = [];
+        if ($request->hasFile('h_album_images')) {
+            foreach ($request->file('h_album_images') as $file) {
+                $albumFilename = time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/hotels'), $albumFilename);
+                $albumImages[] = 'uploads/hotels/' . $albumFilename;
+            }
         }
+        $data['h_album_images'] = json_encode($albumImages); // Lưu dưới dạng JSON
+
+        // Lưu vào database
+        Hotel::create($data);
+
+        return redirect()->route('hotel.index')->with('success', 'Lưu dữ liệu thành công');
     }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -106,7 +111,6 @@ class HotelController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->all();
-        // Explicitly save room type
         $data['h_room_type'] = $request->input('h_room_type');
         if ($request->hasFile('h_image')) {
             $file = $request->file('h_image');
@@ -117,6 +121,16 @@ class HotelController extends Controller
             $filename = time() . '.' . $file->getClientOriginalExtension();
             $file->move($destinationPath, $filename);
             $data['h_image'] = 'uploads/hotels/' . $filename;
+        }
+        // If new album images are provided, override the existing album images.
+        if ($request->hasFile('h_album_images')) {
+            $albumImages = [];
+            foreach ($request->file('h_album_images') as $file) {
+                $albumFilename = time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/hotels'), $albumFilename);
+                $albumImages[] = 'uploads/hotels/' . $albumFilename; // New images only
+            }
+            $data['h_album_images'] = json_encode($albumImages); // Override with new images
         }
         \DB::beginTransaction();
         try {

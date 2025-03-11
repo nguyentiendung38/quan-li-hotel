@@ -20,7 +20,7 @@ class Hotel extends Model
     protected $fillable = [
         'h_name',
         'h_image',
-        'h_anbum_image',
+        'h_album_images',
         'h_address',
         'h_phone',
         'h_number_people',
@@ -32,9 +32,10 @@ class Hotel extends Model
         'h_start_date',
         'h_end_date',
         'h_location_id',
-        'h_user_id ',
+        'h_user_id',
         'h_rooms',
     ];
+    
 
     public function location ()
     {

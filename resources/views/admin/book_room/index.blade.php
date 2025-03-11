@@ -139,7 +139,26 @@
                                         <p><b>Số phòng:</b> {{ $bookRoom->rooms }}</p>
                                         <p><b>Số người:</b> {{ $bookRoom->guests }}</p>
                                         <p><b>Mã giảm giá:</b> {{ $bookRoom->coupon ?? '---' }}</p>
-                                        <p><b>Tổng tiền:</b> {{ number_format($bookRoom->total_price_with_discount, 0, ',', '.') }} VNĐ</p>
+                                        <p><b>Tổng tiền:</b>
+                                            @php
+                                            $price = $bookRoom->hotel->h_price;
+                                            $sale = $bookRoom->hotel->h_sale;
+                                            $priceWithDiscount = $sale > 0 ? $price - ($price * $sale / 100) : $price;
+                                            $totalPrice = $bookRoom->nights * $bookRoom->rooms * $priceWithDiscount;
+                                            // Apply coupon discount if a coupon exists (fixed 5% discount in this example)
+                                            if(!empty($bookRoom->coupon)){
+                                            $couponDiscountRate = 0.05;
+                                            $totalPrice = $totalPrice - ($totalPrice * $couponDiscountRate);
+                                            }
+                                            @endphp
+                                            {{ number_format($totalPrice, 0, ',', '.') }} VNĐ
+                                            @if($sale > 0)
+                                            (sale {{ $sale }}%)
+                                            @endif
+                                            @if($bookRoom->coupon)
+                                            - Mã: {{ $bookRoom->coupon }}
+                                            @endif
+                                        </p>
                                     </td>
                                     <td style="vertical-align: middle;">
                                         @if($bookRoom->payment)

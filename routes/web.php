@@ -26,6 +26,8 @@ use App\Http\Controllers\Page\TourController as PageTourController;
 use App\Http\Controllers\Page\HotelController as PageHotelController;
 use App\Http\Controllers\Page\CommentController as PageCommentController;
 use App\Http\Controllers\Admin\BookRoomController;
+use App\Http\Controllers\ContactController;
+
 
 
 Route::get('/clear-cache', function () {
@@ -234,6 +236,9 @@ Route::group(['namespace' => 'Page'], function () {
     Route::get('/khach-san/{id}/{slug?}.html', [PageHotelController::class, 'detail'])->name('hotel.detail');
     Route::post('/comment', [PageCommentController::class, 'comment'])->name('comment');
 });
+// contack email
+Route::post('/gui-lien-he', [ContactController::class, 'send'])->name('contact.send');
+
 
 Route::get('/test-email', function () {
     $details = [

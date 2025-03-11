@@ -5,8 +5,7 @@
 @section('seo')
 @stop
 @section('content')
-<section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url({{ asset('/page/images/bg_17.jpg') }});">
-    <div class="overlay"></div>
+<section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url({{ asset('/page/images/trangchu.jpg') }});">
     <div class="container">
         <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-center">
             <div class="col-md-9 ftco-animate pb-5 text-center">
@@ -114,15 +113,16 @@
             </div> <!-- .col-md-8 -->
             <div class="col-lg-4">
                 <div class="register-tour">
-                    <p class="price-tour">Giá từ : <span>{{ number_format($tour->t_price_adults-($tour->t_price_adults*$tour->t_sale/100),0,',','.') }}</span> vnd</p>
-                    @if($tour->t_number_registered<$tour->t_number_guests)
-
-                        <a href="{{ route('book.tour', ['id' => $tour->id, 'slug' => safeTitle($tour->t_title)]) }}" class="btn btn-primary py-3 px-4" style="width: 80%">Đặt Tour</a>
-
+                    <p class="price-tour">Giá từ : <span>{{ number_format($tour->t_price_adults - ($tour->t_price_adults*$tour->t_sale/100),0,',','.') }}</span> vnd</p>
+                    @if($tour->t_number_registered < $tour->t_number_guests)
+                        @if(Auth::guard('users')->check())
+                            <a href="{{ route('book.tour', ['id' => $tour->id, 'slug' => safeTitle($tour->t_title)]) }}" class="btn btn-primary py-3 px-4" style="width: 80%">Đặt Tour</a>
                         @else
-                        <a href="{{ route('loi.loi') }}" class="btn btn-primary py-3 px-4" style="width: 80%">Đã hết chỗ</a>
-
+                            <a href="#" class="btn btn-primary py-3 px-4" style="width: 80%" data-toggle="modal" data-target="#loginAlertModalTour">Đặt Tour</a>
                         @endif
+                    @else
+                        <a href="{{ route('loi.loi') }}" class="btn btn-primary py-3 px-4" style="width: 80%">Đã hết chỗ</a>
+                    @endif
                 </div>
                 @if ($tours->count() > 0)
                 <div class="bg-light sidebar-box ftco-animate fadeInUp ftco-animated related-tour">
@@ -138,6 +138,29 @@
         </div>
     </div>
 </section>
+<!-- Inline Modal: Login Alert for Tour Booking -->
+<div class="modal fade" id="loginAlertModalTour" tabindex="-1" role="dialog" aria-labelledby="loginAlertModalTourTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 500px;">
+        <div class="modal-content" style="border-radius: 10px;">
+            <div class="modal-header" style="border-bottom: none;">
+                <h5 class="modal-title w-100 text-center" id="loginAlertModalTourTitle" style="font-size: 1.3rem; font-weight: bold;">
+                    Bạn cần đăng nhập
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="outline: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 1.5rem; text-align: center; font-size: 1rem;">
+                Vui lòng đăng nhập để đặt tour.
+            </div>
+            <div class="modal-footer" style="justify-content: center;">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" data-toggle="modal" data-target="#loginModal">
+                    Đăng nhập
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 @stop
 @section('script')
 @stop

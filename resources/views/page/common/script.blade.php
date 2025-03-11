@@ -46,6 +46,13 @@
             }
         });
     })
+
+    $(document).on('hidden.bs.modal', function () {
+        if ($('.modal.show').length === 0) {
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+        }
+    });
 </script>
 <script src="{{ asset('page/js/main.js') }}"></script>
 <script src="{{ asset('page/js/tour.js') }}"></script>
@@ -132,4 +139,3 @@
       window.open("https://www.facebook.com/congtydulichtourshue/", "_blank");
     }
   </script>
-  

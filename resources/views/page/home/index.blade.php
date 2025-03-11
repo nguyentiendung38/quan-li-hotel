@@ -3,8 +3,7 @@
 @section('style')
 @stop
 @section('content')
-<div class="hero-wrap js-fullheight" style="background-image: url({{ asset('page/images/bg_17.jpg') }});">
-    <div class="overlay"></div>
+<div class="hero-wrap js-fullheight" style="background-image: url({{ asset('page/images/trangchu.jpg') }});">
     <div class="container">
         <div class="row no-gutters slider-text js-fullheight align-items-center" data-scrollax-parent="true">
             <div class="col-md-7 ftco-animate">
@@ -173,7 +172,6 @@
 </section>
 
 <section class="ftco-section ftco-about img" style="background-image: url({{ asset('page/images/bg_99.jpg') }});">
-    <div class="overlay"></div>
     <div class="container py-md-5">
         <div class="row py-md-5">
             <div class="col-md d-flex align-items-center justify-content-center">
@@ -234,7 +232,6 @@
         <div class="row justify-content-center">
             <div class="col-md-12 text-center">
                 <div class="img" style="background-image: url({{ asset('page/images/bg_12.jpg') }});">
-                    <div class="overlay"></div>
                     <h2>Chúng tôi là Công ty Du lịch Fun Travel</h2>
                     <p>Chúng tôi sẽ mang đến cho quý khách những trãi nghiệm tuyệt vời nhất</p>
                     <p class="mb-0"><a href="#" class="btn btn-primary px-4 py-3">Liên hệ qua Messager của chúng tôi</a></p>
