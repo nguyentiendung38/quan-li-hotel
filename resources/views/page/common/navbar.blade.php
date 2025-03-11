@@ -5,24 +5,41 @@
     <!-- Chèn đoạn style tùy chỉnh ngay trong file Blade 
        (hoặc bạn có thể đưa vào file .css riêng) -->
     <style>
-        /* Thiết lập font, kích cỡ, màu chữ, viết hoa cho các link trên thanh navbar */
-        .navbar-nav .nav-link {
-            font-family: "Arial", sans-serif;
-            font-weight: 600;
-            /* Độ đậm của chữ (600 hoặc 700) */
-            font-size: 16px;
-            /* Kích cỡ chữ (có thể tăng lên 20px, 22px, v.v.) */
-            color: #4a4a4a !important;
-            /* Màu chữ */
-            text-transform: uppercase;
-            /* Viết hoa */
+        /* Thiết lập màu nền gradient cho thanh navbar giống như hình ảnh */
+        #ftco-navbar {
+            background: linear-gradient(to right, #28d3c6, #28a8cf);
         }
 
-        /* Màu chữ khi hover (nếu muốn thay đổi) */
-        .navbar-nav .nav-link:hover {
-            color: #222 !important;
+        /* Thiết lập font, kích cỡ, màu chữ và hiệu ứng gạch chân khi active */
+        .navbar-nav .nav-link {
+            font-size: 16px;
+            color: #ffffff !important;
+            /* Chữ màu trắng */
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        /* Hiển thị gạch chân khi active hoặc hover */
+        .navbar-nav .nav-item.active .nav-link::after,
+        .navbar-nav .nav-link:hover::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 50%;
+            height: 2px;
+            background-color: #ffffff;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Dropdown chọn ngôn ngữ */
+        .navbar .dropdown-toggle {
+            background-color: transparent;
+            color: #ffffff;
         }
     </style>
+
 
     <div class="container">
         <!-- Logo / Thương hiệu -->

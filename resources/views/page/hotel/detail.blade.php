@@ -5,8 +5,7 @@
 @section('seo')
 @stop
 @section('content')
-<section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url({{ asset('/page/images/bg_17.jpg') }});">
-    <div class="overlay"></div>
+<section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url({{ asset('/page/images/trangchu.jpg') }});">
     <div class="container">
         <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-center">
             <div class="col-md-9 ftco-animate pb-5 text-center">
@@ -23,9 +22,44 @@
                 <h2 class="mb-3">{{ $hotel->h_name }}</h2>
             </div>
             <div class="col-lg-8 ftco-animate fadeInUp ftco-animated">
-                <p>
+                <!---   <p>
                     <img src="{{ $hotel->h_image ? asset($hotel->h_image) : asset('admin/dist/img/no-image.png') }}" alt="{{ $hotel->h_name }}" class="img-fluid" style="width: 100%">
+                </p> --->
+                @php
+                $mainImage = $hotel->h_image ? asset($hotel->h_image) : asset('admin/dist/img/no-image.png');
+                $images = [$mainImage];
+                if (!empty($hotel->h_album_images)) {
+                $album = json_decode($hotel->h_album_images, true); // Giải mã JSON
+                if (is_array($album) && count($album) > 0) {
+                foreach ($album as $img) {
+                $images[] = asset($img);
+                }
+                }
+                }
+                @endphp
+                @if(count($images) > 1)
+                <div id="hotelCarousel" class="carousel slide" data-ride="carousel" data-interval="1000" data-pause="false">
+                    <div class="carousel-inner">
+                        @foreach($images as $index => $img)
+                        <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                            <img src="{{ $img }}" class="d-block w-100" alt="Hotel Image">
+                        </div>
+                        @endforeach
+                    </div>
+                    <a class="carousel-control-prev" href="#hotelCarousel" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Trước</span>
+                    </a>
+                    <a class="carousel-control-next" href="#hotelCarousel" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Sau</span>
+                    </a>
+                </div>
+                @else
+                <p>
+                    <img src="{{ $mainImage }}" alt="{{ $hotel->h_name }}" class="img-fluid" style="width: 100%">
                 </p>
+                @endif
                 <h2 class="mb-3 mt-5">1. Thông tin liên hệ</h2>
                 <table class="table table-bordered">
                     <tr>
@@ -80,15 +114,14 @@
             <div class="col-lg-4 sidebar ">
                 <div class="register-tour">
                     @if($hotel->h_sale > 0)
-                        <p class="price-tour">
-                            Giá Phòng :
-                            <span>
-                                {{ number_format($hotel->h_price - ($hotel->h_price * $hotel->h_sale / 100), 0, ',', '.') }}
-                            </span> vnđ<br>
-                            <del>{{ number_format($hotel->h_price, 0, ',', '.') }} vnđ</del>
-                        </p>
+                    <p class="price-tour">
+                        Giá Phòng: <span>
+                            {{ number_format($hotel->h_price - ($hotel->h_price * $hotel->h_sale / 100), 0, ',', '.') }}
+                        </span> vnđ<br>
+                        <del>{{ number_format($hotel->h_price, 0, ',', '.') }} vnđ</del>
+                    </p>
                     @else
-                        <p class="price-tour">Giá từ : <span>{{ number_format($hotel->h_price, 0, ',', '.') }}</span> vnđ</p>
+                    <p class="price-tour">Giá từ : <span>{{ number_format($hotel->h_price, 0, ',', '.') }}</span> vnđ</p>
                     @endif
                     <a href="#" class="btn btn-primary py-3 px-4" style="width: 40%; margin-right: 10%;">Liên hệ</a>
                     <a href="#" class="btn btn-secondary py-3 px-4" style="width: 40%;" data-toggle="modal" data-target="#bookingModal">Đặt phòng</a>
@@ -110,4 +143,5 @@
 @include('page.hotel.bookingModal')
 @stop
 @section('script')
+
 @stop

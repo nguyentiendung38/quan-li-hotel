@@ -1,0 +1,4 @@
+.modal-backdrop {
+    background-color: transparent !important; /* or adjust to your preferred color */
+    filter: none !important;
+}

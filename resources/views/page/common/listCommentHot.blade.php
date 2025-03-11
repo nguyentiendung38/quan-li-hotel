@@ -1,5 +1,4 @@
 <section class="ftco-section testimony-section bg-bottom" style="background-image: url({{ asset('page/images/bg_20.jpg') }});">
-    <div class="overlay"></div>
     <div class="container">
         <div class="row justify-content-center pb-4">
             <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
