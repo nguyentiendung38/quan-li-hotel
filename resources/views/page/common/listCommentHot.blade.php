@@ -1,4 +1,4 @@
-<section class="ftco-section testimony-section bg-bottom" style="background-image: url({{ asset('page/images/bg_20.jpg') }});">
+<section class="ftco-section testimony-section bg-bottom" style="background-image: url({{ asset('page/images/cautrangtien.jpg') }});">
     <div class="container">
         <div class="row justify-content-center pb-4">
             <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">

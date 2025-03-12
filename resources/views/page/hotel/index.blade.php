@@ -13,11 +13,12 @@
             </div>
         </div>
     </section>
-    <section class="ftco-section ftco-no-pb">
+    <section class="ftco-section ftco-no-pb" style="margin-top: -50px;">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
                     <div class="search-wrap-1 ftco-animate fadeInUp ftco-animated">
+                    <p class="text-center" style="margin-bottom: 15px;">Tìm Kiếm Khách Sạn Ưu Đãi</p>
                         @include('page.common.searchHotel', compact('locations'))
                     </div>
                 </div>
