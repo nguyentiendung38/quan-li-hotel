@@ -1,68 +1,60 @@
 <footer style="background: url({{ asset('page/images/bg_3.jpg') }}) #00B2BF; background-blend-mode: multiply;">
-  <div class="container">
-    <div class="row">
-      <!-- Giới thiệu -->
-      <div class="col text-center" style="font-size: 0.9rem;">
-        <h3>Giới thiệu</h3>
-        <p>Website Fun Travel cho phép đặt các tour du lịch trong và ngoài nước. Luôn không ngừng đẩy mạnh hoạt động và phát triển nhằm đáp ứng tốt nhất nhu cầu của khách hàng.</p>
+  <div class="container" style="padding-top: 10px;">
+    <div class="row" style="display: flex; justify-content: space-between; text-align: left;">
+      <!-- Hỗ Trợ Khách Hàng 24/7 -->
+      <div class="col" style="font-size: 0.8rem; margin-top: 12px;">
+        <h3 style="font-size: 1.4rem; margin-bottom: 10px;">Hỗ Trợ Khách Hàng</h3>
         <ul style="list-style: none; padding: 0; margin: 0;">
-          <li>
-            <a href="https://www.facebook.com/congtydulichtourshue/">
-              <i class="fa fa-facebook"></i>
-            </a>
-          </li>
-          <li>
-            <a href="https://www.instagram.com/">
-              <i class="fa fa-instagram"></i>
-            </a>
-          </li>
+          <li><a href="#">Tổng đài: 0886888814</a></li>
+          <li><a href="#">Hotline: 0843 308 686</a></li>
+          <li><a href="#">Email: getgotripvn@gmail.com</a></li>
+          <li><a href="#">Tư vấn trực tiếp:</a></li>
         </ul>
       </div>
 
-      <!-- Thông tin -->
-      <div class="col text-center" style="font-size: 0.9rem;">
-        <h3>Thông tin</h3>
+      <!-- Thông Tin Liên Hệ -->
+      <div class="col" style="font-size: 0.8rem; margin-top: 12px;">
+        <h3 style="font-size: 1.4rem; margin-bottom: 10px;">Thông Tin Liên Hệ</h3>
         <ul style="list-style: none; padding: 0; margin: 0;">
-          <li><a href="#">Yêu cầu trực tuyến</a></li>
-          <li><a href="#">Thắc mắc chung</a></li>
-          <li><a href="#">Điều kiện đặt phòng</a></li>
-          <li><a href="#">Quyền riêng tư và Chính sách</a></li>
-          <li><a href="#">Chính sách hoàn lại tiền</a></li>
-          <li><a href="#">Gọi cho chúng tôi</a></li>
+          <li><a href="#">Công ty TNHH DuLichHue</a></li>
+          <li><a href="#">Email: dulichhue@gmail.com</a></li>
+          <li><a href="#">Di động: 0941358686 - 0939487333</a></li>
+          <li><a href="#">Hotline: 0886888814 - 0843308686</a></li>
         </ul>
       </div>
 
-      <!-- Lĩnh vực -->
-      <div class="col text-center" style="font-size: 0.9rem;">
-        <h3>Lĩnh vực</h3>
+      <!-- Du Lịch Huế Cung Cấp -->
+      <div class="col" style="font-size: 0.8rem; margin-top: 12px;">
+        <h3 style="font-size: 1.4rem; margin-bottom: 10px;">Du Lịch Huế Cung Cấp</h3>
         <ul style="list-style: none; padding: 0; margin: 0;">
-          <li><a href="#">Thám hiểm</a></li>
-          <li><a href="#">Khách sạn &amp; Nhà hàng</a></li>
-          <li><a href="#">Biển</a></li>
-          <li><a href="#">Thiên nhiên</a></li>
-          <li><a href="#">Cắm trại</a></li>
-          <li><a href="#">Tiệc</a></li>
+          <li><a href="#">Khách Sạn</a></li>
+          <li><a href="#">Tour Du Lịch</a></li>
         </ul>
       </div>
 
-      <!-- Thông tin liên hệ -->
-      <div class="col text-center" style="font-size: 0.9rem;">
-        <h3>Thông Tin Liên Hệ</h3>
+      <!-- Thông Tin Chung -->
+      <div class="col" style="font-size: 0.8rem; margin-top: 12px;">
+        <h3 style="font-size: 1.4rem; margin-bottom: 10px;">Thông Tin Chung</h3>
         <ul style="list-style: none; padding: 0; margin: 0;">
-          <li><i class="fa fa-map-marker"></i> Điện Biên Phủ, phường 25, Quận Bình Thạnh, TPHCM</li>
-          <li><i class="fa fa-phone"></i> 0123456789</li>
-          <li><i class="fa fa-paper-plane"></i> admin@gmail.com</li>
+          <li><a href="#">Giới thiệu chung</a></li>
+          <li><a href="#">Tầm nhìn – sứ mệnh</a></li>
+          <li><a href="#">Định hướng phát triển</a></li>
+          <li><a href="#">Chính sách bảo mật</a></li>
+          <li><a href="#">Điều khoản sử dụng</a></li>
         </ul>
       </div>
     </div>
+
+    <!-- Phần biểu tượng mạng xã hội -->
+    <div class="social-icons" style="text-align: center; margin-top: 20px;">
+      <a href="https://www.facebook.com/congtydulichtourshue" target="_blank" style="text-decoration: none; display: inline-block;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" style="width: 40px; height: 40px; border-radius: 50%; margin: 0 5px;">
+      </a>
     <!-- Bản quyền -->
     <div class="row">
-      <div class="col text-center" style="font-size: 0.9rem;">
-        <p>&copy; <script>document.write(new Date().getFullYear());</script></p>
+      <div class="col text-center" style="font-size: 0.8rem; margin-top: 12px;">
+        <p>Copyright © 2022 DuLichHue</p>
       </div>
     </div>
   </div>
 </footer>
-
-<div id="fb-root"></div>
-<div id="fb-customer-chat"></div>
