@@ -17,7 +17,7 @@
     </div>
 </div>
 
-<section class="ftco-section ftco-no-pb ftco-no-pt">
+<section class="ftco-section ftco-no-pb ftco-no-pt" style="margin-top:80px;">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
@@ -44,62 +44,59 @@
             </div>
         </div>
 </section>
-
-{{-- <section class="ftco-section services-section">
-        <div class="container">
-            <div class="row d-flex">
-                <div class="col-md-6 order-md-last heading-section pl-md-5 ftco-animate d-flex align-items-center">
-                    <div class="w-100">
-                        <span class="subheading">Welcome to Fun Travel</span>
-                        <h2 class="mb-4">Đã đến lúc bắt đầu cuộc phiêu lưu của bạn</h2>
-                        <p>Xách balo lên vào đi với chúng tôi, bạn sẽ có được những trãi nghiệm tuyệt vời với dịch vụ của chúng tôi!</p>
-                        <p>Các bạn hãy tìm đến với Fun Travel để được đi đến bất cứ nơi nào trên thế giới. Dành cho người có niềm đam mê bất tận với du lịch!</p>
-                    
+<section class="ftco-section services-section" style="padding-bottom:0;">
+    <div class="container">
+        <div class="row d-flex">
+            <div class="col-md-6 order-md-last heading-section pl-md-5 ftco-animate d-flex align-items-center">
+                <div class="w-100">
+                    <span class="subheading">Welcome to Fun Travel HUE </span>
+                    <h2 class="mb-4">Hãy bắt đầu chuyến hành trình khám phá Cố đô Huế</h2>
+                    <p>Dạo bước bên dòng sông Hương thơ mộng, lắng nghe tiếng ca Huế trên sông.Thưởng thức ẩm thực cung đình độc đáo và đậm đà bản sắc miền Trung,tham quan Đại Nội Huế uy nghiêm, các lăng tẩm cổ kính của triều Nguyễn.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
+                        <div class="services services-1 color-1 d-block img" style="background-image: url({{ asset('page/images/hoatdong.jpg') }});">
+                            <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-paragliding"></span></div>
+                            <div class="media-body">
+                                <h3 class="heading mb-3">Các hoạt động</h3>
+                                <p>Hoạt động dã ngoại, thể thao trong quá trình du lịch</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
+                        <div class="services services-1 color-2 d-block img" style="background-image: url({{ asset('page/images/chuyendi.jpg') }});">
+                            <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-route"></span></div>
+                            <div class="media-body">
+                                <h3 class="heading mb-3">Sắp xếp chuyến đi</h3>
+                                <p>Chúng tôi sẽ giúp bạn sắp xếp chuyến đi một cách thoải mái nhất, luôn luôn có các tour để bạn có nhiều sự lựa chọn</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
+                        <div class="services services-1 color-3 d-block img" style="background-image: url({{ asset('page/images/huongdan.jpg') }});">
+                            <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-tour-guide"></span></div>
+                            <div class="media-body">
+                                <h3 class="heading mb-3">Hướng dẫn riêng</h3>
+                                <p>Xách balo lên vào đi với chúng tôi, bạn sẽ có được những trãi nghiệm tuyệt vời với dịch vụ của chúng tôi!</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
+                        <div class="services services-1 color-4 d-block img" style="background-image: url({{ asset('page/images/vitri.jpg') }});">
+                            <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-map"></span></div>
+                            <div class="media-body">
+                                <h3 class="heading mb-3">Quản lý vị trí</h3>
+                                <p>Các bạn hãy tìm đến với Fun Travel để được đi đến bất cứ nơi nào trên thế giới. Dành cho người có niềm đam mê bất tận với du lịch!</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="row">
-                        <div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
-                            <div class="services services-1 color-1 d-block img" style="background-image: url({{ asset('page/images/services-5.jpg') }});">
-<div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-paragliding"></span></div>
-<div class="media-body">
-    <h3 class="heading mb-3">Các hoạt động</h3>
-    <p>Hoạt động dã ngoại, thể thao trong quá trình du lịch</p>
-</div>
-</div>
-</div>
-<div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
-    <div class="services services-1 color-2 d-block img" style="background-image: url({{ asset('page/images/services-6.jpg') }});">
-        <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-route"></span></div>
-        <div class="media-body">
-            <h3 class="heading mb-3">Sắp xếp chuyến đi</h3>
-            <p>Chúng tôi sẽ giúp bạn sắp xếp chuyến đi một cách thoải mái nhất, luôn luôn có các tour để bạn có nhiều sự lựa chọn</p>
+            </div>
         </div>
     </div>
-</div>
-<div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
-    <div class="services services-1 color-3 d-block img" style="background-image: url({{ asset('page/images/services-7.jpg') }});">
-        <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-tour-guide"></span></div>
-        <div class="media-body">
-            <h3 class="heading mb-3">Hướng dẫn riêng</h3>
-            <p>Xách balo lên vào đi với chúng tôi, bạn sẽ có được những trãi nghiệm tuyệt vời với dịch vụ của chúng tôi!</p>
-        </div>
-    </div>
-</div>
-<div class="col-md-12 col-lg-6 d-flex align-self-stretch ftco-animate">
-    <div class="services services-1 color-4 d-block img" style="background-image: url({{ asset('page/images/services-4.jpg') }});">
-        <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-map"></span></div>
-        <div class="media-body">
-            <h3 class="heading mb-3">Quản lý vị trí</h3>
-            <p>Các bạn hãy tìm đến với Fun Travel để được đi đến bất cứ nơi nào trên thế giới. Dành cho người có niềm đam mê bất tận với du lịch!</p>
-        </div>
-    </div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section> --}}
+</section>
 
 <section class="ftco-section img ftco-select-destination" style="background-image: url({{ asset('page/images/bg_3.jpg') }});">
     <div class="container">
@@ -153,7 +150,7 @@
 </section>
 
 <!-- NEW: Khách sạn mới nhất section -->
-<section class="ftco-section no-padding-top">
+<section class="ftco-section no-padding-top" style="padding-bottom: 0 !important;">
     <div class="container">
         <div class="row justify-content-center pb-4">
             <div class="col-md-12 heading-section text-center ftco-animate">
@@ -170,19 +167,15 @@
         </div>
     </div>
 </section>
-
-<section class="ftco-section ftco-about img" style="background-image: url({{ asset('page/images/bg_99.jpg') }});">
-    <div class="container py-md-5">
-        <div class="row py-md-5">
-            <div class="col-md d-flex align-items-center justify-content-center">
-                <a href="https://vimeo.com/45830194" class="icon-video popup-vimeo d-flex align-items-center justify-content-center mb-4">
-                    <span class="fa fa-play"></span>
-                </a>
+<div class="container py-md-5">
+    <div class="row py-md-5">
+        <div class="col-md d-flex align-items-center justify-content-center">
+            <div class="embed-responsive embed-responsive-16by9">
+                <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/JZ3YeP5I0QU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
         </div>
     </div>
-</section>
-
+</div>
 <section class="ftco-section ftco-about ftco-no-pt img">
     <div class="container">
         <div class="col-md-12 heading-section ftco-animate">
@@ -190,7 +183,7 @@
                 <div class="col-md-12 about-intro">
                     <div class="row">
                         <div class="col-md-6 d-flex align-items-stretch">
-                            <div class="img d-flex w-100 align-items-center justify-content-center" style="background-image:url({{ asset('page/images/about-3.jpg') }});">
+                            <div class="img d-flex w-100 align-items-center justify-content-center" style="background-image:url({{ asset('page/images/gioithieu.jpg') }});">
                             </div>
                         </div>
                         <div class="col-md-6 pl-md-5 py-5">
@@ -231,10 +224,10 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-12 text-center">
-                <div class="img" style="background-image: url({{ asset('page/images/bg_12.jpg') }});">
-                    <h2>Chúng tôi là Công ty Du lịch Fun Travel</h2>
+                <div class="img" style="background-image: url({{ asset('page/images/hoatdong.jpg') }});">
+                    <h2>Chúng tôi là Công ty Du lịch Huế Travel</h2>
                     <p>Chúng tôi sẽ mang đến cho quý khách những trãi nghiệm tuyệt vời nhất</p>
-                    <p class="mb-0"><a href="#" class="btn btn-primary px-4 py-3">Liên hệ qua Messager của chúng tôi</a></p>
+                    <p class="mb-0"><a href="https://www.facebook.com/congtydulichtourshue" class="btn btn-primary px-4 py-3">Liên hệ qua Messager của chúng tôi</a></p>
                 </div>
             </div>
         </div>

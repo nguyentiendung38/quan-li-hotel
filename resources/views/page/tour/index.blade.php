@@ -7,17 +7,23 @@
         <div class="container">
             <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-center">
                 <div class="col-md-9 ftco-animate pb-5 text-center">
-                    <p class="breadcrumbs"><span class="mr-2"><a href="{{ route('page.home') }}">Trang chủ <i class="fa fa-chevron-right"></i></a></span> <span>Danh sách<i class="fa fa-chevron-right"></i></span></p>
+                    <p class="breadcrumbs">
+                        <span class="mr-2">
+                            <a href="{{ route('page.home') }}">Trang chủ <i class="fa fa-chevron-right"></i></a>
+                        </span>
+                        <span>Danh sách<i class="fa fa-chevron-right"></i></span>
+                    </p>
                     <h1 class="mb-0 bread">Tours</h1>
                 </div>
             </div>
         </div>
     </section>
-    <section class="ftco-section ftco-no-pb">
+    <section class="ftco-section ftco-no-pb" style="margin-top: -50px;">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
                     <div class="search-wrap-1 ftco-animate fadeInUp ftco-animated">
+                        <p class="text-center" style="margin-bottom: 15px;">Tìm Kiếm Tour Ưu Đãi</p>
                         @include('page.common.searchTour')
                     </div>
                 </div>

@@ -123,7 +123,7 @@
                     @else
                     <p class="price-tour">Giá từ : <span>{{ number_format($hotel->h_price, 0, ',', '.') }}</span> vnđ</p>
                     @endif
-                    <a href="#" class="btn btn-primary py-3 px-4" style="width: 40%; margin-right: 10%;">Liên hệ</a>
+                    <a href="#" class="btn btn-primary py-3 px-4" style="width: 40%; margin-right: 10%;" data-toggle="modal" data-target="#contactModal">Liên hệ</a>
                     <a href="#" class="btn btn-secondary py-3 px-4" style="width: 40%;" data-toggle="modal" data-target="#bookingModal">Đặt phòng</a>
                 </div>
                 @if ($hotels->count() > 0)
@@ -141,6 +141,24 @@
     </div>
 </section>
 @include('page.hotel.bookingModal')
+<!-- New Contact Modal -->
+<div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="contactModalLabel">Liên hệ</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <p>Chọn phương thức liên hệ:</p>
+                <button type="button" class="btn btn-primary mx-1" onclick="window.location.href='tel:0773398244';">Gọi điện</button>
+                <button type="button" class="btn btn-secondary mx-1" onclick="window.location.href='sms:{{ $hotel->h_phone }}';">SMS</button>
+            </div>
+        </div>
+    </div>
+</div>
 @stop
 @section('script')
 

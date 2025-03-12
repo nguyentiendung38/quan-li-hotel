@@ -63,9 +63,6 @@
                 <li class="nav-item {{ request()->is('/') ? 'active' : ''}}">
                     <a href="{{ route('page.home') }}" class="nav-link">TRANG CHỦ</a>
                 </li>
-                <li class="nav-item {{ request()->is('ve-chung-toi.html') ? 'active' : '' }}">
-                    <a href="{{ route('about.us') }}" class="nav-link">GIỚI THIỆU</a>
-                </li>
                 <li class="nav-item {{ request()->is('tour.html') || request()->is('tour/*') ? 'active' : '' }}">
                     <a href="{{ route('tour') }}" class="nav-link">TOURS</a>
                 </li>
@@ -74,6 +71,9 @@
                 </li>
                 <li class="nav-item {{ request()->is('tin-tuc.html') || request()->is('tin-tuc/*')  ? 'active' : '' }}">
                     <a href="{{ route('articles.index') }}" class="nav-link">TIN TỨC</a>
+                </li>
+                <li class="nav-item {{ request()->is('ve-chung-toi.html') ? 'active' : '' }}">
+                    <a href="{{ route('about.us') }}" class="nav-link">GIỚI THIỆU</a>
                 </li>
                 <li class="nav-item {{ request()->is('lien-he.html') ? 'active' : '' }}">
                     <a href="{{ route('contact.index') }}" class="nav-link">LIÊN HỆ</a>

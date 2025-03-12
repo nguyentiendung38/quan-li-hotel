@@ -41,7 +41,7 @@ class Article extends Model
 
     public function comments()
     {
-        return $this->hasMany(Comment::class, 'cm_article_id', 'id');
+        return $this->hasMany(Comment::class, 'cm_article_id', 'id'); // changed key from article_id to cm_article_id
     }
 
     /**
