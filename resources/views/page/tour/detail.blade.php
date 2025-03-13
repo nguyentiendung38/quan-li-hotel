@@ -26,7 +26,7 @@
                     <img src="{{ $tour->t_image ? asset(pare_url_file($tour->t_image)) : asset('admin/dist/img/no-image.png') }}" alt="" class="img-fluid">
                 </div>
                 <div class="content">
-                    <h2 class="mb-3 mt-5">1. Điểm nhấn của hành trình</h2>
+                    <h2 class="mb-3">1. Điểm nhấn của hành trình</h2>
                     <table class="table table-bordered">
                         <tr>
                             <td width="30%">Hành trình </td>
@@ -70,21 +70,97 @@
 
                         </tr>
                     </table>
-                    <h2 class="mb-3 mt-5">2. Lịch trình</h2>
+                    <h2 class="mb-3">2. Lịch trình</h2>
                     <div class="tour_detail">
                         <p>
                             {!! $tour->t_description !!}
                         </p>
 
-                        <h2 class="mb-3 mt-5">3. Giới thiệu tour</h2>
+                        <h2 class="mb-3">3. Giới thiệu tour</h2>
                         <p>
                             {!! $tour->t_content !!}
                         </p>
                     </div>
 
+                    <!-- Add tour rating section -->
+                    <h2 class="mb-3 mt-2">Đánh giá Tour</h2>
+                    <div class="rating-section mb-5">
+                        <div class="rating-summary mb-4">
+                            <h4>Điểm đánh giá trung bình</h4>
+                            <div class="rating-average">
+                                <span class="average-score">{{ number_format($tour->average_rating, 1) }}</span>/5
+                                <div class="rating-stars">
+                                    @php
+                                    $avgRating = $tour->average_rating;
+                                    $fullStars = floor($avgRating);
+                                    $halfStar = $avgRating - $fullStars >= 0.5;
+                                    @endphp
+                                    @for($i = 1; $i <= 5; $i++)
+                                        @if($i <= $fullStars)
+                                            <i class="fa fa-star text-warning"></i>
+                                        @elseif($i == $fullStars + 1 && $halfStar)
+                                            <i class="fa fa-star-half-o text-warning"></i>
+                                        @else
+                                            <i class="fa fa-star-o text-warning"></i>
+                                        @endif
+                                    @endfor
+                                </div>
+                                <div class="total-ratings">({{ $tour->total_ratings }} đánh giá)</div>
+                            </div>
+                        </div>
+
+                        <div class="rating-breakdown mb-4">
+                            <h4>Phân bố đánh giá</h4>
+                            @for($i = 5; $i >= 1; $i--)
+                                @php
+                                $count = $tour->ratings()->where('rating', $i)->count();
+                                $percentage = $tour->total_ratings > 0 ? ($count / $tour->total_ratings) * 100 : 0;
+                                @endphp
+                                <div class="rating-bar">
+                                    <span>{{ $i }} sao</span>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-warning" role="progressbar"
+                                             style="width: {{ $percentage }}%"
+                                             aria-valuenow="{{ $percentage }}"
+                                             aria-valuemin="0"
+                                             aria-valuemax="100"></div>
+                                    </div>
+                                    <span>{{ $count }}</span>
+                                </div>
+                            @endfor
+                        </div>
+
+                        @if(Auth::guard('users')->check())
+                            @php
+                                $userRating = $tour->ratings()->where('user_id', Auth::guard('users')->id())->first();
+                            @endphp
+                            @if($userRating)
+                                <div class="alert alert-info">
+                                    Bạn đã đánh giá {{ $userRating->rating }} sao cho tour này
+                                </div>
+                            @else
+                                <form action="{{ route('tour.rate', $tour->id) }}" method="POST">
+                                    @csrf
+                                    <div class="form-group">
+                                        <label for="rating">Chọn đánh giá của bạn:</label>
+                                        <select name="rating" id="rating" class="form-control">
+                                            <option value="1">1 Sao</option>
+                                            <option value="2">2 Sao</option>
+                                            <option value="3">3 Sao</option>
+                                            <option value="4">4 Sao</option>
+                                            <option value="5">5 Sao</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                                </form>
+                            @endif
+                        @else
+                            <p>Bạn cần <a href="#" data-toggle="modal" data-target="#loginModal">đăng nhập</a> để đánh giá.</p>
+                        @endif
+                    </div>
                 </div>
-                <div class="pt-5 mt-5 py-5" style="border-top: 1px solid #ccc;">
-                    <h3 class="mb-5" style="font-size: 20px; font-weight: bold;">Danh sách bình luận</h3>
+                <div class="mt-2">
+                    <h3 class="mb-2" style="font-size: 20px; font-weight: bold;">Danh sách bình luận</h3>
                     <ul class="comment-list">
                         @if ($tour->comments->count() > 0)
                         @foreach($tour->comments as $key => $comment)
@@ -93,18 +169,18 @@
                         @endif
                     </ul>
                     <!-- END comment-list -->
-
-                    <div class="comment-form-wrap pt-5">
-                        <h3 class="mb-5" style="font-size: 20px; font-weight: bold;">{{ Auth::guard('users')->check() ? 'Bình luận về tour du lịch' : 'Bạn cần đăng nhập để bình luận' }}</h3>
+                    <div class="comment-form-wrap pt-2">
+                        <h3 class="mb-2" style="font-size: 20px; font-weight: bold;">{{ Auth::guard('users')->check() ? 'Bình luận về tour du lịch' : 'Bạn cần đăng nhập để bình luận' }}</h3>
                         @if (Auth::guard('users')->check())
-                        <form action="#" class="p-5 bg-light">
+                        <form action="{{ route('tour.comment', $tour->id) }}" method="POST">
+                            @csrf
                             <div class="form-group">
                                 <label for="message">Nội dung</label>
-                                <textarea name="" id="message" cols="30" rows="5" class="form-control"></textarea>
+                                <textarea name="comment" id="message" cols="30" rows="5" class="form-control"></textarea>
                                 <span class="text-errors-comment" style="display: none;">Vui lòng nhập nội dung bình luận !!!</span>
                             </div>
                             <div class="form-group">
-                                <input type="" value="Gửi bình luận" class="btn py-3 px-4 btn-primary btn-comment" tour_id="{{ $tour->id }}">
+                                <input type="submit" value="Gửi bình luận" class="btn py-3 px-4 btn-primary">
                             </div>
                         </form>
                         @endif

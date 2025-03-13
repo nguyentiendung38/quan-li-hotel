@@ -55,7 +55,8 @@ class TourController extends Controller
                     ->where('cm_status', '1')
                     ->limit(20)
                     ->orderByDesc('id');
-            }
+            },
+            'ratings'  // Add this to load ratings
         ])->find($id);
 
         if (!$tour) {
@@ -316,5 +317,41 @@ class TourController extends Controller
         $bookId = $request->book_id;
         $amount = $request->amount;
         dd("Onepay payment processing for book_id: $bookId, amount: $amount");
+    }
+
+    public function comment(Request $request, $id)
+    {
+        $request->validate([
+            'comment' => 'required|string',
+        ]);
+
+        $tour = Tour::findOrFail($id);
+
+        $tour->comments()->create([
+            'cm_user_id'  => Auth::guard('users')->id(),   // correct user id column
+            'cm_content'  => $request->comment,              // store comment text
+            'cm_hotel_id' => null,                          // set hotel id to null for tour comments
+            'cm_tour_id'  => $tour->id,                       // assign the tour id
+        ]);
+
+        return back()->with('success', 'Bình luận của bạn đã được gửi!');
+    }
+
+    public function rate(Request $request, $id)
+    {
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+        ]);
+
+        $tour = Tour::findOrFail($id);
+        $userId = Auth::guard('users')->id();
+
+        // Update or create the user's rating for this tour, setting hotel_id to null
+        $tour->ratings()->updateOrCreate(
+            ['user_id' => $userId],
+            ['rating' => $request->rating, 'hotel_id' => null]
+        );
+
+        return back()->with('success', 'Cảm ơn bạn đã đánh giá tour!');
     }
 }

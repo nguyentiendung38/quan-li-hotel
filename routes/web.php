@@ -239,6 +239,8 @@ Route::group(['namespace' => 'Page'], function () {
     Route::group(['prefix' => 'hotel'], function () {
         Route::post('/rate/{id}', [\App\Http\Controllers\Page\HotelController::class, 'rateHotel'])->name('hotel.rate');
     });
+    Route::post('tour/{id}/comment', [PageTourController::class, 'comment'])->name('tour.comment');
+    Route::post('tour/rate/{id}', [\App\Http\Controllers\Page\TourController::class, 'rate'])->name('tour.rate');
 });
 // contack email
 Route::post('/gui-lien-he', [ContactController::class, 'send'])->name('contact.send');

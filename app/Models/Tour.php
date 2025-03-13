@@ -80,4 +80,19 @@ class Tour extends Model
     {
         return $this->hasMany(BookTour::class, 'b_tour_id', 'id');
     }
+
+    public function ratings()
+    {
+        return $this->hasMany(\App\Models\Rating::class, 'tour_id', 'id');
+    }
+
+    public function getAverageRatingAttribute()
+    {
+        return $this->ratings()->avg('rating') ?: 0;
+    }
+
+    public function getTotalRatingsAttribute()
+    {
+        return $this->ratings()->count();
+    }
 }
