@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Page;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Hotel;
 use App\Models\Location;
 use App\Models\BookRoom;
+use App\Models\Rating;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Hotel;
+
+
 
 class HotelController extends Controller
 {
@@ -71,12 +75,32 @@ class HotelController extends Controller
         ]);
 
         $data['hotel_id'] = $hotel->id;
-        $data['user_id'] = auth()->id();
+        $data['user_id'] = Auth::id()()->id();
         $data['total_price'] = $hotel->h_price * $data['nights'] * $data['rooms'];
         $data['status'] = 0; // Trạng thái "Tiếp nhận"
 
         BookRoom::create($data);
 
         return redirect()->route('hotel.detail', ['id' => $hotel->id, 'slug' => $slug])->with('success', 'Đặt phòng thành công!');
+    }
+
+    public function rateHotel(Request $request, $id)
+    {
+        if (!Auth::guard('users')->check()) {
+            return redirect()->back()->with('error', 'Bạn cần đăng nhập để đánh giá');
+        }
+
+        $hotel = Hotel::find($id);
+        if (!$hotel) {
+            return redirect()->back()->with('error', 'Không tìm thấy khách sạn');
+        }
+
+        $rating = new Rating();
+        $rating->hotel_id = $id;
+        $rating->user_id = Auth::guard('users')->id();
+        $rating->rating = $request->rating;
+        $rating->save();
+
+        return redirect()->back()->with('success', 'Đánh giá của bạn đã được gửi thành công');
     }
 }

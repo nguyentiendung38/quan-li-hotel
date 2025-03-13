@@ -1,6 +1,6 @@
 <!-- Modal Đặt Phòng -->
 <div class="modal fade" id="bookingModal" tabindex="-1" role="dialog" aria-labelledby="bookingModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="max-width: 500px;">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="max-width: 900px;">
         <div class="modal-content" style="border-radius: 10px;">
             <div class="modal-header" style="border-bottom: none;">
                 <h5 class="modal-title w-100 text-center" id="bookingModalTitle" style="font-size: 1.3rem; font-weight: bold;">
@@ -11,7 +11,7 @@
                 </button>
             </div>
             <!-- Body -->
-            <div class="modal-body" style="padding: 1.5rem;">
+            <div class="modal-body" style="padding: 2rem;">
                 @if(Auth::guard('users')->check())
                 <form action="{{ route('post.book.room', ['id' => $hotel->id, 'slug' => Str::slug($hotel->h_name)]) }}" method="POST">
                     @csrf
@@ -19,7 +19,7 @@
                     <input type="hidden" name="hotel_id" value="{{ $hotel->id }}">
                     <div class="row">
                         <!-- Cột Trái: Thông tin liên hệ -->
-                        <div class="col-md-6 mb-4">
+                        <div class="col-md-6 mb-4 pr-md-4">
                             <h5 style="font-weight: bold; margin-bottom: 1rem; font-size: 1rem;">Thông tin liên hệ</h5>
                             <!-- Tên -->
                             <div class="form-group">
@@ -68,7 +68,7 @@
                             </div>
                         </div>
                         <!-- Cột Phải: Thông tin phòng -->
-                        <div class="col-md-6">
+                        <div class="col-md-6 pl-md-4">
                             <h5 style="font-weight: bold; margin-bottom: 1rem; font-size: 1rem;">Thông tin phòng</h5>
                             <!-- Tên khách sạn & Ảnh (tuỳ chọn) -->
                             <div class="mb-3">

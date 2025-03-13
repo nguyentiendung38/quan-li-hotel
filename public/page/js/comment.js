@@ -24,11 +24,11 @@ $(function () {
             dataType: 'json',
             async: true,
             data: {
-                tour_id : tour_id,
-                reply_id : reply_id,
-                article_id : article_id,
-                hotel_id : hotel_id,
-                message : content,
+                tour_id: tour_id,
+                reply_id: reply_id,
+                article_id: article_id,
+                hotel_id: hotel_id,
+                message: content,
             }
         }).done(function (result) {
 
@@ -36,10 +36,10 @@ $(function () {
                 $('.comment-list').prepend(result.html);
                 $('#message').val('')
             } else {
-                toastr.error('Đã sảy ra lỗi không thể bình luận', {timeOut: 3000});
+                toastr.error('Đã sảy ra lỗi không thể bình luận', { timeOut: 3000 });
             }
         }).fail(function (XMLHttpRequest, textStatus, thrownError) {
-            toastr.error('Đã sảy ra lỗi không thể hủy tour', {timeOut: 3000});
+            toastr.error('Đã sảy ra lỗi không thể hủy tour', { timeOut: 3000 });
         });
     });
 

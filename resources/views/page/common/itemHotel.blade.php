@@ -23,6 +23,26 @@
                     {{ the_excerpt($hotel->h_name, 100) }}
                 </a>
             </h3>
+            <!-- Add Star Rating Display -->
+            <div class="rating-stars mb-2">
+                @php
+                $rating = $hotel->average_rating;
+                $fullStars = floor($rating);
+                $halfStar = $rating - $fullStars >= 0.5;
+                @endphp
+
+                @for($i = 1; $i <= 5; $i++)
+                    @if($i <=$fullStars)
+                    <i class="fa fa-star text-warning"></i>
+                    @elseif($i == $fullStars + 1 && $halfStar)
+                    <i class="fa fa-star-half-o text-warning"></i>
+                    @else
+                    <i class="fa fa-star-o text-warning"></i>
+                    @endif
+                    @endfor
+                    <span class="rating-count">({{ $hotel->total_ratings }} đánh giá)</span>
+            </div>
+
             <!-- Dòng hiển thị vị trí -->
             <p class="location">
                 <span class="fa fa-map-marker" style="margin-right: 10px;"></span>
@@ -31,7 +51,7 @@
             <!-- Thông tin booking hiển thị giống vị trí -->
             <p class="location mb-0">
                 <span class="fa fa-user" style="margin-right: 10px;"></span>
-                Loại phòng: {{ $hotel->h_rooms ?? '0' }}
+                Loại phòng: {{ $hotel->h_room_type ?? 'Chưa chọn' }}
             </p>
             <p class="location mb-0">
                 <span class="fa fa-user" style="margin-right: 10px;"></span>

@@ -235,6 +235,10 @@ Route::group(['namespace' => 'Page'], function () {
     Route::get('/khach-san.html', [PageHotelController::class, 'index'])->name('hotel');
     Route::get('/khach-san/{id}/{slug?}.html', [PageHotelController::class, 'detail'])->name('hotel.detail');
     Route::post('/comment', [PageCommentController::class, 'comment'])->name('comment');
+
+    Route::group(['prefix' => 'hotel'], function () {
+        Route::post('/rate/{id}', [\App\Http\Controllers\Page\HotelController::class, 'rateHotel'])->name('hotel.rate');
+    });
 });
 // contack email
 Route::post('/gui-lien-he', [ContactController::class, 'send'])->name('contact.send');

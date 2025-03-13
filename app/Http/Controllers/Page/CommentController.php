@@ -14,7 +14,7 @@ class CommentController extends Controller
     public function comment(Request $request)
     {
 
-        if($request->ajax()) {
+        if ($request->ajax()) {
             try {
                 $comment = new Comment();
                 if ($request->tour_id) {
@@ -35,7 +35,7 @@ class CommentController extends Controller
                 $comment->cm_status = 1;
                 $comment->save();
                 $comment = $comment->with('user')->find($comment->id);
-                $html =  view('page.common.itemComment',compact('comment'))->render();
+                $html =  view('page.common.itemComment', compact('comment'))->render();
                 return response([
                     'code' => 200,
                     'html' => $html
@@ -51,8 +51,7 @@ class CommentController extends Controller
 
     public function replyComment(Request $request)
     {
-        if($request->ajax()) {
-
+        if ($request->ajax()) {
         }
     }
 }
