@@ -10,22 +10,30 @@
             <div class="col-md-12">
                 <div class="carousel-testimony owl-carousel">
                     @if($comments->count() > 0)
-                        @foreach($comments as $comment)
-                            <div class="item">
-                                <div class="testimony-wrap py-4">
-                                    <div class="text item-comment">
-                                        <p class="mb-4">{!! the_excerpt($comment->cm_content, 150) !!}</p>
-                                        <div class="d-flex align-items-center">
-                                            <div class="user-img" style="background-image: url({{ asset(isset($comment) && !empty($comment->user->avatar) ? asset(pare_url_file($comment->user->avatar)) : 'page/images/person_1.jpg') }})"></div>
-                                            <div class="pl-3">
-                                                <p class="name">{!! $comment->user->name !!}</p>
-                                                <span class="position">Thành viên</span>
-                                            </div>
-                                        </div>
+                    @foreach($comments as $comment)
+                    <div class="item">
+                        <div class="testimony-wrap py-4">
+                            <div class="text item-comment">
+                                <p class="mb-4">{!! the_excerpt($comment->cm_content, 150) !!}</p>
+                                <div class="d-flex align-items-center">
+                                    <div class="user-img" style="background-image: url({{ asset(isset($comment) && !empty($comment->user->avatar) ? asset(pare_url_file($comment->user->avatar)) : 'page/images/person_1.jpg') }})"></div>
+                                    <div class="pl-3">
+                                        <p class="name">{!! $comment->user->name !!}</p>
+                                        <span class="position">Thành viên</span>
                                     </div>
                                 </div>
                             </div>
-                        @endforeach
+                        </div>
+                    </div>
+                    @endforeach
+                    @else
+                    <div class="item">
+                        <div class="testimony-wrap py-4">
+                            <div class="text item-comment text-center">
+                                <p class="mb-4">Không có bình luận nổi bật.</p>
+                            </div>
+                        </div>
+                    </div>
                     @endif
                 </div>
             </div>

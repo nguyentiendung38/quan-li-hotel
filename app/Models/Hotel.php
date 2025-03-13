@@ -34,20 +34,21 @@ class Hotel extends Model
         'h_location_id',
         'h_user_id',
         'h_rooms',
+        'h_room_type' // Added room type field for mass assignment
     ];
-    
 
-    public function location ()
+
+    public function location()
     {
         return $this->belongsTo(Location::class, 'h_location_id', 'id')->where('l_status', 1);
     }
 
-    public function user ()
+    public function user()
     {
         return $this->belongsTo(User::class, 'h_user_id', 'id');
     }
 
-    public function createOrUpdate($request , $id ='')
+    public function createOrUpdate($request, $id = '')
     {
         $params = $request->except(['images', '_token', 'submit']);
 
@@ -77,5 +78,33 @@ class Hotel extends Model
     public function bookRooms()
     {
         return $this->hasMany(BookRoom::class, 'hotel_id', 'id');
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+    public function getAverageRatingAttribute()
+    {
+        return $this->ratings()->avg('rating') ?? 0;
+    }
+
+    public function getTotalRatingsAttribute()
+    {
+        return $this->ratings()->count();
+    }
+
+    public function getRoomTypeNameAttribute()
+    {
+        $types = [
+            'Standard' => 'Phòng tiêu chuẩn',
+            'Deluxe'   => 'Phòng cao cấp',
+            'Suite'    => 'Phòng Suite',
+            'Family'   => 'Phòng gia đình',
+            'Single'   => 'Phòng đơn',
+            'Double'   => 'Phòng đôi',
+        ];
+        return $types[$this->h_room_type] ?? 'Chưa chọn';
     }
 }

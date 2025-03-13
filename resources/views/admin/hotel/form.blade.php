@@ -102,10 +102,10 @@
                             <div>
                                 <select class="custom-select" name="h_room_type">
                                     <option value="">Chọn loại phòng</option>
-                                    @foreach($roomTypes as $roomType)
-                                    <option value="{{ $roomType->id }}"
-                                        {{ old('h_room_type', isset($hotel) ? $hotel->h_room_type : '') == $roomType->id ? 'selected="selected"' : '' }}>
-                                        {{ $roomType->name }}
+                                    @foreach($roomTypes as $key => $name)
+                                    <option value="{{ $key }}"
+                                        {{ old('h_room_type', isset($hotel) ? $hotel->h_room_type : '') == $key ? 'selected="selected"' : '' }}>
+                                        {{ $name }}
                                     </option>
                                     @endforeach
                                 </select>
@@ -126,7 +126,6 @@
                                 @endif
                             </div>
                         </div>
-
                         <div class="form-group {{ $errors->first('h_content') ? 'has-error' : '' }} ">
                             <label for="inputEmail3" class="control-label default">Nội dung</label>
                             <div>
@@ -181,6 +180,33 @@
                         </div>
                     </div>
                     <!-- /.card-body -->
+                </div>
+                <!-- Re-add Album Images upload field -->
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h3 class="card-title">Album Ảnh</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="h_album_images">Tải nhiều ảnh</label>
+                            <input type="file" name="h_album_images[]" multiple class="form-control">
+                            @if($errors->first('h_album_images'))
+                            <span class="text-danger">
+                                <p class="mg-t-5">{{ $errors->first('h_album_images') }}</p>
+                            </span>
+                            @endif
+                            @if(isset($hotel) && !empty($hotel->h_album_images))
+                            <?php $album = json_decode($hotel->h_album_images, true); ?>
+                            @if(is_array($album) && count($album) > 0)
+                            <div class="mt-3">
+                                @foreach($album as $img)
+                                <img src="{{ asset($img) }}" alt="" class="img-thumbnail" style="height:100px;">
+                                @endforeach
+                            </div>
+                            @endif
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

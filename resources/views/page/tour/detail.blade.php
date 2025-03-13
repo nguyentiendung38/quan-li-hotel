@@ -116,13 +116,13 @@
                     <p class="price-tour">Giá từ : <span>{{ number_format($tour->t_price_adults - ($tour->t_price_adults*$tour->t_sale/100),0,',','.') }}</span> vnd</p>
                     @if($tour->t_number_registered < $tour->t_number_guests)
                         @if(Auth::guard('users')->check())
-                            <a href="{{ route('book.tour', ['id' => $tour->id, 'slug' => safeTitle($tour->t_title)]) }}" class="btn btn-primary py-3 px-4" style="width: 80%">Đặt Tour</a>
+                        <a href="{{ route('book.tour', ['id' => $tour->id, 'slug' => safeTitle($tour->t_title)]) }}" class="btn btn-primary py-3 px-4" style="width: 80%">Đặt Tour</a>
                         @else
-                            <a href="#" class="btn btn-primary py-3 px-4" style="width: 80%" data-toggle="modal" data-target="#loginAlertModalTour">Đặt Tour</a>
+                        <a href="#" class="btn btn-primary py-3 px-4" style="width: 80%" data-toggle="modal" data-target="#loginAlertModalTour">Đặt Tour</a>
                         @endif
-                    @else
+                        @else
                         <a href="{{ route('loi.loi') }}" class="btn btn-primary py-3 px-4" style="width: 80%">Đã hết chỗ</a>
-                    @endif
+                        @endif
                 </div>
                 @if ($tours->count() > 0)
                 <div class="bg-light sidebar-box ftco-animate fadeInUp ftco-animated related-tour">
