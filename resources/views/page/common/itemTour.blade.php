@@ -19,7 +19,6 @@
                     </span>
                 @endif
             </a>
-
             <div class="text p-4">
                 @if($tour->t_number_registered == $tour->t_number_guests)
                     <h5 class="days" style="color:red">Đã hết chỗ</h5>
@@ -30,6 +29,25 @@
                         {{ the_excerpt($tour->t_title, 100) }}
                     </a>
                 </h3>
+                <!-- Add rating display -->
+                <div class="rating-stars mb-2">
+                    @php
+                    $avgRating = $tour->average_rating;
+                    $fullStars = floor($avgRating);
+                    $halfStar = $avgRating - $fullStars >= 0.5;
+                    @endphp
+                    @for($i = 1; $i <= 5; $i++)
+                        @if($i <= $fullStars)
+                            <i class="fa fa-star text-warning"></i>
+                        @elseif($i == $fullStars + 1 && $halfStar)
+                            <i class="fa fa-star-half-o text-warning"></i>
+                        @else
+                            <i class="fa fa-star-o text-warning"></i>
+                        @endif
+                    @endfor
+                    <span class="rating-count">({{ $tour->total_ratings }})</span>
+                </div>
+
                 <p class="location">
                     <span class="fa fa-map-marker"></span> Từ : {{ isset($tour->t_starting_gate) ? $tour->t_starting_gate : '' }}
                 </p>
