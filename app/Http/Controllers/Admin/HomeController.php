@@ -11,6 +11,8 @@ use App\Models\BookTour;
 use App\Models\Tour;
 use App\Models\BookRoom;
 use App\Models\Hotel;
+use Illuminate\Support\Facades\Auth; // Import if using Auth facade
+use Illuminate\Support\Facades\DB;   // Import if using DB facade
 
 class HomeController extends Controller
 {

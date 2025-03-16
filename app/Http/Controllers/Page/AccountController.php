@@ -10,9 +10,13 @@ use App\Http\Requests\ChangePasswordRequest;
 use App\Models\User;
 use App\Models\BookTour;
 use App\Models\Tour;
-use Mail;
 use Illuminate\Support\Facades\Password;
 use App\Mail\PagePasswordResetEmail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+
+
+
 
 class AccountController extends Controller
 {
@@ -32,7 +36,7 @@ class AccountController extends Controller
 
     public function updateInfoAccount(UpdateInfoAccountRequest $request)
     {
-        \DB::beginTransaction();
+        DB::beginTransaction();
         try {
             $user =  User::find(Auth::guard('users')->user()->id);
             $user->name = $request->name;
@@ -47,10 +51,10 @@ class AccountController extends Controller
             }
 
             $user->save();
-            \DB::commit();
+            DB::commit();
             return redirect()->back()->with('success', 'Cập nhật thành công.');
         } catch (\Exception $exception) {
-            \DB::rollBack();
+            DB::rollBack();
             return redirect()->back()->with('error', 'Đã xảy ra lỗi không thể cập nhật tài khoản');
         }
     }
@@ -62,12 +66,12 @@ class AccountController extends Controller
 
     public function postChangePassword(ChangePasswordRequest $request)
     {
-        \DB::beginTransaction();
+        DB::beginTransaction();
         try {
             $user =  User::find(Auth::guard('users')->user()->id);
             $user->password = bcrypt($request->password);
             $user->save();
-            \DB::commit();
+            DB::commit();
             Auth::guard('users')->logout();
             return redirect()->route('page.user.account')->with('success', 'Đổi mật khẩu thành công.');
         } catch (\Exception $exception) {
@@ -97,35 +101,35 @@ class AccountController extends Controller
             'password' => 'required|confirmed|min:6',
             'token'    => 'required'
         ]);
-        
+
         $credentials = $request->only('email', 'password', 'password_confirmation', 'token');
-        $response = Password::broker('users')->reset($credentials, function($user, $password) {
+        $response = Password::broker('users')->reset($credentials, function ($user, $password) {
             $user->password = bcrypt($password);
             $user->save();
         });
-        
+
         if ($response === Password::PASSWORD_RESET) {
             // Redirect to home page after successful password reset
             return redirect()->route('page.home')
-                             ->with('success', 'Mật khẩu đã được đặt lại. Vui lòng đăng nhập lại.');
+                ->with('success', 'Mật khẩu đã được đặt lại. Vui lòng đăng nhập lại.');
         }
-        
+
         return redirect()->back()->withErrors(['email' => 'Có lỗi xảy ra khi đặt lại mật khẩu']);
     }
 
     public function cancelTour($id)
     {
-        \DB::beginTransaction();
+        DB::beginTransaction();
         try {
-            
-            \DB::commit();
+
+            DB::commit();
 
             return response([
                 'status_code' => 200,
                 'message' => 'Hủy thành công đơn hàng',
             ]);
         } catch (\Exception $exception) {
-            \DB::rollBack();
+            DB::rollBack();
             $code = 404;
             return response([
                 'status_code' => $code,
@@ -149,41 +153,40 @@ class AccountController extends Controller
             return redirect()->back()->with('error', 'Dữ liệu không tồn tại');
         }
 
-        \DB::beginTransaction();
-        if($status != $bookTour->b_status){
-        try {
-            $bookTour->b_status = $status;
-            if ($bookTour->save()) {
-                if ($status == 5 ) {
-                    $tour = Tour::find($bookTour->b_tour_id);
-                    $numberRegistered = $tour->t_number_registered - $numberUser;
-                    $tour->t_number_registered = $numberRegistered > 0 ? $numberRegistered : 0;
-                    $tour->save();
-                    
+        DB::beginTransaction();
+        if ($status != $bookTour->b_status) {
+            try {
+                $bookTour->b_status = $status;
+                if ($bookTour->save()) {
+                    if ($status == 5) {
+                        $tour = Tour::find($bookTour->b_tour_id);
+                        $numberRegistered = $tour->t_number_registered - $numberUser;
+                        $tour->t_number_registered = $numberRegistered > 0 ? $numberRegistered : 0;
+                        $tour->save();
+                    }
                 }
+                $tour = Tour::find($bookTour->b_tour_id);
+                $user = User::find($bookTour->b_user_id);
+                $mailuser = $user->email;
+                Mail::send('emailhuy', compact('user', 'bookTour', 'tour'), function ($email) use ($mailuser) {
+                    $email->subject('Xác nhận HUỶ BOOKING');
+                    $email->to($mailuser);
+                });
+                DB::commit();
+
+                return response([
+                    'status_code' => 200,
+                    'message' => 'Hủy thành công đơn hàngg',
+                ]);
+            } catch (\Exception $exception) {
+                DB::rollBack();
+                $code = 404;
+                return response([
+                    'status_code' => $code,
+                    'message' => 'Không thể hủy đơn hàng',
+                ]);
             }
-            $tour = Tour::find($bookTour->b_tour_id);
-            $user = User::find($bookTour->b_user_id);
-            $mailuser =$user->email;
-                    Mail::send('emailhuy',compact('user','bookTour','tour'),function($email) use($mailuser){
-                        $email->subject('Xác nhận HUỶ BOOKING');
-                        $email->to($mailuser);
-                    });
-            \DB::commit();
-           
-            return response([
-                'status_code' => 200,
-                'message' => 'Hủy thành công đơn hàngg',
-            ]);
-        } catch (\Exception $exception) {
-            \DB::rollBack();
-            $code = 404;
-            return response([
-                'status_code' => $code,
-                'message' => 'Không thể hủy đơn hàng',
-            ]);
-        }}
-        else {
+        } else {
             return redirect()->back()->with('error', 'Trạng thái đã tồn tại');
         }
     }

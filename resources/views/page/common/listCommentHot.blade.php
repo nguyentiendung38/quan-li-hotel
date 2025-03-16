@@ -16,7 +16,7 @@
                             <div class="text item-comment">
                                 <p class="mb-4">{!! the_excerpt($comment->cm_content, 150) !!}</p>
                                 <div class="d-flex align-items-center">
-                                    <div class="user-img" style="background-image: url({{ asset(isset($comment) && !empty($comment->user->avatar) ? asset(pare_url_file($comment->user->avatar)) : 'page/images/person_1.jpg') }})"></div>
+                                    <div class="user-img" style="background-image: url({{ asset(isset($comment) && !empty($comment->user->avatar) ? asset(pare_url_file($comment->user->avatar)) : 'page/images/avatahotel.jpg') }})"></div>
                                     <div class="pl-3">
                                         <p class="name">{!! $comment->user->name !!}</p>
                                         <span class="position">Thành viên</span>
