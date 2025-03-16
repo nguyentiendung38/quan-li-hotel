@@ -45,6 +45,14 @@
                                 style="font-size: 0.8rem; border-radius: 4px; text-align: center; min-width: 100px;">
                         </div>
                     </div>
+                    <div class="col-md-12 text-center" style="margin-top: 1rem;">
+                        <div class="form-group">
+                            <!-- Google Login Button -->
+                            <a href="{{ route('account.google.login') }}" class="btn btn-danger py-2 px-4" style="font-size: 0.8rem; border-radius: 4px; text-align: center; min-width: 100px;">
+                                Đăng nhập bằng Google
+                            </a>
+                        </div>
+                    </div>
                 </form>
                 <!-- Đoạn văn đăng ký -->
                 <p class="text-center" style="font-size: 0.85rem; margin-top: 1rem;">
@@ -72,7 +80,7 @@
             </div>
             <!-- Body -->
             <div class="modal-body">
-                <form action="{{ route('account.forgot.password') }}" method="POST">
+                <form action="{{ route('account.forgot.password.post') }}" method="POST">
                     @csrf
                     <div class="form-group">
                         <label style="font-size: 0.85rem;">
@@ -162,10 +170,14 @@
         // Khi nhấn vào "Quên mật khẩu"
         $('#forgotPasswordLink').on('click', function(e) {
             e.preventDefault();
+            console.log('Forgot password link clicked');
             if ($('#loginModal').hasClass('show')) {
                 $('#loginModal').modal('hide');
                 $('#loginModal').one('hidden.bs.modal', function() {
-                    $('#forgotPasswordModal').modal('show');
+                    // Use a slight delay before showing the forgot modal
+                    setTimeout(function(){
+                        $('#forgotPasswordModal').modal('show');
+                    }, 300);
                 });
             } else {
                 $('#forgotPasswordModal').modal('show');

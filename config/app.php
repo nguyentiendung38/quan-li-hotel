@@ -123,4 +123,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'aliases' => [
+        'Auth'      => Illuminate\Support\Facades\Auth::class,
+        'Socialite' => Laravel\Socialite\Facades\Socialite::class,
+        'Request'   => Illuminate\Support\Facades\Request::class,
+        'DB'        => Illuminate\Support\Facades\DB::class,
+        'File'      => Illuminate\Support\Facades\File::class, // Thêm dòng này
+        'Str'       => Illuminate\Support\Str::class, // Thêm dòng này
+        'Mail' => Illuminate\Support\Facades\Mail::class,
+
+    ],
+
+
 ];

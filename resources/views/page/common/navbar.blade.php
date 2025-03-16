@@ -1,59 +1,44 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top"
-    id="ftco-navbar"
-    style="box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-
-    <!-- Chèn đoạn style tùy chỉnh ngay trong file Blade 
-       (hoặc bạn có thể đưa vào file .css riêng) -->
+<nav class="navbar navbar-expand-lg navbar-light sticky-top" id="ftco-navbar" style="box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <!-- Chèn CSS tùy chỉnh -->
     <style>
-        /* Thiết lập màu nền gradient cho thanh navbar giống như hình ảnh */
+        /* Nền gradient cho navbar */
         #ftco-navbar {
             background: linear-gradient(to right, #28d3c6, #28a8cf);
         }
 
-        /* Thiết lập font, kích cỡ, màu chữ và hiệu ứng gạch chân khi active */
+        /* Thiết lập font chữ, màu sắc và hiệu ứng border-bottom cho các mục menu */
         .navbar-nav .nav-link {
             font-size: 16px;
             color: #ffffff !important;
-            /* Chữ màu trắng */
             text-transform: uppercase;
             position: relative;
+            border-bottom: 2px solid transparent;
+            /* Dự phòng không gian cho underline */
+            transition: border-color 0.3s;
         }
 
-        /* Hiển thị gạch chân khi active hoặc hover */
-        .navbar-nav .nav-item.active .nav-link::after,
-        .navbar-nav .nav-link:hover::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 50%;
-            height: 2px;
-            background-color: #ffffff;
-            left: 50%;
-            transform: translateX(-50%);
+        /* Khi hover hoặc active thì đổi màu border-bottom */
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-item.active .nav-link {
+            border-bottom-color: #ffffff;
         }
 
-        /* Dropdown chọn ngôn ngữ */
+        /* Định dạng cho dropdown */
         .navbar .dropdown-toggle {
             background-color: transparent;
             color: #ffffff;
         }
     </style>
 
-
     <div class="container">
         <!-- Logo / Thương hiệu -->
         <a class="navbar-brand" href="{{ route('page.home') }}">
             DU LỊCH HUẾ
-            <span style="font-size: 0.9rem; margin-left: 5px; color: #4a4a4a;">
-                DU LỊCH HUẾ
-            </span>
+            <span style="font-size: 0.9rem; margin-left: 5px; color: #4a4a4a;">DU LỊCH HUẾ</span>
         </a>
 
         <!-- Nút toggle khi thu nhỏ màn hình -->
-        <button class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#ftco-nav" aria-controls="ftco-nav"
-            aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="oi oi-menu"></span> Menu
         </button>
 
@@ -69,7 +54,7 @@
                 <li class="nav-item {{ request()->is('khach-san.html') || request()->is('khach-san/*') ? 'active' : '' }}">
                     <a href="{{ route('hotel') }}" class="nav-link">KHÁCH SẠN</a>
                 </li>
-                <li class="nav-item {{ request()->is('tin-tuc.html') || request()->is('tin-tuc/*')  ? 'active' : '' }}">
+                <li class="nav-item {{ request()->is('tin-tuc.html') || request()->is('tin-tuc/*') ? 'active' : '' }}">
                     <a href="{{ route('articles.index') }}" class="nav-link">TIN TỨC</a>
                 </li>
                 <li class="nav-item {{ request()->is('ve-chung-toi.html') ? 'active' : '' }}">
@@ -81,22 +66,24 @@
 
                 @if (Auth::guard('users')->check())
                 @php $user = Auth::guard('users')->user(); @endphp
-                <li class="nav-item {{ request()->is('thong-tin-tai-khoan.html') || request()->is('thay-doi-mat-khau.html') || request()->is('danh-sach-tour.html') ? 'active' : '' }}">
-                    <a href="{{ route('info.account') }}" class="nav-link" title="{{ $user->name }}">
-                        Xin chào : {{ the_excerpt($user->name, 15) }}
+                <li class="nav-item dropdown {{ request()->is('thong-tin-tai-khoan.html') || request()->is('thay-doi-mat-khau.html') || request()->is('danh-sach-tour.html') ? 'active' : '' }}">
+                    <a href="#" class="nav-link dropdown-toggle" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        TÀI KHOẢN
                     </a>
-                </li>
-                <li class="nav-item {{ request()->is('dang-xuat.html') ? 'active' : '' }}">
-                    <a href="{{ route('page.user.logout') }}" class="nav-link">ĐĂNG XUẤT</a>
+                    <div class="dropdown-menu" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="{{ route('info.account') }}">Thông tin tài khoản</a>
+                        <a class="dropdown-item" href="{{ route('page.user.logout') }}">ĐĂNG XUẤT</a>
+                    </div>
                 </li>
                 @else
                 <li class="nav-item {{ request()->is('dang-nhap.html') ? 'active' : '' }}">
-                    <a href="#" class="nav-link" data-toggle="modal" data-target="#loginModal">ĐĂNG NHẬP</a>
+                    <a href="#" class="nav-link" data-toggle="modal" data-target="#loginModal">TÀI KHOẢN</a>
                 </li>
                 @endif
             </ul>
         </div>
     </div>
 </nav>
+
 @include('page.common.login-modal')
 @include('page.common.register-modal')

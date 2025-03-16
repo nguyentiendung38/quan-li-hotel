@@ -2,16 +2,17 @@
   <div class="container" style="padding-top: 10px;">
     <div class="row" style="display: flex; justify-content: space-between; text-align: left;">
       <!-- Hỗ Trợ Khách Hàng 24/7 -->
+      <!-- Thông Tin Chung -->
       <div class="col" style="font-size: 0.8rem; margin-top: 12px;">
-        <h3 style="font-size: 1.4rem; margin-bottom: 10px;">Hỗ Trợ Khách Hàng</h3>
+        <h3 style="font-size: 1.4rem; margin-bottom: 10px;">Thông Tin Chung</h3>
         <ul style="list-style: none; padding: 0; margin: 0;">
-          <li><a href="#">Tổng đài: 0886888814</a></li>
-          <li><a href="#">Hotline: 0843 308 686</a></li>
-          <li><a href="#">Email: getgotripvn@gmail.com</a></li>
-          <li><a href="#">Tư vấn trực tiếp:</a></li>
+          <li><a href="{{ route('page.info.gioithieuchung') }}">Giới thiệu chung</a></li>
+          <li><a href="{{ route('page.info.tamninhsumenh') }}">Tầm nhìn – sứ mệnh</a></li>
+          <li><a href="{{ route('page.info.dinhhuongphattrien') }}">Định hướng phát triển</a></li>
+          <li><a href="{{ route('page.info.chinhsachbaomat') }}">Chính sách bảo mật</a></li>
+          <li><a href="{{ route('page.info.dieukhoansu-dung') }}">Điều khoản sử dụng</a></li>
         </ul>
       </div>
-
       <!-- Thông Tin Liên Hệ -->
       <div class="col" style="font-size: 0.8rem; margin-top: 12px;">
         <h3 style="font-size: 1.4rem; margin-bottom: 10px;">Thông Tin Liên Hệ</h3>
@@ -31,16 +32,13 @@
           <li><a href="#">Tour Du Lịch</a></li>
         </ul>
       </div>
-
-      <!-- Thông Tin Chung -->
       <div class="col" style="font-size: 0.8rem; margin-top: 12px;">
-        <h3 style="font-size: 1.4rem; margin-bottom: 10px;">Thông Tin Chung</h3>
+        <h3 style="font-size: 1.4rem; margin-bottom: 10px;">Hỗ Trợ Khách Hàng</h3>
         <ul style="list-style: none; padding: 0; margin: 0;">
-          <li><a href="#">Giới thiệu chung</a></li>
-          <li><a href="#">Tầm nhìn – sứ mệnh</a></li>
-          <li><a href="#">Định hướng phát triển</a></li>
-          <li><a href="#">Chính sách bảo mật</a></li>
-          <li><a href="#">Điều khoản sử dụng</a></li>
+          <li><a href="#">Tổng đài: 0886888814</a></li>
+          <li><a href="#">Hotline: 0843 308 686</a></li>
+          <li><a href="#">Email: getgotripvn@gmail.com</a></li>
+          <li><a href="#">Tư vấn trực tiếp:</a></li>
         </ul>
       </div>
     </div>
@@ -50,11 +48,14 @@
       <a href="https://www.facebook.com/congtydulichtourshue" target="_blank" style="text-decoration: none; display: inline-block;">
         <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" style="width: 40px; height: 40px; border-radius: 50%; margin: 0 5px;">
       </a>
-    <!-- Bản quyền -->
-    <div class="row">
-      <div class="col text-center" style="font-size: 0.8rem; margin-top: 12px;">
-        <p>Copyright © 2022 DuLichHue</p>
+      <a href="https://www.tiktok.com/@dulichtourhue" target="_blank" style="text-decoration: none; display: inline-block;">
+        <img src="https://sf-tb-sg.ibytedtos.com/obj/eden-sg/uhtyvueh7nulogpoguhm/tiktok-icon2.png" alt="TikTok" style="width: 40px; height: 40px; border-radius: 50%; margin: 0 5px;">
+      </a>
+      <!-- Bản quyền -->
+      <div class="row">
+        <div class="col text-center" style="font-size: 0.8rem; margin-top: 12px;">
+          <p>Copyright © 2022 DuLichHue</p>
+        </div>
       </div>
     </div>
-  </div>
 </footer>

@@ -189,6 +189,14 @@ Route::group(['namespace' => 'Page'], function () {
         Route::post('/account/register', [PageRegisterController::class, 'postRegister'])->name('post.account.register');
         Route::get('/dang-xuat.html', [PageLoginController::class, 'logout'])->name('page.user.logout');
         Route::get('/quen-mat-khau.html', [PageForgotPasswordController::class, 'forgotPassword'])->name('page.user.forgot.password');
+        Route::post('/quen-mat-khau.html', [PageForgotPasswordController::class, 'sendResetLinkEmail'])
+            ->name('account.forgot.password.post');
+        // đăng nhập bằng google
+        Route::get('/auth/google', [\App\Http\Controllers\Page\Auth\GoogleController::class, 'redirectToGoogle'])
+            ->name('account.google.login');
+        // Add callback route:
+        Route::get('/auth/google/callback', [\App\Http\Controllers\Page\Auth\GoogleController::class, 'handleGoogleCallback'])
+            ->name('account.google.callback');
     });
 
     Route::group(['middleware' => ['users']], function () {
@@ -241,6 +249,26 @@ Route::group(['namespace' => 'Page'], function () {
     });
     Route::post('tour/{id}/comment', [PageTourController::class, 'comment'])->name('tour.comment');
     Route::post('tour/rate/{id}', [\App\Http\Controllers\Page\TourController::class, 'rate'])->name('tour.rate');
+    
+    Route::get('/gioi-thieu-chung.html', function () {
+        return view('page.info.gioi-thieu-chung');
+    })->name('page.info.gioithieuchung');
+
+    Route::get('/tam-nhin-su-menh.html', function () {
+        return view('page.info.tam-nhin-su-menh');
+    })->name('page.info.tamninhsumenh');
+
+    Route::get('/dinh-huong-phat-trien.html', function () {
+        return view('page.info.dinh-huong-phat-trien');
+    })->name('page.info.dinhhuongphattrien');
+
+    Route::get('/chinh-sach-bao-mat.html', function () {
+        return view('page.info.chinh-sach-bao-mat');
+    })->name('page.info.chinhsachbaomat');
+
+    Route::get('/dieu-khoan-su-dung.html', function () {
+        return view('page.info.dieu-khoan-su-dung');
+    })->name('page.info.dieukhoansu-dung');
 });
 // contack email
 Route::post('/gui-lien-he', [ContactController::class, 'send'])->name('contact.send');
@@ -256,3 +284,9 @@ Route::get('/test-email', function () {
 
     return 'Email sent';
 });
+
+// Thêm   ánh giá sao:
+Route::get('/danh-gia.html', [\App\Http\Controllers\ReviewController::class, 'index'])->name('review');
+
+// Đường dẫn để hủy đánh giá:
+Route::delete('/review/{id}', [\App\Http\Controllers\ReviewController::class, 'destroy'])->name('review.destroy');

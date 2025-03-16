@@ -76,6 +76,11 @@
                         <td width="30%">Giá từ </td>
                         <td>{{ number_format($hotel->h_price,0,',','.') }} vnđ</td>
                     </tr>
+                    <!-- New row: Room Type -->
+                    <tr>
+                        <td width="30%">Loại phòng</td>
+                        <td>{{ $hotel->h_room_type }}</td>
+                    </tr>
                 </table>
                 <h2 class="mb-3">2. Mô tả</h2>
                 {!! $hotel->h_description !!}

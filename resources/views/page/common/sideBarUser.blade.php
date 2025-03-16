@@ -5,6 +5,8 @@
             <li class="{{ request()->is('thong-tin-tai-khoan.html') ? 'active-user' : '' }}"><a href="{{ route('info.account') }}">Thông tin tài khoản </a></li>
             <li class="{{ request()->is('danh-sach-tour.html') ? 'active-user' : '' }}"><a href="{{ route('my.tour') }}">Danh sách tour đã đặt </a></li>
             <li class="{{ request()->is('thay-doi-mat-khau.html') ? 'active-user' : '' }}"><a href="{{ route('change.password') }}">Đổi mật khẩu </a></li>
+            <li class="{{ request()->is('danh-gia.html') ? 'active-user' : '' }}"> <a href="{{ route('review') }}">Đánh giá</a></li>
+            <li class="{{ request()->is('dang-xuat.html') ? 'active-user' : '' }}"><a href="{{ route('page.user.logout') }}">Thoát</a></li>
         </div>
     </div>
 </div>

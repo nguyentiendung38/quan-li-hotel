@@ -183,7 +183,11 @@
                 <div class="col-md-12 about-intro">
                     <div class="row">
                         <div class="col-md-6 d-flex align-items-stretch">
-                            <div class="img d-flex w-100 align-items-center justify-content-center" style="background-image:url({{ asset('page/images/gioithieu.jpg') }});">
+                            <div class="img d-flex w-100 align-items-center justify-content-center">
+                                <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@dulichtourhue/video/7481341388328586513?is_from_webapp=1&sender_device=pc&web_id=7382983446836725264" data-video-id="7481341388328586513" style="min-width: 325px; max-width: 605px; width: 100%;">
+                                    <section>…</section>
+                                </blockquote>
+                                <script async src="https://www.tiktok.com/embed.js"></script>
                             </div>
                         </div>
                         <div class="col-md-6 pl-md-5 py-5">
