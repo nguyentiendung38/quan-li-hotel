@@ -70,17 +70,46 @@ class TourController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(TourRequest $request)
+    public function store(Request $request)
     {
-        //
-        \DB::beginTransaction();
         try {
-            $this->tour->createOrUpdate($request);
-            \DB::commit();
-            return redirect()->back()->with('success', 'Lưu dữ liệu thành công');
-        } catch (\Exception $exception) {
-            \DB::rollBack();
-            return redirect()->back()->with('error', 'Đã xảy ra lỗi khi lưu dữ liệu');
+            $data = $request->all();
+            
+            // Process main image
+            if ($request->hasFile('images')) {
+                $file = $request->file('images');
+                if ($file->isValid()) {
+                    $path = $file->store('uploads/tours', 'public');
+                    $data['t_image'] = 'storage/' . $path;
+                }
+            }
+
+            // Process album images
+            if ($request->hasFile('t_album_images')) {
+                $albumImages = [];
+                foreach ($request->file('t_album_images') as $file) {
+                    if ($file->isValid()) {
+                        $path = $file->store('uploads/tours', 'public');
+                        $albumImages[] = 'storage/' . $path;
+                    }
+                }
+                $data['t_album_images'] = json_encode($albumImages);
+            }
+
+            // Set default values
+            $data['t_user_id'] = auth()->id();
+            $data['t_number_registered'] = 0;
+            $data['t_view'] = 0;
+            $data['t_status'] = $data['t_status'] ?? 1;
+
+            Tour::create($data);
+            return redirect()->route('tour.index')->with('success', 'Thêm tour thành công');
+            
+        } catch (\Exception $e) {
+            \Log::error('Error creating tour: ' . $e->getMessage());
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Đã xảy ra lỗi: ' . $e->getMessage());
         }
     }
 
@@ -111,10 +140,33 @@ class TourController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $tour = Tour::findOrFail($id);
+        $data = $request->all();
+
+        // Process main image
+        if ($request->hasFile('images')) {
+            $file = $request->file('images');
+            if ($file->isValid()) {
+                $path = $file->store('uploads/tours', 'public');
+                $data['t_image'] = 'storage/' . $path;
+            }
+        }
+
+        // Process album images
+        if ($request->hasFile('t_album_images')) {
+            $albumImages = [];
+            foreach ($request->file('t_album_images') as $file) {
+                if ($file->isValid()) {
+                    $path = $file->store('uploads/tours', 'public');
+                    $albumImages[] = 'storage/' . $path;
+                }
+            }
+            $data['t_album_images'] = json_encode($albumImages);
+        }
+
         \DB::beginTransaction();
         try {
-            $this->tour->createOrUpdate($request, $id);
+            $tour->update($data);
             \DB::commit();
             return redirect()->back()->with('success', 'Lưu dữ liệu thành công');
         } catch (\Exception $exception) {

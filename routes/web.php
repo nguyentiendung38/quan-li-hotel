@@ -269,6 +269,27 @@ Route::group(['namespace' => 'Page'], function () {
     Route::get('/dieu-khoan-su-dung.html', function () {
         return view('page.info.dieu-khoan-su-dung');
     })->name('page.info.dieukhoansu-dung');
+
+    // Route thanh toán khách sạn
+    Route::get('/{id}/thanhtoan-khach-san.html', [\App\Http\Controllers\Page\HotelController::class, 'getFromPayment'])
+    ->name('get.from.payment.hotel');
+    Route::post('/post/payment/hotel', [\App\Http\Controllers\Page\HotelController::class, 'createPayMent'])
+        ->name('post.payment.hotel');
+    Route::get('vnpay/return/hotel', [\App\Http\Controllers\Page\HotelController::class, 'vnPayReturn'])
+        ->name('vnpay.return.hotel');
+    Route::post('vnpay/create/hotel', [\App\Http\Controllers\Page\HotelController::class, 'createPayMent'])
+        ->name('vnpay.create.hotel');
+    Route::post('hotel/{id}/payment', [App\Http\Controllers\Page\HotelController::class, 'paymentOnline'])
+        ->name('post.payment.online.hotel');
+
+    // Add these new routes
+    Route::get('/chinh-sach-khach-san', function () {
+        return view('page.policies.hotel-policy');
+    })->name('hotel.policy');
+
+    Route::get('/dieu-khoan-su-dung-khach-san', function () {
+        return view('page.policies.terms-of-use');
+    })->name('hotel.terms');
 });
 // contack email
 Route::post('/gui-lien-he', [ContactController::class, 'send'])->name('contact.send');

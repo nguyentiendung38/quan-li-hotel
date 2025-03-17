@@ -29,13 +29,12 @@ class Tour extends Model
         't_view',
         't_description',
         't_content',
-        't_anbum_image',
         't_image',
+        't_album_images',  // Thêm trường này
         't_location_id',
         't_user_id',
         't_number_registered',
-        't_follow',
-        't_status',
+        't_status'
     ];
 
     const STATUS = [

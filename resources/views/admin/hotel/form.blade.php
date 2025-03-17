@@ -96,6 +96,18 @@
                                 </span>
                             </div>
                         </div>
+                        
+                        <!-- Sửa trường Tổng số phòng -->
+                        <div class="form-group {{ $errors->first('h_rooms') ? 'has-error' : '' }}">
+                            <label for="inputEmail3" class="control-label default">Tổng số phòng <sup class="text-danger">(*)</sup></label>
+                            <div>
+                                <input type="number" min="1" class="form-control" placeholder="Nhập tổng số phòng" name="h_rooms" value="{{ old('h_rooms', isset($hotel) ? $hotel->h_rooms : '') }}">
+                                <span class="text-danger ">
+                                    <p class="mg-t-5">{{ $errors->first('h_rooms') }}</p>
+                                </span>
+                            </div>
+                        </div>
+
                         <!-- Thêm trường Loại phòng -->
                         <div class="form-group {{ $errors->first('h_room_type') ? 'has-error' : '' }}">
                             <label for="inputRoomType" class="control-label default">Loại phòng <sup class="text-danger">(*)</sup></label>
