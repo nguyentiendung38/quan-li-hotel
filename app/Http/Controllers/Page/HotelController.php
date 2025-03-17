@@ -9,8 +9,9 @@ use App\Models\BookRoom;
 use App\Models\Rating;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Hotel;
-
-
+use Illuminate\Support\Facades\Mail;
+use App\Mail\BookingConfirmation;
+use Illuminate\Support\Facades\Log;
 
 class HotelController extends Controller
 {
@@ -57,6 +58,50 @@ class HotelController extends Controller
         return view('page.tour.book');
     }
 
+    public function paymentOnline(Request $request, $id)
+    {
+        $hotel = Hotel::findOrFail($id);
+        
+        // Kiểm tra số phòng còn trống
+        $bookedRooms = $hotel->bookRooms->where('status', '!=', 2)->sum('rooms');
+        $availableRooms = $hotel->h_rooms - $bookedRooms;
+
+        if ($request->rooms > $availableRooms) {
+            return redirect()->back()->with('error', 'Rất tiếc, chỉ còn ' . $availableRooms . ' phòng trống');
+        }
+
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:15',
+            'address' => 'required|string|max:255',
+            'checkin_date' => 'required|date',
+            'checkout_date' => 'required|date',
+            'nights' => 'required|integer',
+            'rooms' => 'required|integer',
+            'guests' => 'required|integer',
+            'email' => 'required|email',
+            'note' => 'nullable|string|max:500', // Thêm validate cho note
+            'agreePolicy' => 'required'
+        ]);
+
+        $data['hotel_id'] = $hotel->id;
+        $data['user_id'] = Auth::guard('users')->id();
+        $data['total_price'] = $hotel->h_price * $data['nights'] * $data['rooms'];
+        $data['status'] = 0;
+        $data['note'] = $request->note; // Thêm note vào data
+
+        $booking = BookRoom::create($data);
+        
+        // Gửi email xác nhận
+        try {
+            Mail::to($booking->email)->send(new BookingConfirmation($booking, $data['total_price']));
+        } catch (\Exception $e) {
+            Log::error('Không thể gửi email: ' . $e->getMessage());
+        }
+
+        return redirect()->route('get.from.payment.hotel', $booking->id);
+    }
+
     public function postBookRoom(Request $request, $id, $slug)
     {
         $hotel = Hotel::findOrFail($id);
@@ -71,17 +116,20 @@ class HotelController extends Controller
             'rooms' => 'required|integer',
             'guests' => 'required|integer',
             'email' => 'required|email',
-            'agreePolicy' => 'required'
+            'agreePolicy' => 'required',
+            'note' => 'nullable|string|max:500', // Thêm validate cho note
         ]);
 
         $data['hotel_id'] = $hotel->id;
-        $data['user_id'] = Auth::id()()->id();
+        $data['user_id'] = Auth::guard('users')->id();
         $data['total_price'] = $hotel->h_price * $data['nights'] * $data['rooms'];
-        $data['status'] = 0; // Trạng thái "Tiếp nhận"
+        $data['status'] = 0;
+        $data['note'] = $request->note; // Thêm note vào data
 
-        BookRoom::create($data);
-
-        return redirect()->route('hotel.detail', ['id' => $hotel->id, 'slug' => $slug])->with('success', 'Đặt phòng thành công!');
+        $booking = BookRoom::create($data);
+        
+        return redirect()->route('hotel.detail', ['id' => $hotel->id, 'slug' => $slug])
+                        ->with('success', 'Đặt phòng thành công!');
     }
 
     public function rateHotel(Request $request, $id)
@@ -102,5 +150,147 @@ class HotelController extends Controller
         $rating->save();
 
         return redirect()->back()->with('success', 'Đánh giá của bạn đã được gửi thành công');
+    }
+
+    // Hiển thị form thanh toán cho đơn đặt phòng khách sạn
+    public function getFromPayment($id)
+    {
+        $booking = \App\Models\BookRoom::with('hotel')->find($id);
+        if (!$booking) {
+            return redirect()->back()->with('error', 'Không tìm thấy đơn đặt phòng.');
+        }
+        // Tính giá sau khuyến mãi
+        if ($booking->hotel->h_sale > 0) {
+            $priceAfterDiscount = $booking->hotel->h_price - ($booking->hotel->h_price * $booking->hotel->h_sale / 100);
+            $totalMoney = $priceAfterDiscount * $booking->rooms * $booking->nights;
+        } else {
+            $totalMoney = $booking->total_price;
+        }
+        session(['booking_id' => $booking->id]);
+        return view('page.vnpay.bookingHotel', compact('booking', 'totalMoney'));
+    }
+    
+
+    // Tạo phương thức thanh toán (VNPay) cho đặt phòng khách sạn
+    public function createPayMent(Request $request)
+    {
+        $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+        $vnp_Returnurl = route('vnpay.return.hotel');
+        $vnp_TmnCode = "KZYZ0PPO";
+        $vnp_HashSecret = "47SKX7IX1UAFALKDUYV9XQ06MA8AKKF6";
+
+        $bookingId = session('booking_id');
+        $booking = \App\Models\BookRoom::with('hotel')->find($bookingId);
+        if (!$booking) {
+            return redirect()->back()->with('error', 'Không tìm thấy đơn đặt phòng.');
+        }
+
+        // Tính lại giá sau khuyến mãi
+        if ($booking->hotel->h_sale > 0) {
+            $priceAfterDiscount = $booking->hotel->h_price - ($booking->hotel->h_price * $booking->hotel->h_sale / 100);
+            $totalMoney = $priceAfterDiscount * $booking->rooms * $booking->nights;
+        } else {
+            $totalMoney = $booking->total_price;
+        }
+
+        $vnp_TxnRef = $booking->id . '_' . time();
+        $payment = \App\Models\Payment::create([
+            'p_transaction_id'   => $booking->id,
+            'p_user_id'          => auth()->id(),
+            'p_money'            => $totalMoney, // Sử dụng giá đã giảm
+            'p_transaction_code' => $vnp_TxnRef,
+            'p_note'             => 'Thanh toán cho booking #' . $booking->id,
+        ]);
+
+        $vnp_OrderInfo = 'Thanh toán đặt phòng khách sạn #' . $booking->id;
+        $vnp_OrderType = 'billpayment';
+        $vnp_Amount = $totalMoney * 100; // Sử dụng giá đã giảm
+        $vnp_Locale = 'vn';
+        $vnp_BankCode = '';
+        $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
+
+        $inputData = [
+            "vnp_Version"    => "2.1.0",
+            "vnp_TmnCode"    => $vnp_TmnCode,
+            "vnp_Amount"     => $vnp_Amount,
+            "vnp_Command"    => "pay",
+            "vnp_CreateDate" => date('YmdHis'),
+            "vnp_CurrCode"   => "VND",
+            "vnp_IpAddr"     => $vnp_IpAddr,
+            "vnp_Locale"     => $vnp_Locale,
+            "vnp_OrderInfo"  => $vnp_OrderInfo,
+            "vnp_OrderType"  => $vnp_OrderType,
+            "vnp_ReturnUrl"  => $vnp_Returnurl,
+            "vnp_TxnRef"     => $vnp_TxnRef,
+        ];
+
+        ksort($inputData);
+        $query = "";
+        $hashdata = "";
+        $i = 0;
+        foreach ($inputData as $key => $value) {
+            $hashdata .= ($i++ > 0 ? '&' : '') . urlencode($key) . "=" . urlencode($value);
+            $query .= urlencode($key) . "=" . urlencode($value) . '&';
+        }
+        $vnp_Url = $vnp_Url . "?" . $query;
+        if ($vnp_HashSecret) {
+            $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret);
+            $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
+        }
+        // Luôn redirect sang VNPay
+        return redirect($vnp_Url);
+    }
+
+    // Nhận callback từ VNPay cho booking khách sạn
+    public function vnPayReturn(Request $request)
+    {
+        Log::info('VNPay callback:', $request->all());
+
+        $vnp_TxnRef = $request->get('vnp_TxnRef');
+        $vnp_ResponseCode = $request->get('vnp_ResponseCode');
+        $vnp_TransactionStatus = $request->get('vnp_TransactionStatus');
+        $vnp_BankCode = $request->get('vnp_BankCode');
+        $vnp_PayDate = $request->get('vnp_PayDate');
+
+        $payment = \App\Models\Payment::where('p_transaction_code', $vnp_TxnRef)->first();
+        if (!$payment) {
+            return redirect()->route('page.home')->with('error', 'Giao dịch không tồn tại.');
+        }
+        $payment->p_vnp_response_code = $vnp_ResponseCode;
+        $payment->p_code_vnpay = $vnp_TransactionStatus;
+        $payment->p_code_bank = $vnp_BankCode;
+        $payment->p_time = $vnp_PayDate;
+        $payment->save();
+
+        // Only mark success if a secure hash is verified (simulate a more robust check)
+        if ($vnp_ResponseCode === '00' && $vnp_TransactionStatus === '00' && $request->has('vnp_SecureHash')) {
+            // Lấy thông tin booking
+            $booking = BookRoom::with('hotel')->find($payment->p_transaction_id);
+            
+            // Tính giá gốc và giá sau khuyến mãi
+            $originalPrice = $booking->hotel->h_price * $booking->rooms * $booking->nights;
+            $discountedPrice = $originalPrice;
+            
+            if ($booking->hotel->h_sale > 0) {
+                $discountedPrice = $originalPrice - ($originalPrice * $booking->hotel->h_sale / 100);
+            }
+            
+            // Gửi email xác nhận thanh toán thành công
+            try {
+                Mail::to($booking->email)->send(new BookingConfirmation($booking, [
+                    'originalPrice' => $originalPrice,
+                    'discountedPrice' => $discountedPrice,
+                    'discountPercent' => $booking->hotel->h_sale
+                ]));
+            } catch (\Exception $e) {
+                Log::error('Không thể gửi email: ' . $e->getMessage());
+            }
+
+            return redirect()->route('page.home')->with('success', 'Thanh toán thành công!');
+        } else {
+            // During testing, you may want to redirect to the payment page for further review
+            return redirect()->route('get.from.payment.hotel', $payment->p_transaction_id)
+        ->with('error', 'Thông tin thanh toán chưa xác minh, vui lòng kiểm tra lại!');
+        }
     }
 }

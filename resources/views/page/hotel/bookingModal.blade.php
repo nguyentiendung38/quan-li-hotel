@@ -53,9 +53,31 @@
                             </div>
                             <!-- Số phòng -->
                             <div class="form-group">
-                                <label for="rooms" style="font-size: 0.9rem;">Số phòng</label>
-                                <input type="number" name="rooms" id="rooms" class="form-control" placeholder="VD: 1, 2, 3..." required>
+                                <label for="rooms" style="font-size: 0.9rem;">Số phòng muốn đặt (Còn {{ $hotel->h_rooms - ($hotel->bookRooms->where('status', 0)->sum('rooms')) }} phòng trống)</label>
+                                <input type="number"
+                                    name="rooms"
+                                    id="rooms"
+                                    class="form-control"
+                                    min="1"
+                                    max="{{ $hotel->h_rooms }}" // Cho phép đặt tối đa số phòng của khách sạn
+                                    placeholder="Nhập số phòng cần đặt..."
+                                    required
+                                    onchange="validateRooms(this)">
                             </div>
+
+                            <script>
+                                function validateRooms(input) {
+                                    var availableRooms = {
+                                        {
+                                            $hotel - > h_rooms - ($hotel - > bookRooms - > where('status', 0) - > sum('rooms'))
+                                        }
+                                    };
+                                    if (parseInt(input.value) > availableRooms) {
+                                        alert('Chỉ còn ' + availableRooms + ' phòng trống');
+                                        input.value = availableRooms;
+                                    }
+                                }
+                            </script>
                             <!-- Số người -->
                             <div class="form-group">
                                 <label for="guests" style="font-size: 0.9rem;">Số người</label>
@@ -101,22 +123,33 @@
                                 <label for="coupon" style="font-size: 0.9rem;">Nhập mã giảm giá (nếu có)</label>
                                 <input type="text" name="coupon" id="coupon" class="form-control" placeholder="VD: SUMMER2025">
                             </div>
+                            <!-- Add Note field -->
+                            <div class="form-group">
+                                <label for="note" style="font-size: 0.9rem;">Ghi chú</label>
+                                <textarea name="note" id="note" class="form-control" rows="3"
+                                    placeholder="Nhập yêu cầu đặc biệt của bạn..."></textarea>
+                            </div>
                             <!-- Check: Tôi đã đọc... -->
                             <div class="form-group" style="margin-top: 1.5rem;">
                                 <div class="custom-control custom-checkbox">
                                     <input type="checkbox" class="custom-control-input" id="agreePolicy" name="agreePolicy" required>
                                     <label class="custom-control-label" for="agreePolicy" style="font-size: 0.9rem;">
                                         Tôi đã đọc và đồng ý với
-                                        <a href="#" target="_blank" style="text-decoration: underline;">chính sách khách sạn</a> và
-                                        <a href="#" target="_blank" style="text-decoration: underline;">điều khoản sử dụng</a>
+                                        <a href="{{ route('hotel.policy') }}" target="_blank" style="text-decoration: underline;">chính sách khách sạn</a> và
+                                        <a href="{{ route('hotel.terms') }}" target="_blank" style="text-decoration: underline;">điều khoản sử dụng</a>
                                     </label>
                                 </div>
                             </div>
-                            <!-- Nút Đặt phòng -->
+                            <!-- Phần nút submit -->
                             <div class="text-center" style="margin-top: 2rem;">
-                                <button type="submit" class="btn btn-primary"
-                                    style="font-size: 0.9rem; padding: 0.6rem 1.5rem;">
+                                <button type="submit" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.6rem 1.5rem;">
                                     Đặt phòng
+                                </button>
+                                <button type="submit"
+                                    formaction="{{ route('post.payment.online.hotel', ['id' => $hotel->id]) }}"
+                                    class="btn btn-success"
+                                    style="font-size: 0.9rem; padding: 0.6rem 1.5rem;">
+                                    Thanh toán online
                                 </button>
                             </div>
                         </div> <!-- end col-md-6 -->

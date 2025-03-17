@@ -51,7 +51,25 @@
             <!-- Thông tin booking hiển thị giống vị trí -->
             <p class="location mb-0">
                 <span class="fa fa-user" style="margin-right: 10px;"></span>
-                Loại phòng: {{ $hotel->h_room_type ?? 'Chưa chọn' }}
+                Loại phòng: @php
+                    $roomTypes = [
+                        'Standard' => 'Phòng tiêu chuẩn',
+                        'Deluxe'   => 'Phòng cao cấp',
+                        'Suite'    => 'Phòng Suite',
+                        'Family'   => 'Phòng gia đình',
+                        'Single'   => 'Phòng đơn',
+                        'Double'   => 'Phòng đôi'
+                    ];
+                @endphp
+                {{ $roomTypes[$hotel->h_room_type] ?? 'Chưa chọn' }}
+            </p>
+            <p class="location mb-0">
+                <span class="fa fa-home" style="margin-right: 10px;"></span>
+                Tổng số phòng: {{ $hotel->h_rooms }}
+            </p>
+            <p class="location mb-0">
+                <span class="fa fa-check" style="margin-right: 10px;"></span>
+                Phòng trống: {{ $hotel->h_rooms - ($hotel->bookRooms->where('status', '!=', 2)->sum('rooms')) }}
             </p>
             <p class="location mb-0">
                 <span class="fa fa-user" style="margin-right: 10px;"></span>

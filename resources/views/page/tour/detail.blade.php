@@ -22,9 +22,36 @@
                 <h2 class="mb-3">{{ $tour->t_title }}</h2>
             </div>
             <div class="col-lg-8 ftco-animate fadeInUp ftco-animated">
-                <div class="description">
-                    <img src="{{ $tour->t_image ? asset(pare_url_file($tour->t_image)) : asset('admin/dist/img/no-image.png') }}" alt="" class="img-fluid">
+                @php
+                // Use only album images; ignore t_image for display
+                $album = [];
+                if (!empty($tour->t_album_images)) {
+                    $album = json_decode($tour->t_album_images, true);
+                    if (!is_array($album)) {
+                        $album = [];
+                    }
+                }
+                @endphp
+
+                @if(count($album) > 0)
+                <div id="tourCarousel" class="carousel slide" data-ride="carousel" data-interval="1000" data-pause="false">
+                    <div class="carousel-inner">
+                        @foreach($album as $index => $img)
+                        <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                            <img src="{{ asset($img) }}" class="d-block w-100">
+                        </div>
+                        @endforeach
+                    </div>
+                    <a class="carousel-control-prev" href="#tourCarousel" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Trước</span>
+                    </a>
+                    <a class="carousel-control-next" href="#tourCarousel" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Sau</span>
+                    </a>
                 </div>
+                @endif
                 <div class="content">
                     <h2 class="mb-3">1. Điểm nhấn của hành trình</h2>
                     <table class="table table-bordered">
@@ -96,14 +123,14 @@
                                     $halfStar = $avgRating - $fullStars >= 0.5;
                                     @endphp
                                     @for($i = 1; $i <= 5; $i++)
-                                        @if($i <= $fullStars)
-                                            <i class="fa fa-star text-warning"></i>
+                                        @if($i <=$fullStars)
+                                        <i class="fa fa-star text-warning"></i>
                                         @elseif($i == $fullStars + 1 && $halfStar)
-                                            <i class="fa fa-star-half-o text-warning"></i>
+                                        <i class="fa fa-star-half-o text-warning"></i>
                                         @else
-                                            <i class="fa fa-star-o text-warning"></i>
+                                        <i class="fa fa-star-o text-warning"></i>
                                         @endif
-                                    @endfor
+                                        @endfor
                                 </div>
                                 <div class="total-ratings">({{ $tour->total_ratings }} đánh giá)</div>
                             </div>
@@ -112,50 +139,50 @@
                         <div class="rating-breakdown mb-4">
                             <h4>Phân bố đánh giá</h4>
                             @for($i = 5; $i >= 1; $i--)
-                                @php
-                                $count = $tour->ratings()->where('rating', $i)->count();
-                                $percentage = $tour->total_ratings > 0 ? ($count / $tour->total_ratings) * 100 : 0;
-                                @endphp
-                                <div class="rating-bar">
-                                    <span>{{ $i }} sao</span>
-                                    <div class="progress">
-                                        <div class="progress-bar bg-warning" role="progressbar"
-                                             style="width: {{ $percentage }}%"
-                                             aria-valuenow="{{ $percentage }}"
-                                             aria-valuemin="0"
-                                             aria-valuemax="100"></div>
-                                    </div>
-                                    <span>{{ $count }}</span>
+                            @php
+                            $count = $tour->ratings()->where('rating', $i)->count();
+                            $percentage = $tour->total_ratings > 0 ? ($count / $tour->total_ratings) * 100 : 0;
+                            @endphp
+                            <div class="rating-bar">
+                                <span>{{ $i }} sao</span>
+                                <div class="progress">
+                                    <div class="progress-bar bg-warning" role="progressbar"
+                                        style="width: {{ $percentage }}%"
+                                        aria-valuenow="{{ $percentage }}"
+                                        aria-valuemin="0"
+                                        aria-valuemax="100"></div>
                                 </div>
+                                <span>{{ $count }}</span>
+                            </div>
                             @endfor
                         </div>
 
                         @if(Auth::guard('users')->check())
-                            @php
-                                $userRating = $tour->ratings()->where('user_id', Auth::guard('users')->id())->first();
-                            @endphp
-                            @if($userRating)
-                                <div class="alert alert-info">
-                                    Bạn đã đánh giá {{ $userRating->rating }} sao cho tour này
-                                </div>
-                            @else
-                                <form action="{{ route('tour.rate', $tour->id) }}" method="POST">
-                                    @csrf
-                                    <div class="form-group">
-                                        <label for="rating">Chọn đánh giá của bạn:</label>
-                                        <select name="rating" id="rating" class="form-control">
-                                            <option value="1">1 Sao</option>
-                                            <option value="2">2 Sao</option>
-                                            <option value="3">3 Sao</option>
-                                            <option value="4">4 Sao</option>
-                                            <option value="5">5 Sao</option>
-                                        </select>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
-                                </form>
-                            @endif
+                        @php
+                        $userRating = $tour->ratings()->where('user_id', Auth::guard('users')->id())->first();
+                        @endphp
+                        @if($userRating)
+                        <div class="alert alert-info">
+                            Bạn đã đánh giá {{ $userRating->rating }} sao cho tour này
+                        </div>
                         @else
-                            <p>Bạn cần <a href="#" data-toggle="modal" data-target="#loginModal">đăng nhập</a> để đánh giá.</p>
+                        <form action="{{ route('tour.rate', $tour->id) }}" method="POST">
+                            @csrf
+                            <div class="form-group">
+                                <label for="rating">Chọn đánh giá của bạn:</label>
+                                <select name="rating" id="rating" class="form-control">
+                                    <option value="1">1 Sao</option>
+                                    <option value="2">2 Sao</option>
+                                    <option value="3">3 Sao</option>
+                                    <option value="4">4 Sao</option>
+                                    <option value="5">5 Sao</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                        </form>
+                        @endif
+                        @else
+                        <p>Bạn cần <a href="#" data-toggle="modal" data-target="#loginModal">đăng nhập</a> để đánh giá.</p>
                         @endif
                     </div>
                 </div>

@@ -93,7 +93,7 @@
 
                                                 <td style="vertical-align: middle; width:15%;">
                                                     @if(isset($tour) && !empty($tour->t_image))
-                                                        <img src="{{ asset(pare_url_file($tour->t_image)) }}" alt="" class="margin-auto-div img-rounded"  id="image_render" style="height: 100px; width:100%;">
+                                                        <img src="{{ asset($tour->t_image) }}" alt="" class="margin-auto-div img-rounded"  id="image_render" style="height: 100px; width:100%;">
                                                     @else
                                                         <img src="{{ asset('admin/dist/img/no-image.png') }}" alt="" class="margin-auto-div img-rounded"  id="image_render" style="height: 100px; width:100%;">
                                                     @endif
