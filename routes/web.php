@@ -27,6 +27,8 @@ use App\Http\Controllers\Page\HotelController as PageHotelController;
 use App\Http\Controllers\Page\CommentController as PageCommentController;
 use App\Http\Controllers\Admin\BookRoomController;
 use App\Http\Controllers\ContactController;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TestEmail;
 
 
 
@@ -290,6 +292,10 @@ Route::group(['namespace' => 'Page'], function () {
     Route::get('/dieu-khoan-su-dung-khach-san', function () {
         return view('page.policies.terms-of-use');
     })->name('hotel.terms');
+
+    // Thêm route cho đặt phòng khách sạn
+    Route::post('/hotel/booking', [App\Http\Controllers\Page\HotelController::class, 'booking'])
+        ->name('hotel.booking');
 });
 // contack email
 Route::post('/gui-lien-he', [ContactController::class, 'send'])->name('contact.send');
@@ -311,3 +317,6 @@ Route::get('/danh-gia.html', [\App\Http\Controllers\ReviewController::class, 'in
 
 // Đường dẫn để hủy đánh giá:
 Route::delete('/review/{id}', [\App\Http\Controllers\ReviewController::class, 'destroy'])->name('review.destroy');
+
+// Add the following route:
+Route::post('/tour/booking', [App\Http\Controllers\Page\TourController::class, 'booking'])->name('tour.booking');

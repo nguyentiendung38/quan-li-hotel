@@ -12,8 +12,9 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Mail;
 use App\Models\Payment;
+use App\Mail\AdminBookingMail;
+use Illuminate\Support\Facades\Mail;
 
 class TourController extends Controller
 {
@@ -353,5 +354,37 @@ class TourController extends Controller
         );
 
         return back()->with('success', 'Cảm ơn bạn đã đánh giá tour!');
+    }
+    public function booking(Request $request)
+    {
+        // Validate input
+        $validated = $request->validate([
+            'tour_id' => 'required',  // Thêm validation cho tour_id
+            'fullname' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string',
+            'people' => 'required|integer|min:1',
+            'date' => 'required|string',
+            'pickup' => 'required|string',
+            'note' => 'nullable|string',
+        ]);
+
+        // Lấy thông tin tour
+        $tour = Tour::find($request->tour_id);
+        if (!$tour) {
+            return redirect()->back()->with('error', 'Tour không tồn tại');
+        }
+
+        // Thêm tên tour vào dữ liệu gửi mail
+        $bookingData = $validated;
+        $bookingData['tour_name'] = $tour->t_title; // Thêm tên tour
+
+        // Gửi email cho admin
+        Mail::to('nguyendunghk789@gmail.com')->send(new AdminBookingMail($bookingData));
+        
+        // Gửi email cho khách hàng
+        Mail::to($validated['email'])->send(new \App\Mail\CustomerBookingMail($bookingData));
+
+        return redirect()->back()->with('success', 'Đặt tour thành công.');
     }
 }

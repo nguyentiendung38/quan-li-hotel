@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Hotel;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BookingConfirmation;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Log; // Add this line
+use App\Mail\AdminHotelBookingMail; // ensure this line exists
+use App\Mail\CustomerHotelBookingMail; // Thêm use statement này
 
 class HotelController extends Controller
 {
@@ -291,6 +293,41 @@ class HotelController extends Controller
             // During testing, you may want to redirect to the payment page for further review
             return redirect()->route('get.from.payment.hotel', $payment->p_transaction_id)
         ->with('error', 'Thông tin thanh toán chưa xác minh, vui lòng kiểm tra lại!');
+        }
+    }
+
+    public function booking(Request $request)
+    {
+        $validated = $request->validate([
+            'hotel_id' => 'required',
+            'fullname' => 'required|string|max:255',
+            'email' => 'required|email',
+            'phone' => 'required|string',
+            'check_in' => 'required|date',
+            'check_out' => 'required|date|after:check_in',
+            'rooms' => 'required|integer|min:1',
+            'note' => 'nullable|string',
+        ]);
+
+        $hotel = Hotel::find($request->hotel_id);
+        if (!$hotel) {
+            return redirect()->back()->with('error', 'Không tìm thấy khách sạn');
+        }
+
+        $bookingData = $validated;
+        $bookingData['hotel_name'] = $hotel->h_name;
+        $bookingData['room_type'] = $hotel->h_room_type;
+        $bookingData['price'] = $hotel->h_price * (1 - $hotel->h_sale / 100);
+
+        try {
+            // Chỉ gửi email cho admin và khách hàng, không lưu vào database
+            Mail::to('nguyendunghk789@gmail.com')->send(new AdminHotelBookingMail($bookingData));
+            Mail::to($validated['email'])->send(new CustomerHotelBookingMail($bookingData));
+
+            return redirect()->back()->with('success', 'Đặt phòng thành công. Vui lòng kiểm tra email để xác nhận.');
+        } catch (\Exception $e) {
+            \Log::error($e->getMessage());
+            return redirect()->back()->with('error', 'Có lỗi xảy ra, vui lòng thử lại sau.');
         }
     }
 }

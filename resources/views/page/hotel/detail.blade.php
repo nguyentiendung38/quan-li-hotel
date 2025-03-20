@@ -263,6 +263,8 @@
         </div>
     </div>
 </div>
+<!-- Include modal booking -->
+@include('modals.hotel.bookingModal')
 @stop
 @section('script')
 

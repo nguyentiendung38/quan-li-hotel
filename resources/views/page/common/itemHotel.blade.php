@@ -42,7 +42,6 @@
                     @endfor
                     <span class="rating-count">({{ $hotel->total_ratings }} đánh giá)</span>
             </div>
-
             <!-- Dòng hiển thị vị trí -->
             <p class="location">
                 <span class="fa fa-map-marker" style="margin-right: 10px;"></span>
@@ -52,14 +51,14 @@
             <p class="location mb-0">
                 <span class="fa fa-user" style="margin-right: 10px;"></span>
                 Loại phòng: @php
-                    $roomTypes = [
-                        'Standard' => 'Phòng tiêu chuẩn',
-                        'Deluxe'   => 'Phòng cao cấp',
-                        'Suite'    => 'Phòng Suite',
-                        'Family'   => 'Phòng gia đình',
-                        'Single'   => 'Phòng đơn',
-                        'Double'   => 'Phòng đôi'
-                    ];
+                $roomTypes = [
+                'Standard' => 'Phòng tiêu chuẩn',
+                'Deluxe' => 'Phòng cao cấp',
+                'Suite' => 'Phòng Suite',
+                'Family' => 'Phòng gia đình',
+                'Single' => 'Phòng đơn',
+                'Double' => 'Phòng đôi'
+                ];
                 @endphp
                 {{ $roomTypes[$hotel->h_room_type] ?? 'Chưa chọn' }}
             </p>
@@ -75,9 +74,27 @@
                 <span class="fa fa-user" style="margin-right: 10px;"></span>
                 Đã đặt: {{ $hotel->bookRooms->sum('rooms') ?? '0' }}
             </p>
-            <p class="text-center">
-                <a href="{{ route('hotel.detail', ['id' => $hotel->id, 'slug' => safeTitle($hotel->h_name)]) }}" title="{{ $hotel->h_name }}" class="btn btn-primary">Xem thêm</a>
-            </p>
+            <!-- Thêm div wrapper cho các nút -->
+            <div class="text-center" style="margin-top:10px;">
+                <a href="{{ route('hotel.detail', ['id' => $hotel->id, 'slug' => safeTitle($hotel->h_name)]) }}"
+                    title="{{ $hotel->h_name }}"
+                    class="btn btn-primary"
+                    style="margin-right:10px;">
+                    Xem thêm
+                </a>
+                <button type="button"
+                    class="btn btn-success"
+                    data-toggle="modal"
+                    data-target="#hotelBookingModal"
+                    data-hotel_id="{{ $hotel->id }}"
+                    data-title="{{ $hotel->h_name }}"
+                    data-price="{{ number_format($hotel->h_price * (1 - $hotel->h_sale/100), 0, ',', '.') }}">
+                    Đặt Ngay
+                </button>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- Include modal booking -->
+@include('modals.hotel.bookingModal')
