@@ -47,14 +47,15 @@ class HotelController extends Controller
         $roomTypes = [
             'standard_double' => 'Phòng tiêu chuẩn giường đôi',
             'superior_double' => 'Phòng Superior giường đôi',
-            'superior_twin' => 'Phòng Superior 2 giường đơn',
-            'deluxe_double' => 'Phòng Deluxe giường đôi',
-            'deluxe_triple' => 'Phòng Deluxe cho 3 người',
-            'family_room' => 'Phòng gia đình',
-            'junior_suite' => 'Phòng Suite Junior gia đình',
-            'deluxe_quad' => 'Phòng Deluxe cho 4 người'
+            'superior_twin'   => 'Phòng Superior 2 giường đơn',
+            'deluxe_double'   => 'Phòng Deluxe giường đôi',
+            'deluxe_triple'   => 'Phòng Deluxe cho 3 người',
+            'family_room'     => 'Phòng gia đình',
+            'junior_suite'    => 'Phòng Suite Junior gia đình',
+            'deluxe_quad'     => 'Phòng Deluxe cho 4 người'
         ];
-        return view('admin.hotel.create', compact('roomTypes'));
+        
+        return view('admin.hotel.create', compact('status', 'locations', 'roomTypes'));
     }
 
     /**
@@ -113,12 +114,14 @@ class HotelController extends Controller
         }
 
         $roomTypes = [
-            'Standard' => 'Phòng tiêu chuẩn',
-            'Deluxe'   => 'Phòng cao cấp',
-            'Suite'    => 'Phòng Suite',
-            'Family'   => 'Phòng gia đình',
-            'Single'   => 'Phòng đơn',
-            'Double'   => 'Phòng đôi'
+            'standard_double' => 'Phòng tiêu chuẩn giường đôi',
+            'superior_double' => 'Phòng Superior giường đôi',
+            'superior_twin'   => 'Phòng Superior 2 giường đơn',
+            'deluxe_double'   => 'Phòng Deluxe giường đôi',
+            'deluxe_triple'   => 'Phòng Deluxe cho 3 người',
+            'family_room'     => 'Phòng gia đình',
+            'junior_suite'    => 'Phòng Suite Junior gia đình',
+            'deluxe_quad'     => 'Phòng Deluxe cho 4 người'
         ];
 
         return view('admin.hotel.edit', compact('hotel', 'roomTypes'));

@@ -29,6 +29,11 @@ class HotelController extends Controller
         if ($request->location_id) {
             $hotels->where('h_location_id', $request->location_id);
         }
+        
+        // Added filter for room_type
+        if ($request->room_type) {
+            $hotels->where('h_room_type', $request->room_type);
+        }
 
         if ($request->price) {
             $price = explode('-', $request->price);

@@ -19,11 +19,21 @@
         </div>
     </section>
     <section class="ftco-section ftco-no-pb" style="margin-top: -50px;">
-        <div class="container">
+        <div class="container-fluid px-0" style="max-width: 1600px; margin: 0 auto;">
             <div class="row">
-                <div class="col-md-12">
-                    <div class="search-wrap-1 ftco-animate fadeInUp ftco-animated">
-                        <p class="text-center" style="margin-bottom: 15px;">Tìm Kiếm Tour Ưu Đãi</p>
+                <div class="col-md-12 tab-wrap">
+                    <div class="search-wrap-1 ftco-animate fadeInUp ftco-animated p-4"
+                        style="background: rgba(248, 249, 250, 0.97);
+                            border-radius: 20px;
+                            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+                            border: 3px solid #edf2f7;
+                            padding: 35px !important;
+                            margin: 0 30px;">
+                        <p class="text-center" style="margin-bottom: 30px; font-size: 24px; font-weight: 600; color: #2f3640;">
+                            <img src="{{ asset('page/images/icon.svg') }}" alt="Tour icon" 
+                                style="width: 24px; height: 24px; margin-right: 10px; vertical-align: middle;">
+                            <span style="vertical-align: middle;">Tìm Kiếm Tour Du Lịch Ưu Đãi</span>
+                        </p>
                         @include('page.common.searchTour')
                     </div>
                 </div>
