@@ -243,7 +243,7 @@
                             </div>
                             <div class="modal-body text-center" style="padding: 1.5rem; font-size: 1rem;">
                                 Chọn phương thức liên hệ:
-                                <div class="mt-3">
+                                <div class="mt-2">
                                     <button type="button" class="btn btn-primary mx-1" onclick="window.location.href='tel:{{ $hotline ?? '0773398244' }}';">Gọi điện</button>
                                     <button type="button" class="btn btn-secondary mx-1" onclick="window.location.href='sms:{{ $hotline ?? '0773398244' }}';">SMS</button>
                                 </div>

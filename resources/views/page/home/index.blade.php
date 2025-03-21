@@ -1,6 +1,7 @@
 @extends('page.layouts.page')
 @section('title', 'Cuộc đời là những chuyến đi | Fun Travel')
 @section('style')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 @stop
 @section('content')
 <div class="hero-wrap js-fullheight" style="background-image: url({{ asset('page/images/trangchu.jpg') }});">
@@ -16,21 +17,32 @@
         </div>
     </div>
 </div>
-
 <section class="ftco-section ftco-no-pb ftco-no-pt" style="margin-top:80px;">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
                 <div class="ftco-search d-flex justify-content-center">
-                    <div class="row">
-                        <div class="col-md-12 nav-link-wrap">
-                            <div class="nav nav-pills text-center" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                                <a class="nav-link active mr-md-1" id="v-pills-1-tab" data-toggle="pill" href="#v-pills-1" role="tab" aria-controls="v-pills-1" aria-selected="true">Tìm kiếm Tour</a>
-                                <a class="nav-link " id="v-pills-2-tab" data-toggle="pill" href="#v-pills-2" role="tab" aria-controls="v-pills-2" aria-selected="false">Tìm kiếm khách sạn</a>
+                    <div class="row w-100">
+                        <div class="col-md-12 nav-link-wrap mb-4">
+                            <div class="nav nav-pills text-center" id="v-pills-tab" role="tablist" aria-orientation="vertical"
+                                style="background: rgba(255,255,255,0.9); border-radius: 30px; padding: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.1);">
+                                <a class="nav-link active mr-md-1" id="v-pills-1-tab" data-toggle="pill" href="#v-pills-1" role="tab"
+                                    aria-controls="v-pills-1" aria-selected="true"
+                                    style="border-radius: 20px; font-weight: 600; font-size: 16px; padding: 15px 30px;">
+                                    <img src="{{ asset('page/images/icon.svg') }}" alt="Tour icon"
+                                        style="width: 20px; height: 20px; margin-right: 8px; vertical-align: middle; display: inline-block;">
+                                    <span style="vertical-align: middle;">Tìm kiếm Tour</span>
+                                </a>
+                                <a class="nav-link" id="v-pills-2-tab" data-toggle="pill" href="#v-pills-2" role="tab"
+                                    aria-controls="v-pills-2" aria-selected="false"
+                                    style="border-radius: 20px; font-weight: 600; font-size: 16px; padding: 15px 30px;">
+                                    <i class="fa fa-hotel mr-2"></i>Tìm kiếm khách sạn
+                                </a>
                             </div>
                         </div>
                         <div class="col-md-12 tab-wrap">
-                            <div class="tab-content" id="v-pills-tabContent">
+                            <div class="tab-content p-4 px-5" id="v-pills-tabContent"
+                                style="background: rgba(255,255,255,0.9); border-radius: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.1);">
                                 <div class="tab-pane fade show active" id="v-pills-1" role="tabpanel" aria-labelledby="v-pills-nextgen-tab">
                                     @include('page.common.searchTour')
                                 </div>
@@ -138,15 +150,14 @@
                 <span class="subheading">Danh Sách</span>
                 <h2 class="mb-4">Tour Du Lịch Mới Nhất</h2>
             </div>
+            <div class="row">
+                @if($tours->count() > 0)
+                @foreach($tours as $tour)
+                @include('page.common.itemTour', compact('tour'))
+                @endforeach
+                @endif
+            </div>
         </div>
-        <div class="row">
-            @if($tours->count() > 0)
-            @foreach($tours as $tour)
-            @include('page.common.itemTour', compact('tour'))
-            @endforeach
-            @endif
-        </div>
-    </div>
 </section>
 
 <!-- NEW: Khách sạn mới nhất section -->

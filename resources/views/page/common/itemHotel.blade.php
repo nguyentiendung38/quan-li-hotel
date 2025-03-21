@@ -50,15 +50,18 @@
             <!-- Thông tin booking hiển thị giống vị trí -->
             <p class="location mb-0">
                 <span class="fa fa-user" style="margin-right: 10px;"></span>
-                Loại phòng: @php
-                $roomTypes = [
-                'Standard' => 'Phòng tiêu chuẩn',
-                'Deluxe' => 'Phòng cao cấp',
-                'Suite' => 'Phòng Suite',
-                'Family' => 'Phòng gia đình',
-                'Single' => 'Phòng đơn',
-                'Double' => 'Phòng đôi'
-                ];
+                Loại phòng: 
+                @php
+                    $roomTypes = [
+                        'standard_double' => 'Phòng tiêu chuẩn giường đôi',
+                        'superior_double' => 'Phòng Superior giường đôi',
+                        'superior_twin'   => 'Phòng Superior 2 giường đơn',
+                        'deluxe_double'   => 'Phòng Deluxe giường đôi',
+                        'deluxe_triple'   => 'Phòng Deluxe cho 3 người',
+                        'family_room'     => 'Phòng gia đình',
+                        'junior_suite'    => 'Phòng Suite Junior gia đình',
+                        'deluxe_quad'     => 'Phòng Deluxe cho 4 người'
+                    ];
                 @endphp
                 {{ $roomTypes[$hotel->h_room_type] ?? 'Chưa chọn' }}
             </p>

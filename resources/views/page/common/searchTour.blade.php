@@ -1,5 +1,9 @@
 <form action="{{ route('tour') }}" class="search-property-1">
-    <div class="row no-gutters">
+    <div class="row no-gutters" style="background: #f1f3f5; 
+                                      padding: 25px; 
+                                      border-radius: 15px; 
+                                      box-shadow: inset 0 0 15px rgba(0,0,0,0.03);
+                                      border: 1px solid #e9ecef;">
         <div class="col-md d-flex">
             <div class="form-group p-2 border-0">
                 <label for="#">Tour</label>
@@ -35,8 +39,11 @@
                         <div class="icon"><span class="fa fa-chevron-down"></span></div>
                         <select name="price" id="" class="form-control">
                             <option value="">Chọn khoảng giá</option>
-                            <option value="0-1000000">0->1.000.000</option>
-                            <option value="1000000-2000000">1.000.000->2.000.000</option>
+                            <option value="0-500000">0->500.000</option>
+                            <option value="500000-800000">500.000->800.000</option>
+                            <option value="800000-1000000">800.000->1.000.000</option>
+                            <option value="1000000-15000000">1.000.000->1.500.000</option>
+                            <option value="1500000-2000000">1.500.000->2.000.000</option>
                             <option value="2000000-3000000">2.000.000->3.000.000</option>
                             <option value="3000000-4000000">3.000.000->4.000.000</option>
                             <option value="4000000-5000000">4.000.000->5.000.000</option>
@@ -59,7 +66,13 @@
         <div class="col-md d-flex">
             <div class="form-group d-flex w-100 border-0">
                 <div class="form-field w-100 align-items-center d-flex">
-                    <input type="submit" value="Tìm kiếm" class="align-self-stretch form-control btn btn-primary">
+                    <input type="submit" value="Tìm kiếm"
+                        class="align-self-stretch form-control btn btn-primary"
+                        style="border-radius: 30px; 
+                            font-weight: 600; 
+                                padding: 12px 35px !important;
+                                margin-top: 24px;
+                                box-shadow: 0 3px 15px rgba(16,137,255,0.2);">
                 </div>
             </div>
         </div>
