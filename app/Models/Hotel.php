@@ -34,9 +34,22 @@ class Hotel extends Model
         'h_location_id',
         'h_user_id',
         'h_rooms',
-        'h_room_type' // Added room type field for mass assignment
+        'h_room_type', // Added room type field for mass assignment
+        'h_facilities'
     ];
 
+    // Thêm mapping tiện nghi
+    public static $facilityNames = [
+        'wifi' => 'Wifi miễn phí',
+        'parking' => 'Bãi đậu xe',
+        'pool' => 'Hồ bơi',
+        'restaurant' => 'Nhà hàng',
+        'gym' => 'Phòng tập gym',
+        'spa' => 'Spa & Massage',
+        'air_conditioning' => 'Điều hòa',
+        'elevator' => 'Thang máy',
+        'non_smoking' => 'Phòng không hút thuốc'
+    ];
 
     public function location()
     {
@@ -108,5 +121,14 @@ class Hotel extends Model
             'deluxe_quad' => 'Phòng Deluxe cho 4 người'
         ];
         return $types[$this->h_room_type] ?? 'Chưa chọn';
+    }
+
+    // Thêm accessor để lấy tên tiện nghi đã được dịch
+    public function getTranslatedFacilitiesAttribute()
+    {
+        $facilities = json_decode($this->h_facilities ?? '[]', true);
+        return array_map(function($facility) {
+            return self::$facilityNames[$facility] ?? $facility;
+        }, $facilities);
     }
 }

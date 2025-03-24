@@ -34,3 +34,42 @@
 .map-actions .btn i {
     font-size: 16px;
 }
+
+.facilities-section .ficon {
+    font-size: 24px;
+    color: #007bff;
+    width: 30px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.facilities-section li {
+    font-size: 15px;
+    color: #333;
+}
+
+.facilities-section .d-flex {
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    margin-bottom: 10px;
+}
+
+.facilities-section .d-flex:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.custom-control-label .ficon {
+    margin-right: 5px;
+    color: #666;
+}
+
+.facilities-section i {
+    font-size: 20px;
+    width: 30px;
+    text-align: center;
+    color: #007bff;
+}

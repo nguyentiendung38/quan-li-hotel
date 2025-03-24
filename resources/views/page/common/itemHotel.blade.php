@@ -25,22 +25,28 @@
             </h3>
             <!-- Add Star Rating Display -->
             <div class="rating-stars mb-2">
-                @php
-                $rating = $hotel->average_rating;
-                $fullStars = floor($rating);
-                $halfStar = $rating - $fullStars >= 0.5;
-                @endphp
+                @if($hotel->total_ratings > 0)
+                    @php
+                    $rating = $hotel->average_rating;
+                    $fullStars = floor($rating);
+                    $halfStar = $rating - $fullStars >= 0.5;
+                    @endphp
 
-                @for($i = 1; $i <= 5; $i++)
-                    @if($i <=$fullStars)
-                    <i class="fa fa-star text-warning"></i>
-                    @elseif($i == $fullStars + 1 && $halfStar)
-                    <i class="fa fa-star-half-o text-warning"></i>
-                    @else
-                    <i class="fa fa-star-o text-warning"></i>
-                    @endif
+                    @for($i = 1; $i <= 5; $i++)
+                        @if($i <= $fullStars)
+                            <i class="fas fa-star text-warning"></i>
+                        @elseif($i == $fullStars + 1 && $halfStar)
+                            <i class="fas fa-star-half-alt text-warning"></i>
+                        @else
+                            <i class="far fa-star text-warning"></i>
+                        @endif
                     @endfor
-                    <span class="rating-count">({{ $hotel->total_ratings }} đánh giá)</span>
+                @else
+                    @for($i = 1; $i <= 5; $i++)
+                        <i class="far fa-star text-warning"></i>
+                    @endfor
+                @endif
+                <span class="rating-count">({{ $hotel->total_ratings }} đánh giá)</span>
             </div>
             <!-- Dòng hiển thị vị trí -->
             <p class="location">

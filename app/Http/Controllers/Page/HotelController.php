@@ -47,16 +47,22 @@ class HotelController extends Controller
 
     public function detail(Request $request, $id)
     {
-        $hotel = Hotel::with(['comments' => function($query) use ($id){
+        $hotel = Hotel::with(['comments' => function($query) use ($id) {
             $query->with(['user', 'replies' => function($q) {
                 $q->with('user')->limit(10);
             }])->where('cm_hotel_id', $id)->limit(20)->orderByDesc('id');
         }])->find($id);
+
         if (!$hotel) {
             return redirect()->back()->with('error', 'Dữ liệu không tồn tại');
         }
 
-        $hotels = Hotel::with('user')->where(['h_location_id' => $hotel->h_location_id])->where('id', '<>', $id)->active()->orderByDesc('id')->limit(NUMBER_PAGINATION_PAGE)->get();
+        // Decode facilities for display
+        $hotel->h_facilities = json_decode($hotel->h_facilities ?? '[]'); // Ensure this line exists
+
+        $hotels = Hotel::with('user')->where(['h_location_id' => $hotel->h_location_id])
+            ->where('id', '<>', $id)->active()->orderByDesc('id')->limit(NUMBER_PAGINATION_PAGE)->get();
+
         return view('page.hotel.detail', compact('hotel', 'hotels'));
     }
 

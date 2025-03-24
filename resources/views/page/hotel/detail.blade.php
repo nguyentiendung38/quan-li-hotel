@@ -187,8 +187,56 @@
                     </div>
                 </div>
 
+                <h2 class="mb-3 mt-5">6. Tiện nghi</h2>
+                <div class="facilities-section mb-5">
+                    <ul class="list-unstyled row">
+                        @if(!empty($hotel->h_facilities))
+                            @foreach($hotel->h_facilities as $facility)
+                                <li class="col-md-4 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        @switch($facility)
+                                            @case('Wifi miễn phí')
+                                                <i class="fas fa-wifi text-primary"></i>
+                                                @break
+                                            @case('Bãi đậu xe')
+                                                <i class="fas fa-parking text-primary"></i>
+                                                @break
+                                            @case('Hồ bơi')
+                                                <i class="fas fa-swimming-pool text-primary"></i>
+                                                @break
+                                            @case('Nhà hàng')
+                                                <i class="fas fa-utensils text-primary"></i>
+                                                @break
+                                            @case('Phòng tập gym')
+                                                <i class="fas fa-dumbbell text-primary"></i>
+                                                @break
+                                            @case('Spa & Massage')
+                                                <i class="fas fa-spa text-primary"></i>
+                                                @break
+                                            @case('Điều hòa')
+                                                <i class="fas fa-snowflake text-primary"></i>
+                                                @break
+                                            @case('Phòng không hút thuốc')
+                                                <i class="fas fa-smoking-ban text-primary"></i>
+                                                @break
+                                            @case('Thang máy')
+                                                <i class="fas fa-level-up-alt text-primary"></i>
+                                                @break
+                                            @default
+                                                <i class="fas fa-check text-primary"></i>
+                                        @endswitch
+                                        <span class="ml-2">{{ $facility }}</span>
+                                    </div>
+                                </li>
+                            @endforeach
+                        @else
+                            <li>Không có thông tin tiện nghi.</li>
+                        @endif
+                    </ul>
+                </div>
+
                 <div class="mt-5">
-                    <h3 class="mb-2" style="font-size: 20px; font-weight: bold;">6. Đánh giá & Bình luận</h3>
+                    <h3 class="mb-2" style="font-size: 20px; font-weight: bold;">7. Đánh giá & Bình luận</h3>
                     <ul class="comment-list">
                         @if ($hotel->comments->count() > 0)
                         @foreach($hotel->comments as $key => $comment)
