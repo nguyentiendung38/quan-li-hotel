@@ -126,6 +126,68 @@
                                 </span>
                             </div>
                         </div>
+
+                        <!-- Thêm mục tiện nghi -->
+                        <div class="form-group {{ $errors->first('h_facilities') ? 'has-error' : '' }}">
+                            <label for="inputFacilities" class="control-label default">Tiện nghi <sup class="text-danger">(*)</sup></label>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="wifi" name="h_facilities[]" value="Wifi miễn phí"
+                                            {{ isset($hotel) && in_array('Wifi miễn phí', json_decode($hotel->h_facilities ?? '[]')) ? 'checked' : '' }}>
+                                        <label class="custom-control-label" for="wifi"><i class="fas fa-wifi"></i> Wifi miễn phí</label>
+                                    </div>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="parking" name="h_facilities[]" value="Bãi đậu xe"
+                                            {{ isset($hotel) && in_array('Bãi đậu xe', json_decode($hotel->h_facilities ?? '[]')) ? 'checked' : '' }}>
+                                        <label class="custom-control-label" for="parking"><i class="fas fa-parking"></i> Bãi đậu xe</label>
+                                    </div>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="air_conditioning" name="h_facilities[]" value="Điều hòa"
+                                            {{ isset($hotel) && in_array('Điều hòa', json_decode($hotel->h_facilities ?? '[]')) ? 'checked' : '' }}>
+                                        <label class="custom-control-label" for="air_conditioning"><i class="fas fa-snowflake"></i> Điều hòa</label>
+                                    </div>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="elevator" name="h_facilities[]" value="Thang máy"
+                                            {{ isset($hotel) && in_array('Thang máy', json_decode($hotel->h_facilities ?? '[]')) ? 'checked' : '' }}>
+                                        <label class="custom-control-label" for="elevator"><i class="fas fa-level-up-alt text-primary"></i> Thang máy</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="pool" name="h_facilities[]" value="Hồ bơi"
+                                            {{ isset($hotel) && in_array('Hồ bơi', json_decode($hotel->h_facilities ?? '[]')) ? 'checked' : '' }}>
+                                        <label class="custom-control-label" for="pool"><i class="fas fa-swimming-pool"></i> Hồ bơi</label>
+                                    </div>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="restaurant" name="h_facilities[]" value="Nhà hàng"
+                                            {{ isset($hotel) && in_array('Nhà hàng', json_decode($hotel->h_facilities ?? '[]')) ? 'checked' : '' }}>
+                                        <label class="custom-control-label" for="restaurant"><i class="fas fa-utensils"></i> Nhà hàng</label>
+                                    </div>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="non_smoking" name="h_facilities[]" value="Phòng không hút thuốc"
+                                            {{ isset($hotel) && in_array('Phòng không hút thuốc', json_decode($hotel->h_facilities ?? '[]')) ? 'checked' : '' }}>
+                                        <label class="custom-control-label" for="non_smoking"><i class="fas fa-smoking-ban"></i> Phòng không hút thuốc</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="gym" name="h_facilities[]" value="Phòng tập gym"
+                                            {{ isset($hotel) && in_array('Phòng tập gym', json_decode($hotel->h_facilities ?? '[]')) ? 'checked' : '' }}>
+                                        <label class="custom-control-label" for="gym"><i class="fas fa-dumbbell"></i> Phòng tập gym</label>
+                                    </div>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="spa" name="h_facilities[]" value="Spa & Massage"
+                                            {{ isset($hotel) && in_array('Spa & Massage', json_decode($hotel->h_facilities ?? '[]')) ? 'checked' : '' }}>
+                                        <label class="custom-control-label" for="spa"><i class="fas fa-spa"></i> Spa & Massage</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="text-danger">
+                                <p class="mg-t-5">{{ $errors->first('h_facilities') }}</p>
+                            </span>
+                        </div>
+
                         <div class="form-group {{ $errors->first('h_description') ? 'has-error' : '' }} ">
                             <label for="inputEmail3" class="control-label default">Mô tả</label>
                             <div>

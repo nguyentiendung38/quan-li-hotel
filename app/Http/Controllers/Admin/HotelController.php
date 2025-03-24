@@ -44,6 +44,8 @@ class HotelController extends Controller
      */
     public function create()
     {
+        $status = $this->hotel::STATUS; // Retrieve the shared status
+        $locations = Location::where('l_status', 1)->get(); // Retrieve the shared locations
         $roomTypes = [
             'standard_double' => 'Phòng tiêu chuẩn giường đôi',
             'superior_double' => 'Phòng Superior giường đôi',
@@ -66,37 +68,44 @@ class HotelController extends Controller
      */
     public function store(HotelRequest $request)
     {
-        $data = $request->all();
-        $data['h_room_type'] = $request->input('h_room_type');
-        // Set a default value for h_rooms if not provided
-        $data['h_rooms'] = isset($data['h_rooms']) ? $data['h_rooms'] : 0;
+        try {
+            $data = $request->except('_token');
+            $data['h_room_type'] = $request->input('h_room_type');
+            // Set a default value for h_rooms if not provided
+            $data['h_rooms'] = isset($data['h_rooms']) ? $data['h_rooms'] : 0;
 
-        // Process main image using Storage
-        if ($request->hasFile('h_image')) {
-            $file = $request->file('h_image');
-            if ($file->isValid()) {
-                // Store in the 'public/uploads/hotels' directory
-                $path = $file->store('uploads/hotels', 'public');
-                $data['h_image'] = 'storage/' . $path;
-            }
-        }
+            // Xử lý facilities
+            $data['h_facilities'] = !empty($request->h_facilities) ? json_encode($request->h_facilities) : json_encode([]);
 
-        // Process album images
-        $albumImages = [];
-        if ($request->hasFile('h_album_images')) {
-            foreach ($request->file('h_album_images') as $file) {
+            // Process main image using Storage
+            if ($request->hasFile('h_image')) {
+                $file = $request->file('h_image');
                 if ($file->isValid()) {
+                    // Store in the 'public/uploads/hotels' directory
                     $path = $file->store('uploads/hotels', 'public');
-                    $albumImages[] = 'storage/' . $path;
+                    $data['h_image'] = 'storage/' . $path;
                 }
             }
+
+            // Process album images
+            $albumImages = [];
+            if ($request->hasFile('h_album_images')) {
+                foreach ($request->file('h_album_images') as $file) {
+                    if ($file->isValid()) {
+                        $path = $file->store('uploads/hotels', 'public');
+                        $albumImages[] = 'storage/' . $path;
+                    }
+                }
+            }
+            $data['h_album_images'] = json_encode($albumImages);
+
+            // Save to database
+            $id = Hotel::insertGetId($data);
+
+            return redirect()->route('hotel.index')->with('success', 'Lưu dữ liệu thành công');
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', 'Đã xảy ra lỗi khi lưu dữ liệu');
         }
-        $data['h_album_images'] = json_encode($albumImages);
-
-        // Save to database
-        Hotel::create($data);
-
-        return redirect()->route('hotel.index')->with('success', 'Lưu dữ liệu thành công');
     }
 
     /**
@@ -136,38 +145,44 @@ class HotelController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data = $request->all();
-        $data['h_room_type'] = $request->input('h_room_type');
-        // Set default value for h_rooms if not provided
-        $data['h_rooms'] = isset($data['h_rooms']) ? $data['h_rooms'] : 0;
+        try {
+            $data = $request->except('_token');
+            $data['h_room_type'] = $request->input('h_room_type');
+            $data['h_rooms'] = isset($data['h_rooms']) ? $data['h_rooms'] : 0;
 
-        if ($request->hasFile('h_image')) {
-            $file = $request->file('h_image');
-            if ($file->isValid()) {
-                $path = $file->store('uploads/hotels', 'public');
-                $data['h_image'] = 'storage/' . $path;
-            }
-        }
+            // Xử lý facilities
+            $data['h_facilities'] = !empty($request->h_facilities) ? json_encode($request->h_facilities) : json_encode([]);
 
-        if ($request->hasFile('h_album_images')) {
-            $albumImages = [];
-            foreach ($request->file('h_album_images') as $file) {
+            if ($request->hasFile('h_image')) {
+                $file = $request->file('h_image');
                 if ($file->isValid()) {
                     $path = $file->store('uploads/hotels', 'public');
-                    $albumImages[] = 'storage/' . $path;
+                    $data['h_image'] = 'storage/' . $path;
                 }
             }
-            $data['h_album_images'] = json_encode($albumImages);
-        }
 
-        DB::beginTransaction();
-        try {
-            $hotel = Hotel::findOrFail($id);
-            $hotel->update($data);
-            DB::commit();
-            return redirect()->route('hotel.index')->with('success', 'Lưu dữ liệu thành công');
+            if ($request->hasFile('h_album_images')) {
+                $albumImages = [];
+                foreach ($request->file('h_album_images') as $file) {
+                    if ($file->isValid()) {
+                        $path = $file->store('uploads/hotels', 'public');
+                        $albumImages[] = 'storage/' . $path;
+                    }
+                }
+                $data['h_album_images'] = json_encode($albumImages);
+            }
+
+            DB::beginTransaction();
+            try {
+                $hotel = Hotel::findOrFail($id);
+                $hotel->update($data);
+                DB::commit();
+                return redirect()->route('hotel.index')->with('success', 'Lưu dữ liệu thành công');
+            } catch (\Exception $exception) {
+                DB::rollBack();
+                return redirect()->back()->with('error', 'Đã xảy ra lỗi khi lưu dữ liệu');
+            }
         } catch (\Exception $exception) {
-            DB::rollBack();
             return redirect()->back()->with('error', 'Đã xảy ra lỗi khi lưu dữ liệu');
         }
     }

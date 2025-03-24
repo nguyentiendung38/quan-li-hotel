@@ -1,0 +1,28 @@
+@font-face {
+    font-family: 'hotel-icons';
+    src: url('../fonts/hotel-icons.eot');
+    src: url('../fonts/hotel-icons.woff') format('woff'),
+        url('../fonts/hotel-icons.ttf') format('truetype'),
+        url('../fonts/hotel-icons.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.ficon {
+    font-family: 'hotel-icons';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+}
+
+.ficon-wifi:before { content: "\e900"; }
+.ficon-outdoor-pool:before { content: "\e901"; }
+.ficon-beach:before { content: "\e902"; }
+.ficon-restaurant:before { content: "\e903"; }
+.ficon-spa-sauna:before { content: "\e904"; }
+.ficon-fitness-center:before { content: "\e905"; }
+.ficon-air-conditioning:before { content: "\e906"; }
+.ficon-non-smoking-room:before { content: "\e907"; }
