@@ -68,7 +68,7 @@
             <div class="col-md-6 order-md-last">
                 <div class="card booking-card bg-light p-0">
                     <div class="card-header text-center">
-                        <h4>Đặt Tour</h4>
+                        <h4><i class="fa fa-user-circle"></i> THÔNG TIN LIÊN HỆ</h4>
                     </div>
                     <div class="card-body p-5">
                         <form action="{{ route('post.book.tour', $tour->id) }}" method="POST" class="contact-form">
@@ -103,28 +103,28 @@
                             </div>
                             <div class="form-group">
                                 <label>Số người lớn <sup class="text-danger">(*)</sup></label>
-                                <input type="number" name="b_number_adults" class="form-control" placeholder="Số người lớn">
+                                <input type="number" min="0" onkeydown="return event.keyCode !== 69" name="b_number_adults" class="form-control number-input" placeholder="Số người lớn">
                                 @if ($errors->first('b_number_adults'))
                                 <span class="text-danger">{{ $errors->first('b_number_adults') }}</span>
                                 @endif
                             </div>
                             <div class="form-group">
                                 <label>Số trẻ em (6 - 12 tuổi) <sup class="text-danger">(*)</sup></label>
-                                <input type="number" min="0" value="0" name="b_number_children" class="form-control" placeholder="Số trẻ em">
+                                <input type="number" min="0" onkeydown="return event.keyCode !== 69" name="b_number_children" class="form-control number-input" value="0" placeholder="Số trẻ em">
                                 @if ($errors->first('b_number_children'))
                                 <span class="text-danger">{{ $errors->first('b_number_children') }}</span>
                                 @endif
                             </div>
                             <div class="form-group">
                                 <label>Số trẻ em (2-6 tuổi) <sup class="text-danger">(*)</sup></label>
-                                <input type="number" min="0" value="0" name="b_number_child6" class="form-control" placeholder="Số trẻ em">
+                                <input type="number" min="0" onkeydown="return event.keyCode !== 69" name="b_number_child6" class="form-control number-input" value="0" placeholder="Số trẻ em">
                                 @if ($errors->first('b_number_children'))
                                 <span class="text-danger">{{ $errors->first('b_number_children') }}</span>
                                 @endif
                             </div>
                             <div class="form-group">
                                 <label>Số trẻ em (Dưới 2 tuổi) <sup class="text-danger">(*)</sup></label>
-                                <input type="number" min="0" value="0" name="b_number_child2" class="form-control a" placeholder="Số trẻ em">
+                                <input type="number" min="0" onkeydown="return event.keyCode !== 69" name="b_number_child2" class="form-control number-input a" value="0" placeholder="Số trẻ em">
                                 @if ($errors->first('b_number_children'))
                                 <span class="text-danger">{{ $errors->first('b_number_children') }}</span>
                                 @endif
@@ -159,6 +159,9 @@
                         <img src="{{ asset('page/images/du-lich-hue.jpg') }}" alt="" class="img-fluid" style="max-width:100%; border-radius:8px;">
                     </div>
                     <div class="mt-4">
+                        <h4 class="text-center mb-3">
+                            <i class="fa fa-money"></i> BẢNG GIÁ TOURS CHI TIẾT
+                        </h4>
                         <table class="table table-bordered" style="margin-top:20px;">
                             <thead class="thead-light">
                                 <tr>
@@ -196,4 +199,20 @@
 </section>
 @stop
 @section('script')
+<script>
+    // Prevent negative numbers and validate input
+    document.querySelectorAll('.number-input').forEach(function(input) {
+        input.addEventListener('input', function() {
+            if (this.value < 0) this.value = 0;
+            if (this.value === '') this.value = 0;
+        });
+        
+        // Prevent 'e' input in number fields
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'e' || e.key === 'E' || e.key === '-' || e.key === '+') {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
 @stop

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Tour;
 use App\Models\Location;
 use App\Http\Requests\TourRequest;
+use Illuminate\Support\Facades\Log; // Thêm dòng này
 
 class TourController extends Controller
 {
@@ -72,9 +73,24 @@ class TourController extends Controller
      */
     public function store(Request $request)
     {
+        $data = $request->except('_token','t_album_images');
+        $request->validate([
+            't_hotel_star' => 'nullable|integer|min:1|max:5',
+        ]);
+
         try {
             $data = $request->all();
             
+            // Xử lý các ngày khởi hành
+            if ($request->has('t_start_date')) {
+                $dates = array_filter($request->t_start_date); // Lọc bỏ các giá trị rỗng
+                if (!empty($dates)) {
+                    $data['t_start_date'] = json_encode($dates);
+                } else {
+                    $data['t_start_date'] = null;
+                }
+            }
+
             // Process main image
             if ($request->hasFile('images')) {
                 $file = $request->file('images');
@@ -106,7 +122,7 @@ class TourController extends Controller
             return redirect()->route('tour.index')->with('success', 'Thêm tour thành công');
             
         } catch (\Exception $e) {
-            \Log::error('Error creating tour: ' . $e->getMessage());
+            Log::error('Error creating tour: ' . $e->getMessage()); // Đã sửa \Log thành Log
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Đã xảy ra lỗi: ' . $e->getMessage());
@@ -140,37 +156,51 @@ class TourController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $tour = Tour::findOrFail($id);
-        $data = $request->all();
+        $data = $request->except('_token','t_album_images');
+        $request->validate([
+            't_hotel_star' => 'nullable|integer|min:1|max:5',
+        ]);
 
-        // Process main image
-        if ($request->hasFile('images')) {
-            $file = $request->file('images');
-            if ($file->isValid()) {
-                $path = $file->store('uploads/tours', 'public');
-                $data['t_image'] = 'storage/' . $path;
-            }
-        }
+        try {
+            $tour = Tour::findOrFail($id);
+            $data = $request->all();
 
-        // Process album images
-        if ($request->hasFile('t_album_images')) {
-            $albumImages = [];
-            foreach ($request->file('t_album_images') as $file) {
-                if ($file->isValid()) {
-                    $path = $file->store('uploads/tours', 'public');
-                    $albumImages[] = 'storage/' . $path;
+            // Xử lý các ngày khởi hành
+            if ($request->has('t_start_date')) {
+                $dates = array_filter($request->t_start_date); // Lọc bỏ các giá trị rỗng
+                if (!empty($dates)) {
+                    $data['t_start_date'] = json_encode($dates);
+                } else {
+                    $data['t_start_date'] = null;
                 }
             }
-            $data['t_album_images'] = json_encode($albumImages);
-        }
 
-        \DB::beginTransaction();
-        try {
+            // Process main image
+            if ($request->hasFile('images')) {
+                $file = $request->file('images');
+                if ($file->isValid()) {
+                    $path = $file->store('uploads/tours', 'public');
+                    $data['t_image'] = 'storage/' . $path;
+                }
+            }
+
+            // Process album images
+            if ($request->hasFile('t_album_images')) {
+                $albumImages = [];
+                foreach ($request->file('t_album_images') as $file) {
+                    if ($file->isValid()) {
+                        $path = $file->store('uploads/tours', 'public');
+                        $albumImages[] = 'storage/' . $path;
+                    }
+                }
+                $data['t_album_images'] = json_encode($albumImages);
+            }
+
             $tour->update($data);
-            \DB::commit();
             return redirect()->back()->with('success', 'Lưu dữ liệu thành công');
+
         } catch (\Exception $exception) {
-            \DB::rollBack();
+            Log::error('Error updating tour: ' . $exception->getMessage()); // Đã sửa \Log thành Log
             return redirect()->back()->with('error', 'Đã xảy ra lỗi khi lưu dữ liệu');
         }
     }

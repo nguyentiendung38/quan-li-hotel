@@ -63,6 +63,20 @@ class TourController extends Controller
         if (!$tour) {
             return redirect()->back()->with('error', 'Dữ liệu không tồn tại');
         }
+
+        // Sử dụng khóa phiên cho mỗi người dùng (hoặc mỗi khách) để mỗi người xem duy nhất chỉ tăng số lượng một lần.
+        if (Auth::guard('users')->check()) {
+            $userId = Auth::guard('users')->id();
+            $sessionKey = 'viewed_tour_' . $tour->id . '_user_' . $userId;
+        } else {
+            $sessionKey = 'viewed_tour_' . $tour->id;
+        }
+
+        if (!session()->has($sessionKey)) {
+            $tour->increment('t_view');
+            session([$sessionKey => true]);
+        }
+
         $tours = Tour::where('t_location_id', $tour->t_location_id)
             ->where('id', '<>', $id)
             ->orderBy('id')

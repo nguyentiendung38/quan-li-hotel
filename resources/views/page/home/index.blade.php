@@ -150,16 +150,16 @@
                 <span class="subheading">Danh Sách</span>
                 <h2 class="mb-4">Tour Du Lịch Mới Nhất</h2>
             </div>
-            <div class="row">
-                @if($tours->count() > 0)
-                @foreach($tours as $tour)
-                @include('page.common.itemTour', compact('tour'))
-                @endforeach
-                @endif
-            </div>
         </div>
+        <div class="row">
+            @if($tours->count() > 0)
+            @foreach($tours as $tour)
+            @include('page.common.itemTour', compact('tour'))
+            @endforeach
+            @endif
+        </div>
+    </div>
 </section>
-
 <!-- NEW: Khách sạn mới nhất section -->
 <section class="ftco-section no-padding-top" style="padding-bottom: 0 !important;">
     <div class="container">

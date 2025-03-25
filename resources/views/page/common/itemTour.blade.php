@@ -57,8 +57,19 @@
             <p class="location">
                 <span class="fa fa-map-marker"></span> Từ : {{ isset($tour->t_starting_gate) ? $tour->t_starting_gate : '' }}
             </p>
+            
+            <!-- Add hotel star rating display -->
+            @if($tour->t_hotel_star)
             <p class="location">
-                <span class="fa fa-calendar-check-o"></span> Khởi hành : {{ $tour->t_start_date }}
+                <span class="fa fa-hotel"></span> Khách sạn:
+                @for($i = 1; $i <= $tour->t_hotel_star; $i++)
+                    <i class="fa fa-star text-warning"></i>
+                @endfor
+            </p>
+            @endif
+
+            <p class="location">
+                <span class="fa fa-calendar-check-o"></span> Khởi hành: {{ \App\Helpers\Date::formatDepartureDates($tour->t_start_date) }}
             </p>
             <?php $number = $tour->t_number_guests - $tour->t_number_registered ?>
             <p class="location">

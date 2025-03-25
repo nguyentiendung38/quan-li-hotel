@@ -1,12 +1,10 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-
 
 class Tour extends Model
 {
@@ -30,11 +28,19 @@ class Tour extends Model
         't_description',
         't_content',
         't_image',
-        't_album_images',  // Thêm trường này
+        't_album_images',
         't_location_id',
         't_user_id',
         't_number_registered',
-        't_status'
+        't_status',
+        't_service_included',  // Add these
+        't_notes',             // here
+        't_hotel_star'
+    ];
+
+    protected $casts = [
+        't_start_date' => 'array',
+        't_album_images' => 'array'
     ];
 
     const STATUS = [

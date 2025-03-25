@@ -199,6 +199,79 @@
         border-radius: 5px;
         overflow: hidden;
     }
+
+    /* Modal Popup Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 400px;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    .modal-content h2 {
+        color: #27ae60;
+        margin-bottom: 20px;
+    }
+
+    .modal-content p {
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+
+    .modal-buttons {
+        margin-top: 20px;
+    }
+
+    .modal-button {
+        padding: 10px 20px;
+        margin: 0 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btn-confirm {
+        background-color: #27ae60;
+        color: white;
+    }
+
+    .btn-cancel {
+        background-color: #e74c3c;
+        color: white;
+    }
+
+    /* Add new styles for bank info section */
+    .bank-info {
+        display: none;
+        background: #f8f9fa;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 5px;
+        border: 1px dashed #27ae60;
+    }
+
+    .bank-info p {
+        margin: 5px 0;
+        font-size: 15px;
+    }
+
+    .bank-info strong {
+        color: #27ae60;
+    }
 </style>
 </head>
 
@@ -313,23 +386,110 @@
             <div class="payment-method">
                 <h3>Chọn phương thức thanh toán</h3>
                 <label class="method-item">
+                    <input type="radio" name="payment_type" value="CASH" checked>
+                    <span>Thanh toán tại quầy</span>
+                    <p>Quý khách có thể đến trực tiếp văn phòng của chúng tôi để thanh toán bằng tiền mặt hoặc thẻ.</p>
+                </label>
+                <label class="method-item">
+                    <input type="radio" name="payment_type" value="BANK">
+                    <span>Thanh toán chuyển khoản qua ngân hàng</span>
+                </label>
+                <!-- Bank Transfer Information Section -->
+                <div id="bankInfo" class="bank-info">
+                    <p><strong>Ngân hàng:</strong> BIDV - Chi nhánh ABC</p>
+                    <p><strong>Số tài khoản:</strong> 1234 5678 9012</p>
+                    <p><strong>Chủ tài khoản:</strong> CÔNG TY DU LỊCH ABC</p>
+                    <p><strong>Số tiền:</strong> {{ number_format($totalMoney, 0, ',', '.') }} VND</p>
+                    <p><strong>Nội dung CK:</strong> Mã booking {{ $book->id }} - {{ $book->b_name }}</p>
+                    <p class="text-danger mt-2">Lưu ý: Vui lòng giữ lại biên lai chuyển khoản để đối chiếu khi cần thiết.</p>
+                </div>
+                <label class="method-item">
                     <input type="radio" name="payment_type" value="VNPAY">
                     <span>Thanh toán qua VNPAY</span>
                     <p>Quý khách có thể thanh toán qua VNPAY bằng cách quét mã QR hoặc sử dụng tài khoản ngân hàng liên kết với VNPAY.</p>
                 </label>
                 <!-- Nút thanh toán -->
                 <div style="margin-top: 20px; text-align: center;">
-                    <form action="{{ route('payment.online') }}" method="POST">
+                    <form action="{{ route('payment.online') }}" method="POST" id="payment-form" onsubmit="return handlePaymentSubmit(event)">
                         @csrf
                         <input type="hidden" name="amount" value="{{ $totalMoney }}">
-                        <button type="submit" name="redirect" class="btn-pay-now">Thanh Toán ngay</button>
+                        <input type="hidden" name="payment_method" id="payment_method" value="CASH">
+                        <button type="submit" name="redirect" class="btn-pay-now">Xác nhận thanh toán</button>
                     </form>
                 </div>
             </div>
+            
+            <script>
+                // Update hidden payment method when radio selection changes
+                document.querySelectorAll('input[name="payment_type"]').forEach(function(radio) {
+                    radio.addEventListener('change', function() {
+                        document.getElementById('payment_method').value = this.value;
+                        
+                        // Show/hide bank info section
+                        const bankInfo = document.getElementById('bankInfo');
+                        if (this.value === 'BANK') {
+                            bankInfo.style.display = 'block';
+                        } else {
+                            bankInfo.style.display = 'none';
+                        }
+                    });
+                });
+
+                // Handle form submission based on payment method
+                function handlePaymentSubmit(event) {
+                    const paymentMethod = document.getElementById('payment_method').value;
+                    event.preventDefault();
+                    
+                    if (paymentMethod === 'CASH') {
+                        document.getElementById('cashPaymentModal').style.display = "block";
+                    } else if (paymentMethod === 'BANK') {
+                        alert('Cảm ơn quý khách! Chúng tôi sẽ kiểm tra và xác nhận sau khi nhận được chuyển khoản.');
+                        window.location.href = '/';
+                    } else if (paymentMethod === 'VNPAY') {
+                        document.getElementById('payment-form').submit();
+                    }
+                    return false;
+                }
+            </script>
         </div>
         <!-- FOOTER -->
         <div class="footer">
             &copy; 2025 Chudu24 - Hotline: 0123 456 789
+        </div>
+    </div>
+
+    <!-- Modal Popup -->
+    <div id="cashPaymentModal" class="modal">
+        <div class="modal-content">
+            <h2>Xác nhận thanh toán</h2>
+            <p>Cảm ơn quý khách đã đặt tour!</p>
+            <p>Quý khách vui lòng đến văn phòng của chúng tôi để hoàn tất thanh toán.</p>
+            <p>Địa chỉ: 123 Đường ABC, Quận XYZ</p>
+            <p>Hotline: 0123.456.789</p>
+            <div class="modal-buttons">
+                <button class="modal-button btn-confirm" onclick="confirmCashPayment()">Xác nhận</button>
+                <button class="modal-button btn-cancel" onclick="closeModal()">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add new bank transfer modal -->
+    <div id="bankTransferModal" class="modal">
+        <div class="modal-content">
+            <h2>Thông tin chuyển khoản</h2>
+            <p>Vui lòng chuyển khoản theo thông tin sau:</p>
+            <div style="text-align: left; margin: 20px 0;">
+                <p><strong>Ngân hàng:</strong> BIDV - Chi nhánh ABC</p>
+                <p><strong>Số tài khoản:</strong> 1234 5678 9012</p>
+                <p><strong>Chủ tài khoản:</strong> CÔNG TY DU LỊCH ABC</p>
+                <p><strong>Số tiền:</strong> {{ number_format($totalMoney, 0, ',', '.') }} VND</p>
+                <p><strong>Nội dung CK:</strong> Mã booking {{ $book->id }} - {{ $book->b_name }}</p>
+            </div>
+            <p class="text-danger">Lưu ý: Vui lòng giữ lại biên lai chuyển khoản để đối chiếu khi cần thiết.</p>
+            <div class="modal-buttons">
+                <button class="modal-button btn-confirm" onclick="confirmBankTransfer()">Đã chuyển khoản</button>
+                <button class="modal-button btn-cancel" onclick="closeModal()">Đóng</button>
+            </div>
         </div>
     </div>
 </body>
