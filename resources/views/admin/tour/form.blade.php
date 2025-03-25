@@ -123,6 +123,25 @@
                             </div>
                         </div>
 
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6">
+                                <div class="form-group">
+                                    <label>Hạng sao khách sạn <sup class="text-danger">(*)</sup></label>
+                                    <select class="custom-select" name="t_hotel_star">
+                                        <option value="">Chọn hạng sao</option>
+                                        <option value="1" {{old('t_hotel_star', isset($tour->t_hotel_star) ? $tour->t_hotel_star : '') == 1 ? 'selected="selected"' : ''}}>Khách sạn 1 sao ⭐</option>
+                                        <option value="2" {{old('t_hotel_star', isset($tour->t_hotel_star) ? $tour->t_hotel_star : '') == 2 ? 'selected="selected"' : ''}}>Khách sạn 2 sao ⭐⭐</option>
+                                        <option value="3" {{old('t_hotel_star', isset($tour->t_hotel_star) ? $tour->t_hotel_star : '') == 3 ? 'selected="selected"' : ''}}>Khách sạn 3 sao ⭐⭐⭐</option>
+                                        <option value="4" {{old('t_hotel_star', isset($tour->t_hotel_star) ? $tour->t_hotel_star : '') == 4 ? 'selected="selected"' : ''}}>Khách sạn 4 sao ⭐⭐⭐⭐</option>
+                                        <option value="5" {{old('t_hotel_star', isset($tour->t_hotel_star) ? $tour->t_hotel_star : '') == 5 ? 'selected="selected"' : ''}}>Khách sạn 5 sao ⭐⭐⭐⭐⭐</option>
+                                    </select>
+                                    <span class="text-danger">
+                                        <p class="mg-t-5">{{ $errors->first('t_hotel_star') }}</p>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-group {{ $errors->first('t_journeys') ? 'has-error' : '' }} ">
                             <label for="inputEmail3" class="control-label default">Hành trình <sup class="text-danger">(*)</sup></label>
                             <div>
@@ -167,6 +186,32 @@
                                 @endif
                             </div>
                         </div>
+
+                        <!-- Add new service sections -->
+                        <div class="form-group {{ $errors->first('t_service_included') ? 'has-error' : '' }} ">
+                            <label for="inputEmail3" class="control-label default">Dịch vụ bao gồm </label>
+                            <div>
+                                <textarea name="t_service_included" id="t_service_included" cols="30" rows="10" class="form-control" style="height: 225px;">{{ old('t_service_included', isset($tour) ? $tour->t_service_included : '') }}</textarea>
+                                <script>
+                                    ckeditor(t_service_included);
+                                </script>
+                                @if ($errors->first('t_service_included'))
+                                <span class="text-danger">{{ $errors->first('t_service_included') }}</span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="form-group {{ $errors->first('t_notes') ? 'has-error' : '' }} ">
+                            <label for="inputEmail3" class="control-label default">Ghi chú </label>
+                            <div>
+                                <textarea name="t_notes" id="t_notes" cols="30" rows="10" class="form-control" style="height: 225px;">{{ old('t_notes', isset($tour) ? $tour->t_notes : '') }}</textarea>
+                                <script>
+                                    ckeditor(t_notes);
+                                </script>
+                                @if ($errors->first('t_notes'))
+                                <span class="text-danger">{{ $errors->first('t_notes') }}</span>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                     <!-- /.card-body -->
                 </div>
@@ -187,24 +232,37 @@
                         </div>
                     </div>
                     <div class="card-header">
-                        <h3 class="card-title">Thời gian diễn ra </h3>
+                        <h3 class="card-title">Lịch khởi hành</h3>
                     </div>
                     <div class="card-body">
-                        <div class="form-group">
-                            <label>Ngày bắt đầu <sup class="text-danger">(*)</sup></label>
-                            <input type="date" class="form-control" name="t_start_date" value="{{ old('t_start_date', isset($tour) ? $tour->t_start_date : '') }}">
-                            @if ($errors->first('t_start_date'))
-                            <span class="text-danger">{{ $errors->first('t_start_date') }}</span>
+                        <div id="departure-dates">
+                            @if(isset($tour) && !empty($tour->t_start_date))
+                                @php
+                                    $dates = json_decode($tour->t_start_date) ?? [];
+                                @endphp
+                                @foreach($dates as $date)
+                                <div class="form-group departure-date-group">
+                                    <div class="d-flex">
+                                        <input type="date" class="form-control" name="t_start_date[]" value="{{ $date }}" style="flex: 1;">
+                                        <button type="button" class="btn btn-danger ml-2 remove-date"><i class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                                @endforeach
+                            @else
+                                <div class="form-group departure-date-group">
+                                    <div class="d-flex">
+                                        <input type="date" class="form-control" name="t_start_date[]" style="flex: 1;">
+                                        <button type="button" class="btn btn-danger ml-2 remove-date"><i class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
                             @endif
                         </div>
-
-                        <div class="form-group">
-                            <label>Ngày kết thúc <sup class="text-danger">(*)</sup></label>
-                            <input type="date" class="form-control" name="t_end_date" value="{{ old('t_end_date', isset($tour) ? $tour->t_end_date : '') }}">
-                            @if ($errors->first('t_end_date'))
-                            <span class="text-danger">{{ $errors->first('t_end_date') }}</span>
-                            @endif
-                        </div>
+                        <button type="button" class="btn btn-success mt-2" id="add-date">
+                            <i class="fa fa-plus"></i> Thêm ngày khởi hành
+                        </button>
+                        @if ($errors->first('t_start_date'))
+                        <span class="text-danger">{{ $errors->first('t_start_date') }}</span>
+                        @endif
                     </div>
                     <div class="card-header">
                         <h3 class="card-title">Hình ảnh </h3>
@@ -262,3 +320,28 @@
         </div>
     </form>
 </div>
+
+<!-- Add this JavaScript code at the end of your file -->
+<script>
+document.getElementById('add-date').addEventListener('click', function() {
+    const container = document.getElementById('departure-dates');
+    const newDateGroup = document.createElement('div');
+    newDateGroup.className = 'form-group departure-date-group';
+    newDateGroup.innerHTML = `
+        <div class="d-flex">
+            <input type="date" class="form-control" name="t_start_date[]" style="flex: 1;">
+            <button type="button" class="btn btn-danger ml-2 remove-date"><i class="fa fa-times"></i></button>
+        </div>
+    `;
+    container.appendChild(newDateGroup);
+});
+
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.remove-date')) {
+        const dateGroups = document.querySelectorAll('.departure-date-group');
+        if (dateGroups.length > 1) {
+            e.target.closest('.departure-date-group').remove();
+        }
+    }
+});
+</script>

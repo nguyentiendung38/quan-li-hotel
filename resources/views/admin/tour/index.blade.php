@@ -1,3 +1,5 @@
+
+
 @extends('admin.layouts.main')
 @section('title', '')
 @section('content')
@@ -110,8 +112,7 @@
                                                     <p><b>Địa điểm :</b> {{ isset($tour->location) ? $tour->location->l_name : '' }}</p>
                                                     <p><b>Di chuyển :</b> {{ $tour->t_move_method }}</p>
                                                     <p><b>Điểm xuất phát :</b> {{ $tour->t_starting_gate }}</p>
-                                                    <p><b>Ngày đi :</b> {{ $tour->t_start_date }}</p>
-                                                    <p><b>Ngày về :</b> {{ $tour->t_end_date }}</p>
+                                                    <p><b>Ngày khởi hành:</b> {{ \App\Helpers\Date::formatDepartureDates($tour->t_start_date) }}</p>
                                                 </td>
                                                 <td class=" text-center" style="vertical-align: middle;">{{ $status[$tour->t_status] }}</td>
                                                 <td class="text-center" style="vertical-align: middle;">

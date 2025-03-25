@@ -20,21 +20,49 @@
         <div class="row">
             <div class="col-lg-12 ftco-animate mt-md-5 fadeInUp ftco-animated">
                 <h2 class="mb-3">{{ $tour->t_title }}</h2>
+                <div class="d-flex align-items-center" style="gap: 30px;">
+                    <div class="d-flex align-items-center">
+                        <div class="stars d-flex align-items-center">
+                            @php
+                                $avgRating = $tour->average_rating ?? 0;
+                                $totalRatings = $tour->total_ratings ?? 0;
+                                $fullStars = floor($avgRating);
+                                $halfStar = ($avgRating - $fullStars) >= 0.5;
+                            @endphp
+                            @for($i = 1; $i <= 5; $i++)
+                                @if($totalRatings == 0)
+                                    <i class="far fa-star text-warning"></i>
+                                @elseif($i <= $fullStars)
+                                    <i class="fas fa-star text-warning"></i>
+                                @elseif($i == $fullStars + 1 && $halfStar)
+                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                @else
+                                    <i class="far fa-star text-warning"></i>
+                                @endif
+                            @endfor
+                            <span style="margin-left: 8px;">{{ number_format($avgRating, 2) }}/5 trong {{ $totalRatings }} ĐÁNH GIÁ</span>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-eye"></i>
+                        <span style="margin-left: 8px;">{{ $tour->t_view }} lượt xem</span>
+                    </div>
+                </div>
             </div>
             <div class="col-lg-8 ftco-animate fadeInUp ftco-animated">
                 @php
                 // Use only album images; ignore t_image for display
                 $album = [];
                 if (!empty($tour->t_album_images)) {
-                    $album = json_decode($tour->t_album_images, true);
-                    if (!is_array($album)) {
-                        $album = [];
-                    }
+                $album = json_decode($tour->t_album_images, true);
+                if (!is_array($album)) {
+                $album = [];
+                }
                 }
                 @endphp
 
                 @if(count($album) > 0)
-                <div id="tourCarousel" class="carousel slide" data-ride="carousel" data-interval="1000" data-pause="false">
+                <div id="tourCarousel" class="carousel slide" data-ride="carousel" data-interval="2000" data-pause="false">
                     <div class="carousel-inner">
                         @foreach($album as $index => $img)
                         <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
@@ -53,7 +81,7 @@
                 </div>
                 @endif
                 <div class="content">
-                    <h2 class="mb-3">1. Điểm nhấn của hành trình</h2>
+                    <h2 class="mb-3"><i class="fa fa-info-circle" style="color: orange;"></i> Điểm nhấn của hành trình</h2>
                     <table class="table table-bordered">
                         <tr>
                             <td width="30%">Hành trình </td>
@@ -64,12 +92,8 @@
                             <td>{{ $tour->t_schedule }}</td>
                         </tr>
                         <tr>
-                            <td width="30%">Ngày đi </td>
-                            <td>{{ $tour->t_start_date }}</td>
-                        </tr>
-                        <tr>
-                            <td width="30%">Ngày về </td>
-                            <td>{{ $tour->t_end_date }}</td>
+                            <td width="30%">Khởi hành </td>
+                            <td>{{ \App\Helpers\Date::formatDepartureDates($tour->t_start_date) }}</td>
                         </tr>
                         <tr>
                             <td width="30%">Vận chuyển </td>
@@ -97,42 +121,55 @@
 
                         </tr>
                     </table>
-                    <h2 class="mb-3">2. Lịch trình</h2>
+                    <h2 class="mb-3"><i class="fas fa-map-marker-alt" style="color: orange;"></i> Lịch trình</h2>
                     <div class="tour_detail">
                         <p>
                             {!! $tour->t_description !!}
                         </p>
 
-                        <h2 class="mb-3">3. Giới thiệu tour</h2>
+                        <h2 class="mb-3"><i class="fa fa-users" style="color: orange;"></i> Giới thiệu tour</h2>
                         <p>
                             {!! $tour->t_content !!}
                         </p>
+                        <!-- Thêm phần dịch vụ và ghi chú với icon -->
+                        @if(!empty($tour->t_service_included))
+                        <h2 class="mb-3"><i class="fa fa-check-square" style="color: orange;"></i> Dịch vụ bao gồm</h2>
+                        <div class="service-included">
+                            {!! $tour->t_service_included !!}
+                        </div>
+                        @endif
+
+                        @if(!empty($tour->t_notes))
+                        <h2 class="mb-3"><i class="fa fa-sticky-note" style="color: orange;"></i> Ghi chú</h2>
+                        <div class="tour-notes">
+                            {!! $tour->t_notes !!}
+                        </div>
+                        @endif
                     </div>
 
-                    <!-- Add tour rating section -->
-                    <h2 class="mb-3 mt-2">Đánh giá Tour</h2>
+                    <!-- Add tour rating section with updated rating summary -->
+                    <h2 class="mb-3 mt-2"><i class="fa fa-star" style="color: orange;"></i> Đánh giá Tour</h2>
                     <div class="rating-section mb-5">
                         <div class="rating-summary mb-4">
                             <h4>Điểm đánh giá trung bình</h4>
                             <div class="rating-average">
-                                <span class="average-score">{{ number_format($tour->average_rating, 1) }}</span>/5
-                                <div class="rating-stars">
-                                    @php
-                                    $avgRating = $tour->average_rating;
-                                    $fullStars = floor($avgRating);
-                                    $halfStar = $avgRating - $fullStars >= 0.5;
-                                    @endphp
-                                    @for($i = 1; $i <= 5; $i++)
-                                        @if($i <=$fullStars)
-                                        <i class="fa fa-star text-warning"></i>
-                                        @elseif($i == $fullStars + 1 && $halfStar)
-                                        <i class="fa fa-star-half-o text-warning"></i>
-                                        @else
-                                        <i class="fa fa-star-o text-warning"></i>
-                                        @endif
-                                        @endfor
-                                </div>
-                                <div class="total-ratings">({{ $tour->total_ratings }} đánh giá)</div>
+                                <span class="average-score">{{ number_format($tour->average_rating, 2) }}</span>/5 trong {{ $tour->total_ratings }} đánh giá
+                            </div>
+                            <div class="rating-stars">
+                                @php
+                                $avgRating = $tour->average_rating;
+                                $fullStars = floor($avgRating);
+                                $halfStar = $avgRating - $fullStars >= 0.5;
+                                @endphp
+                                @for($i = 1; $i <= 5; $i++)
+                                    @if($i <=$fullStars)
+                                    <i class="fa fa-star text-warning"></i>
+                                    @elseif($i == $fullStars + 1 && $halfStar)
+                                    <i class="fa fa-star-half-o text-warning"></i>
+                                    @else
+                                    <i class="fa fa-star-o text-warning"></i>
+                                    @endif
+                                    @endfor
                             </div>
                         </div>
 
@@ -187,7 +224,8 @@
                     </div>
                 </div>
                 <div class="mt-2">
-                    <h3 class="mb-2" style="font-size: 20px; font-weight: bold;">Danh sách bình luận</h3>
+                    <!-- Update comment header with icon -->
+                    <h3 class="mb-2" style="font-size: 20px; font-weight: bold;"><i class="fa fa-comments" style="color: orange;"></i> Danh sách bình luận</h3>
                     <ul class="comment-list">
                         @if ($tour->comments->count() > 0)
                         @foreach($tour->comments as $key => $comment)
@@ -217,14 +255,23 @@
             <div class="col-lg-4">
                 <!-- Modified register-tour div with two buttons -->
                 <div class="register-tour">
-                    <p class="price-tour">Giá từ : <span>{{ number_format($tour->t_price_adults - ($tour->t_price_adults*$tour->t_sale/100),0,',','.') }}</span> vnd</p>
+                    @if($tour->t_sale > 0)
+                    <p class="price-tour">
+                        Giá Tour: <span>
+                            {{ number_format($tour->t_price_adults - ($tour->t_price_adults * $tour->t_sale / 100), 0, ',', '.') }}
+                        </span> vnd<br>
+                        <del>{{ number_format($tour->t_price_adults, 0, ',', '.') }} vnd</del>
+                    </p>
+                    @else
+                    <p class="price-tour">Giá từ : <span>{{ number_format($tour->t_price_adults, 0, ',', '.') }}</span> vnd</p>
+                    @endif
                     <div class="d-flex justify-content-center" style="gap:10px;">
                         <a href="#" class="btn btn-secondary py-3 px-4" style="width:40%" data-toggle="modal" data-target="#contactModalTour">Liên Hệ</a>
                         @if($tour->t_number_registered < $tour->t_number_guests)
                             @if(Auth::guard('users')->check())
-                                <a href="{{ route('book.tour', ['id' => $tour->id, 'slug' => safeTitle($tour->t_title)]) }}" class="btn btn-primary py-3 px-4" style="width:40%">Đặt Tour</a>
+                            <a href="{{ route('book.tour', ['id' => $tour->id, 'slug' => safeTitle($tour->t_title)]) }}" class="btn btn-primary py-3 px-4" style="width:40%">Đặt Tour</a>
                             @else
-                                <a href="#" class="btn btn-primary py-3 px-4" style="width:40%" data-toggle="modal" data-target="#loginAlertModalTour">Đặt Tour</a>
+                            <a href="#" class="btn btn-primary py-3 px-4" style="width:40%" data-toggle="modal" data-target="#loginAlertModalTour">Đặt Tour</a>
                             @endif
                         @else
                             <a href="{{ route('loi.loi') }}" class="btn btn-primary py-3 px-4" style="width:40%">Đã hết chỗ</a>
