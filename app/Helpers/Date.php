@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use Carbon\Carbon;
+
 class Date
 {
     public static function getListDayInMonth($month = null, $year = null)
@@ -31,26 +33,45 @@ class Date
     {
         if (empty($dates)) return '';
         
-        try {
-            if (is_string($dates)) {
-                $dates = json_decode($dates);
-            }
-            
-            $grouped = collect($dates)->groupBy(function($date) {
-                return date('m/Y', strtotime($date));
-            })->map(function($dates) {
-                return $dates->map(function($date) {
-                    return date('d', strtotime($date));
-                })->sort()->join(',');
-            });
-
-            return $grouped->map(function($days, $monthYear) use ($grouped) {
-                [$month, $year] = explode('/', $monthYear);
-                return $days . '/' . $month . ($monthYear === $grouped->keys()->last() ? '/' . $year : '');
-            })->join('; ');
-            
-        } catch (\Exception $e) {
-            return '';
+        $dates = json_decode($dates, true);
+        if (!is_array($dates)) return '';
+        
+        sort($dates);
+        
+        // Group dates by month and year
+        $grouped = [];
+        foreach ($dates as $date) {
+            $carbon = Carbon::parse($date);
+            $month = $carbon->format('m');
+            $year = $carbon->format('Y');
+            $day = $carbon->format('d');
+            $grouped[$month][] = ['day' => $day, 'year' => $year];
         }
+        
+        // Format output
+        $result = [];
+        $lastMonth = array_key_last($grouped);
+        
+        foreach ($grouped as $month => $dates) {
+            $days = collect($dates)->pluck('day')->implode(',');
+            // Only add year for the last month
+            if ($month === $lastMonth) {
+                $result[] = $days . '/' . $month . '/' . $dates[0]['year'];
+            } else {
+                $result[] = $days . '/' . $month;
+            }
+        }
+        
+        return implode('; ', $result);
+    }
+
+    public static function getAvailableDates($dates)
+    {
+        if (empty($dates)) return [];
+        
+        $dates = json_decode($dates, true);
+        if (!is_array($dates)) return [];
+        
+        return $dates; // Returns array of available dates in YYYY-MM-DD format
     }
 }

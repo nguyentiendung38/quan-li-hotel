@@ -28,7 +28,7 @@ class BookTour extends Model
 
     
 
-    protected $fillable = ['b_tour_id', 'b_user_id', 'b_name', 'b_email', 'b_phone', 'b_address', 'b_start_date', 'b_note', 'b_number_adults', 'b_number_children','b_price_adults','b_price_children','b_number_child6','b_number_child2','b_price_child6','b_price_child2','b_total_money','b_status'];
+    protected $fillable = ['b_tour_id', 'b_user_id', 'b_name', 'b_email', 'b_phone', 'b_address', 'b_start_date', 'b_note', 'b_number_adults', 'b_number_children','b_price_adults','b_price_children','b_number_child6','b_number_child2','b_price_child6','b_price_child2','b_total_money','b_status', 'departure_date'];
 
     public function tour()
     {
