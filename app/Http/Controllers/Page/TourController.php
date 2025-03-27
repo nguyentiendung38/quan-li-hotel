@@ -123,6 +123,9 @@ class TourController extends Controller
             $params['b_tour_id'] = $id;
             $params['b_user_id'] = $user->id;
             $params['b_status'] = 1;
+            
+            // Thêm ngày khởi hành vào params
+            $params['departure_date'] = $request->departure_date;
 
             // Tính giá trên 1 người cho từng đối tượng
             $params['b_price_adults']   = $tour->t_price_adults - ($tour->t_price_adults * $tour->t_sale / 100);

@@ -24,23 +24,23 @@
                     <div class="d-flex align-items-center">
                         <div class="stars d-flex align-items-center">
                             @php
-                                $avgRating = $tour->average_rating ?? 0;
-                                $totalRatings = $tour->total_ratings ?? 0;
-                                $fullStars = floor($avgRating);
-                                $halfStar = ($avgRating - $fullStars) >= 0.5;
+                            $avgRating = $tour->average_rating ?? 0;
+                            $totalRatings = $tour->total_ratings ?? 0;
+                            $fullStars = floor($avgRating);
+                            $halfStar = ($avgRating - $fullStars) >= 0.5;
                             @endphp
                             @for($i = 1; $i <= 5; $i++)
-                                @if($totalRatings == 0)
-                                    <i class="far fa-star text-warning"></i>
+                                @if($totalRatings==0)
+                                <i class="far fa-star text-warning"></i>
                                 @elseif($i <= $fullStars)
                                     <i class="fas fa-star text-warning"></i>
-                                @elseif($i == $fullStars + 1 && $halfStar)
+                                    @elseif($i == $fullStars + 1 && $halfStar)
                                     <i class="fas fa-star-half-alt text-warning"></i>
-                                @else
+                                    @else
                                     <i class="far fa-star text-warning"></i>
-                                @endif
-                            @endfor
-                            <span style="margin-left: 8px;">{{ number_format($avgRating, 2) }}/5 trong {{ $totalRatings }} ĐÁNH GIÁ</span>
+                                    @endif
+                                    @endfor
+                                    <span style="margin-left: 8px;">{{ number_format($avgRating, 2) }}/5 trong {{ $totalRatings }} ĐÁNH GIÁ</span>
                         </div>
                     </div>
                     <div class="d-flex align-items-center">
@@ -49,7 +49,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-8 ftco-animate fadeInUp ftco-animated">
+            <div class="col-lg-8 ftco-animate fadeInUp ftco-animated mt-4">
                 @php
                 // Use only album images; ignore t_image for display
                 $album = [];
@@ -60,9 +60,8 @@
                 }
                 }
                 @endphp
-
                 @if(count($album) > 0)
-                <div id="tourCarousel" class="carousel slide" data-ride="carousel" data-interval="2000" data-pause="false">
+                <div id="tourCarousel" class="carousel slide" data-ride="carousel" data-interval="8000" data-pause="false">
                     <div class="carousel-inner">
                         @foreach($album as $index => $img)
                         <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
@@ -253,7 +252,6 @@
                 </div>
             </div> <!-- .col-md-8 -->
             <div class="col-lg-4">
-                <!-- Modified register-tour div with two buttons -->
                 <div class="register-tour">
                     @if($tour->t_sale > 0)
                     <p class="price-tour">
@@ -265,39 +263,69 @@
                     @else
                     <p class="price-tour">Giá từ : <span>{{ number_format($tour->t_price_adults, 0, ',', '.') }}</span> vnd</p>
                     @endif
-                    <div class="d-flex justify-content-center" style="gap:10px;">
-                        <a href="#" class="btn btn-secondary py-3 px-4" style="width:40%" data-toggle="modal" data-target="#contactModalTour">Liên Hệ</a>
-                        @if($tour->t_number_registered < $tour->t_number_guests)
-                            @if(Auth::guard('users')->check())
-                            <a href="{{ route('book.tour', ['id' => $tour->id, 'slug' => safeTitle($tour->t_title)]) }}" class="btn btn-primary py-3 px-4" style="width:40%">Đặt Tour</a>
-                            @else
-                            <a href="#" class="btn btn-primary py-3 px-4" style="width:40%" data-toggle="modal" data-target="#loginAlertModalTour">Đặt Tour</a>
-                            @endif
-                        @else
-                            <a href="{{ route('loi.loi') }}" class="btn btn-primary py-3 px-4" style="width:40%">Đã hết chỗ</a>
-                        @endif
-                    </div>
-                </div>
-                <!-- Added new Contact Modal for Tour -->
-                <div class="modal fade" id="contactModalTour" tabindex="-1" role="dialog" aria-labelledby="contactModalTourLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 500px;">
-                        <div class="modal-content">
-                            <div class="modal-header" style="border-bottom: none;">
-                                <h5 class="modal-title w-100 text-center" id="contactModalTourLabel" style="font-size: 1.3rem; font-weight: bold;">Liên Hệ</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="outline: none;">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body text-center" style="padding: 1.5rem; font-size: 1rem;">
-                                Chọn phương thức liên hệ:
-                                <div class="mt-2">
-                                    <button type="button" class="btn btn-primary mx-1" onclick="window.location.href='tel:{{ $hotline ?? '0773398244' }}';">Gọi điện</button>
-                                    <button type="button" class="btn btn-secondary mx-1" onclick="window.location.href='sms:{{ $hotline ?? '0773398244' }}';">SMS</button>
-                                </div>
-                            </div>
+                    @if($tour->t_number_registered < $tour->t_number_guests)
+                        @if(Auth::guard('users')->check())
+                        <!-- Row chứa ô lịch chọn ngày -->
+                        <div class="form-group">
+                            <label for="departure_date" style="font-size: 14px; position: relative;">
+                                Chọn ngày khởi hành
+                                <span style="color: red; position: absolute; top: -5px; right: -15px;">*</span>
+                            </label>
+                            <input type="date" id="departure_date" class="form-control" required>
+                            <div id="departure_date_error" style="color: red; display: none; margin-top: 5px;">Vui lòng chọn ngày khởi hành</div>
                         </div>
-                    </div>
+                        <!-- Row chứa 2 button: Liên Hệ và Đặt Tour -->
+                        <div class="d-flex justify-content-center" style="gap:10px;">
+                            <a href="#" class="btn btn-secondary py-3 px-4" style="width:40%" data-toggle="modal" data-target="#contactModalTour">Liên Hệ</a>
+                            <button type="button" class="btn btn-primary py-3 px-4" style="width:40%" onclick="bookTour()">Đặt Tour</button>
+                        </div>
+                        <!-- New error message displayed below the buttons -->
+
+                        @else
+                        <div class="d-flex justify-content-center" style="gap:10px;">
+                            <a href="#" class="btn btn-secondary py-3 px-4" style="width:40%" data-toggle="modal" data-target="#contactModalTour">Liên Hệ</a>
+                            <a href="#" class="btn btn-primary py-3 px-4" style="width:40%" data-toggle="modal" data-target="#loginAlertModalTour">Đặt Tour</a>
+                        </div>
+                        @endif
+                        @else
+                        <a href="{{ route('loi.loi') }}" class="btn btn-primary py-3 px-4" style="width:40%">Đã hết chỗ</a>
+                        @endif
                 </div>
+                <!-- New: JavaScript function để xử lý chuyển trang đặt tour -->
+                <script>
+                    // Parse available dates from PHP to JavaScript
+                    const availableDates = @json(\App\Helpers\Date::getAvailableDates($tour->t_start_date));
+
+                    function bookTour() {
+                        var date = document.getElementById('departure_date').value;
+                        if (!date) {
+                            document.getElementById('departure_date_error').style.display = "block";
+                            document.getElementById('departure_date_error').textContent = "Vui lòng chọn ngày khởi hành";
+                            return;
+                        }
+
+                        // Check if selected date is in available dates
+                        if (!availableDates.includes(date)) {
+                            document.getElementById('departure_date_error').style.display = "block";
+                            document.getElementById('departure_date_error').textContent = "Ngày bạn chọn không phải là ngày khởi hành của tour";
+                            return;
+                        }
+
+                        document.getElementById('departure_date_error').style.display = "none";
+                        window.location.href = "{{ route('book.tour', ['id' => $tour->id, 'slug' => safeTitle($tour->t_title)]) }}" + "?departure_date=" + encodeURIComponent(date);
+                    }
+
+                    // Add input event listener to validate date as user types/selects
+                    document.getElementById('departure_date').addEventListener('input', function(e) {
+                        const selectedDate = e.target.value;
+                        if (selectedDate && !availableDates.includes(selectedDate)) {
+                            document.getElementById('departure_date_error').style.display = "block";
+                            document.getElementById('departure_date_error').textContent = "Ngày khởi hành chưa bắt đầu";
+                        } else {
+                            document.getElementById('departure_date_error').style.display = "none";
+                        }
+                    });
+                </script>
                 @if ($tours->count() > 0)
                 <div class="bg-light sidebar-box ftco-animate fadeInUp ftco-animated related-tour">
                     <h3>Danh Sách Tour Liên Quan</h3>
