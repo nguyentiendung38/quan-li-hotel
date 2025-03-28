@@ -6,7 +6,7 @@ $booking = \App\Models\BookTour::find($payment->p_transaction_id);
 
 <head>
     <meta charset="utf-8">
-    <title>Thanh Toán Thành Công</title>
+    <title>Thanh Toán Online MOMO Thành Công</title>
     <style>
         body {
             margin: 0;
@@ -32,7 +32,8 @@ $booking = \App\Models\BookTour::find($payment->p_transaction_id);
         }
 
         .header {
-            background: linear-gradient(135deg, #3490dc, #2779bd);
+            background: linear-gradient(135deg, #0d6efd, #0a58ca);
+            /* Sử dụng màu xanh dương cho MoMo */
             padding: 20px;
             text-align: center;
             color: #fff;
@@ -65,7 +66,7 @@ $booking = \App\Models\BookTour::find($payment->p_transaction_id);
         .section h2 {
             margin: 0 0 10px;
             font-size: 20px;
-            color: #8e44ad;
+            color: #6c757d;
         }
 
         .fixed-table {
@@ -99,11 +100,11 @@ $booking = \App\Models\BookTour::find($payment->p_transaction_id);
         }
 
         .footer {
-            background-color: #f0f0f0;
+            background-color: #e9ecef;
             padding: 15px;
             text-align: center;
             font-size: 12px;
-            color: #888;
+            color: #6c757d;
         }
     </style>
 </head>
@@ -113,14 +114,14 @@ $booking = \App\Models\BookTour::find($payment->p_transaction_id);
         <div class="content">
             <!-- Header -->
             <div class="header">
-                <p>Cảm ơn quý khách đã sử dụng dịch vụ của chúng tôi, Booking của quý khách đã được thanh toán online thành công.</p>
+                <p>Cảm ơn quý khách đã sử dụng dịch vụ của chúng tôi, Booking của quý khách đã được thanh toán online MOMO thành công.</p>
             </div>
             <!-- Body -->
             <div class="body">
                 <!-- Phần căn giữa thông tin thanh toán -->
                 <div style="text-align: center;">
                     <h2>
-                        <b style="color:red; border:1px solid red; padding:2px 6px;">THANH TOÁN ONLINE VNPAY THÀNH CÔNG</b>
+                        <b style="color:red; border:1px solid red; padding:2px 6px;">THANH TOÁN ONLINE MMO THÀNH CÔNG</b>
                     </h2>
                     <p>Mã giao dịch: <strong>{{ $payment->p_transaction_code }}</strong> đã được xử lý thành công.</p>
                     <p><strong>Số tiền:</strong> {{ number_format($payment->p_money, 0, ',', '.') }} VND</p>

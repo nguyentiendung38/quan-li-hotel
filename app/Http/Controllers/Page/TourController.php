@@ -12,9 +12,11 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log; // Add this import
 use App\Models\Payment;
 use App\Mail\AdminBookingMail;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\MomoPaymentSuccessMail; // Thêm use statement này ở đầu file
 
 class TourController extends Controller
 {
@@ -123,7 +125,7 @@ class TourController extends Controller
             $params['b_tour_id'] = $id;
             $params['b_user_id'] = $user->id;
             $params['b_status'] = 1;
-            
+
             // Thêm ngày khởi hành vào params
             $params['departure_date'] = $request->departure_date;
 
@@ -146,7 +148,18 @@ class TourController extends Controller
                 // Cập nhật số lượng người đã đăng ký của tour
                 $tour->t_follow += $numberUser;
                 $tour->save();
+                // Gửi email tiếp nhận đặt tour
+                $mailuser = $user->email;
+                Mail::send('emailtiepnhan', [
+                    'user' => $user,
+                    'book' => $book,
+                    'tour' => $tour
+                ], function ($message) use ($mailuser) {
+                    $message->to($mailuser)
+                        ->subject('Tiếp nhận đặt tour');
+                });
             }
+
             DB::commit();
 
             // Nếu người dùng chọn "Thanh toán online" thì chuyển hướng sang trang VNPay
@@ -157,7 +170,7 @@ class TourController extends Controller
             return redirect()->route('page.home')->with('success', 'Cám ơn bạn đã đặt tour, chúng tôi sẽ liên hệ sớm.');
         } catch (Exception $exception) {
             DB::rollBack();
-            dd($exception->getMessage());
+            Log::error('Error booking tour: ' . $exception->getMessage());
             return redirect()->back()->with('error', 'Đã xảy ra lỗi khi lưu dữ liệu');
         }
     }
@@ -284,7 +297,6 @@ class TourController extends Controller
         }
     }
 
-
     public function vnPayReturn(Request $request)
     {
         // 1. Lấy các tham số từ URL
@@ -327,14 +339,145 @@ class TourController extends Controller
         }
     }
 
-
-
-    public function createOnepayPayment(Request $request)
+    // thanh toán bằng mmo
+    public function createMomoPayment(Request $request)
     {
-        // Xử lý thông tin thanh toán OnePay (nếu cần)
-        $bookId = $request->book_id;
-        $amount = $request->amount;
-        dd("Onepay payment processing for book_id: $bookId, amount: $amount");
+        try {
+            $bookId = session('book_id');
+            $booking = BookTour::find($bookId);
+            
+            if (!$booking) {
+                Log::error('Booking not found:', ['booking_id' => $bookId]);
+                return redirect()->back()->with('error', 'Không tìm thấy thông tin đặt tour');
+            }
+
+            $endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
+            $partnerCode = 'MOMOBKUN20180529';
+            $accessKey = 'klm05TvNBzhg7h7j';
+            $secretKey = 'at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa';
+            $orderInfo = "Thanh toán tour du lịch #" . $bookId;
+            $amount = $booking->b_total_money;
+            $orderId = $bookId . "_" . time();
+            $redirectUrl = route('payment.momo.callback'); // Thay đổi redirect URL
+            $ipnUrl = route('payment.momo.callback'); // Thay đổi IPN URL
+            
+            $extraData = "";
+            $requestId = time() . "";
+            $requestType = "payWithATM";
+
+            $rawHash = "accessKey=" . $accessKey . "&amount=" . $amount . "&extraData=" . $extraData . "&ipnUrl=" . $ipnUrl . "&orderId=" . $orderId . "&orderInfo=" . $orderInfo . "&partnerCode=" . $partnerCode . "&redirectUrl=" . $redirectUrl . "&requestId=" . $requestId . "&requestType=" . $requestType;
+            $signature = hash_hmac("sha256", $rawHash, $secretKey);
+
+            $data = [
+                'partnerCode' => $partnerCode,
+                'partnerName' => "Test",
+                "storeId" => "MomoTestStore",
+                'requestId' => $requestId,
+                'amount' => $amount,
+                'orderId' => $orderId,
+                'orderInfo' => $orderInfo,
+                'redirectUrl' => $redirectUrl,
+                'ipnUrl' => $ipnUrl,
+                'lang' => 'vi',
+                'extraData' => $extraData,
+                'requestType' => $requestType,
+                'signature' => $signature
+            ];
+
+            $result = $this->execPostRequest($endpoint, json_encode($data));
+            $jsonResult = json_decode($result, true);
+
+            if (isset($jsonResult['payUrl'])) {
+                Log::info('MOMO Payment processing for booking:', [
+                    'booking_id' => $bookId,
+                    'email' => $booking->b_email
+                ]);
+
+                // Tạo payment record với trạng thái pending
+                $payment = Payment::create([
+                    'p_transaction_id' => $bookId,
+                    'p_transaction_code' => $orderId,
+                    'p_user_id' => auth()->id() ?? 0,
+                    'p_money' => $amount,
+                    'p_note' => $orderInfo,
+                    'p_type' => 'MOMO',
+                    'p_status' => 0 // 0 = pending
+                ]);
+
+                return redirect()->to($jsonResult['payUrl']);
+            }
+
+            Log::error('MOMO Payment failed:', ['response' => $jsonResult]);
+            return redirect()->back()->with('error', 'Không thể kết nối tới MOMO');
+
+        } catch (\Exception $e) {
+            Log::error('MOMO Payment error:', ['error' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Đã xảy ra lỗi trong quá trình thanh toán');
+        }
+    }
+
+    public function momoCallback(Request $request)
+    {
+        // Kiểm tra kết quả trả về từ MOMO
+        if ($request->resultCode == '0') {
+            // Tìm payment record
+            $orderId = $request->orderId;
+            $payment = Payment::where('p_transaction_code', $orderId)->first();
+            
+            if ($payment) {
+                // Cập nhật trạng thái payment
+                $payment->update([
+                    'p_status' => 1,
+                    'p_code_momo' => $request->transId,
+                    'p_time' => now()
+                ]);
+
+                // Tìm booking
+                $booking = BookTour::find($payment->p_transaction_id);
+                if ($booking) {
+                    // Cập nhật trạng thái booking
+                    $booking->update(['b_status' => 2]); // 2 = đã thanh toán
+
+                    // Gửi email xác nhận
+                    try {
+                        Mail::to($booking->b_email)
+                            ->send(new MomoPaymentSuccessMail($payment));
+                        
+                        Log::info('MOMO payment success email sent', [
+                            'booking_id' => $booking->id,
+                            'email' => $booking->b_email
+                        ]);
+                    } catch (\Exception $e) {
+                        Log::error('Error sending MOMO success email', [
+                            'error' => $e->getMessage()
+                        ]);
+                    }
+                }
+
+                return redirect()->route('page.home')
+                    ->with('success', 'Thanh toán MOMO thành công');
+            }
+        }
+
+        return redirect()->route('page.home')
+            ->with('error', 'Thanh toán MOMO không thành công');
+    }
+
+    public function execPostRequest($url, $data)
+    {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($data)
+        ]);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        $result = curl_exec($ch); //execute post
+        curl_close($ch); //close connection
+        return $result;
     }
 
     public function comment(Request $request, $id)
@@ -398,10 +541,18 @@ class TourController extends Controller
 
         // Gửi email cho admin
         Mail::to('nguyendunghk789@gmail.com')->send(new AdminBookingMail($bookingData));
-        
+
         // Gửi email cho khách hàng
         Mail::to($validated['email'])->send(new \App\Mail\CustomerBookingMail($bookingData));
 
         return redirect()->back()->with('success', 'Đặt tour thành công.');
+    }
+
+    public function processPayment(Request $request, $id)
+    {
+        if ($request->get('payment_type') === 'MOMO') {
+            return $this->createMomoPayment($request);
+        }
+        return $this->createPayMent($request);
     }
 }
