@@ -80,7 +80,7 @@
                 </div>
                 @endif
                 <div class="content">
-                    <h2 class="mb-3"><i class="fa fa-info-circle" style="color: orange;"></i> Điểm nhấn của hành trình</h2>
+                    <h2 class="mb-2"><i class="fa fa-info-circle" style="color: orange;"></i> Điểm nhấn của hành trình</h2>
                     <table class="table table-bordered">
                         <tr>
                             <td width="30%">Hành trình </td>
@@ -265,30 +265,30 @@
                     @endif
                     @if($tour->t_number_registered < $tour->t_number_guests)
                         @if(Auth::guard('users')->check())
-                        <!-- Row chứa ô lịch chọn ngày -->
+                        <!-- Form group cho cả calendar và buttons -->
                         <div class="form-group">
                             <label for="departure_date" style="font-size: 14px; position: relative;">
                                 Chọn ngày khởi hành
                                 <span style="color: red; position: absolute; top: -5px; right: -15px;">*</span>
                             </label>
                             <input type="date" id="departure_date" class="form-control" required>
-                            <div id="departure_date_error" style="color: red; display: none; margin-top: 5px;">Vui lòng chọn ngày khởi hành</div>
+                            <div id="departure_date_error" style="color: red; display: none; margin-top: 5px;">
+                                Vui lòng chọn ngày khởi hành
+                            </div>
                         </div>
-                        <!-- Row chứa 2 button: Liên Hệ và Đặt Tour -->
-                        <div class="d-flex justify-content-center" style="gap:10px;">
-                            <a href="#" class="btn btn-secondary py-3 px-4" style="width:40%" data-toggle="modal" data-target="#contactModalTour">Liên Hệ</a>
-                            <button type="button" class="btn btn-primary py-3 px-4" style="width:40%" onclick="bookTour()">Đặt Tour</button>
+                        <!-- Buttons with same width as calendar -->
+                        <div class="d-flex justify-content-between" style="gap:10px;">
+                            <a href="#" class="btn btn-secondary py-3" style="width:48%" data-toggle="modal" data-target="#contactModalTour">Liên Hệ</a>
+                            <button type="button" class="btn btn-primary py-3" style="width:48%" onclick="bookTour()">Đặt Tour</button>
                         </div>
-                        <!-- New error message displayed below the buttons -->
-
                         @else
-                        <div class="d-flex justify-content-center" style="gap:10px;">
-                            <a href="#" class="btn btn-secondary py-3 px-4" style="width:40%" data-toggle="modal" data-target="#contactModalTour">Liên Hệ</a>
-                            <a href="#" class="btn btn-primary py-3 px-4" style="width:40%" data-toggle="modal" data-target="#loginAlertModalTour">Đặt Tour</a>
+                        <div class="d-flex justify-content-between" style="gap:10px;">
+                            <a href="#" class="btn btn-secondary py-3" style="width:48%" data-toggle="modal" data-target="#contactModalTour">Liên Hệ</a>
+                            <a href="#" class="btn btn-primary py-3" style="width:48%" data-toggle="modal" data-target="#loginAlertModalTour">Đặt Tour</a>
                         </div>
                         @endif
                         @else
-                        <a href="{{ route('loi.loi') }}" class="btn btn-primary py-3 px-4" style="width:40%">Đã hết chỗ</a>
+                        <a href="{{ route('loi.loi') }}" class="btn btn-primary py-3 w-100">Đã hết chỗ</a>
                         @endif
                 </div>
                 <!-- New: JavaScript function để xử lý chuyển trang đặt tour -->

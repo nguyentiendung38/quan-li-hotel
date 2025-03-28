@@ -237,6 +237,7 @@ Route::group(['namespace' => 'Page'], function () {
     Route::post('book/tourvnpay/{id}', [PageTourController::class, 'postBookTourVNPay'])->name('post.book.tour.vnpay');
 
     Route::get('/{id}/thanhtoan.html', [PageTourController::class, 'getFromPayMent'])->name('get.from.payment');
+    Route::post('/{id}/thanhtoan.html', [PageTourController::class, 'processPayment'])->name('process.payment');
     Route::post('/post/payment', [PageTourController::class, 'createPayMent'])->name('post.payment');
     Route::post('payment/online', [App\Http\Controllers\Page\TourController::class, 'createPayMent'])->name('payment.online');
     Route::get('vnpay/return', [PageTourController::class, 'vnPayReturn'])->name('vnpay.return');
@@ -320,3 +321,6 @@ Route::delete('/review/{id}', [\App\Http\Controllers\ReviewController::class, 'd
 
 // Add the following route:
 Route::post('/tour/booking', [App\Http\Controllers\Page\TourController::class, 'booking'])->name('tour.booking');
+
+// thanh toán mômo:
+Route::post('/payment/momo', [\App\Http\Controllers\Page\TourController::class, 'createMomoPayment'])->name('payment.momo');
