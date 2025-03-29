@@ -55,15 +55,14 @@ class RegisterController extends Controller
 
     public function postRegister(RegisterRequest $request)
     {
-        // Validate captcha
+        // Validate CAPTCHA
         $captchaResponse = $request->get('g-recaptcha-response');
-        if (!$captchaResponse) {
+        if(!$captchaResponse) {
             return redirect()->back()
                 ->withErrors(['g-recaptcha-response' => 'Vui lòng xác nhận captcha'])
                 ->withInput();
         }
-
-        if (!ReCaptcha::validateCaptcha($captchaResponse)) {
+        if(!ReCaptcha::validateCaptcha($captchaResponse)) {
             return redirect()->back()
                 ->withErrors(['g-recaptcha-response' => 'Xác thực captcha không thành công'])
                 ->withInput();
@@ -73,14 +72,16 @@ class RegisterController extends Controller
         try {
             $user = new User();
             $user->name = $request->name;
-            $user->email = $request->email ;
+            $user->email = $request->email;
             $user->phone = $request->phone;
             $user->address = $request->address;
             $user->password = bcrypt($request->password);
             $user->save();
             Auth::guard('users')->loginUsingId($user->id, true);
             \DB::commit();
-            return redirect()->route('page.home');
+            // Attach success flash message
+            return redirect()->route('page.home')
+                ->with('success', 'Bạn đã đăng ký tài khoản thành công');
         } catch (\Exception $exception) {
             \DB::rollBack();
             return redirect()->back()->with('error', 'Đã xảy ra lỗi không thể đăng ký tài khoản');

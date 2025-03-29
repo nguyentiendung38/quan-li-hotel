@@ -114,9 +114,9 @@
                         <label class="form-label">Mật Khẩu <span class="text-danger">*</span></label>
                         <div class="position-relative">
                             <i class="fas fa-lock input-icon"></i>
-                            <input id="register-password" type="password" 
-                                name="password" 
-                                class="form-control input-custom" 
+                            <input id="register-password" type="password"
+                                name="password"
+                                class="form-control input-custom"
                                 placeholder="Nhập mật khẩu" required>
                             <i class="far fa-eye toggle-password" data-target="register-password"></i>
                         </div>
@@ -126,16 +126,16 @@
                         <label class="form-label">Nhập Lại Mật Khẩu <span class="text-danger">*</span></label>
                         <div class="position-relative">
                             <i class="fas fa-lock input-icon"></i>
-                            <input id="register-password-confirm" type="password" 
-                                name="r_password" 
-                                class="form-control input-custom" 
+                            <input id="register-password-confirm" type="password"
+                                name="r_password"
+                                class="form-control input-custom"
                                 placeholder="Xác nhận mật khẩu" required>
                             <i class="far fa-eye toggle-password" data-target="register-password-confirm"></i>
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <div class="g-recaptcha" data-sitekey="6LekdgMrAAAAAM-p7J94vjei6OfnAZyOv45UM3mK"></div>
+                        <div class="g-recaptcha" data-sitekey="6LcUvAMrAAAAAFQscgydc1bLv9MPA89pCZGlt74L"></div>
                     </div>
                 </form>
             </div>
@@ -150,10 +150,10 @@
 </div>
 
 <script>
-    // Kiểm tra reCAPTCHA trước khi submit form
+    // Function to validate reCAPTCHA before submission
     function validateForm() {
-        var captchaResponse = grecaptcha.getResponse();
-        if (captchaResponse.length === 0) {
+        var response = grecaptcha.getResponse();
+        if(response.length === 0) {
             alert('Vui lòng xác nhận CAPTCHA!');
             return false;
         }
@@ -166,19 +166,15 @@
             toggle.addEventListener('click', function() {
                 const targetId = this.getAttribute('data-target');
                 const passwordInput = document.getElementById(targetId);
-                
-                // Toggle type
                 const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
                 passwordInput.setAttribute('type', type);
-                
-                // Toggle icon
                 this.classList.toggle('fa-eye');
                 this.classList.toggle('fa-eye-slash');
             });
         });
 
-        // Reset form và reCAPTCHA khi modal được đóng
-        $('#registerModal').on('hidden.bs.modal', function () {
+        // Reset form & reCAPTCHA when modal is closed
+        $('#registerModal').on('hidden.bs.modal', function() {
             $('#registerForm')[0].reset();
             grecaptcha.reset();
             $('.modal-backdrop').remove();
