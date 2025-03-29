@@ -5,12 +5,12 @@
     <div class="row justify-content-center w-100">
         <div class="col-md-6">
             <div class="card text-center"
-                 style="background-color: transparent;
+                style="background-color: transparent;
                         border: 1px solid rgb(16, 89, 62);
                         border-radius: 14px;
                         color: #fff;">
                 <div class="card-header"
-                     style="background-color: transparent;
+                    style="background-color: transparent;
                             border-bottom: none; 
                             color: #fff;">
                     <h4 class="mb-0">{{ __('Đặt Lại Mật Khẩu') }}</h4>
@@ -26,14 +26,14 @@
                                 {{ __('Địa chỉ Email') }}
                             </label>
                             <input id="email" type="email"
-                                   class="form-control @error('email') is-invalid @enderror"
-                                   name="email"
-                                   value="{{ $email ?? old('email') }}"
-                                   required autocomplete="email" autofocus>
+                                class="form-control @error('email') is-invalid @enderror"
+                                name="email"
+                                value="{{ $email ?? old('email') }}"
+                                required autocomplete="email" autofocus>
                             @error('email')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
                             @enderror
                         </div>
 
@@ -43,13 +43,13 @@
                                 {{ __('Mật Khẩu Mới') }}
                             </label>
                             <input id="password" type="password"
-                                   class="form-control @error('password') is-invalid @enderror"
-                                   name="password"
-                                   required autocomplete="new-password">
+                                class="form-control @error('password') is-invalid @enderror"
+                                name="password"
+                                required autocomplete="new-password">
                             @error('password')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
                             @enderror
                         </div>
 
@@ -59,9 +59,9 @@
                                 {{ __('Xác Nhận Mật Khẩu') }}
                             </label>
                             <input id="password-confirm" type="password"
-                                   class="form-control"
-                                   name="password_confirmation"
-                                   required autocomplete="new-password">
+                                class="form-control"
+                                name="password_confirmation"
+                                required autocomplete="new-password">
                         </div>
 
                         <!-- Nút Submit (căn giữa) -->
