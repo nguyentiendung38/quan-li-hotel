@@ -20,7 +20,7 @@ class PaymentSuccess extends Mailable
     
     public function build()
     {
-        return $this->subject('Qúy khách đã thanh toán thành công')
+        return $this->subject('Thanh toán VNPAY thành công')
                     ->view('emails.payment_success');
     }
 }

@@ -118,7 +118,7 @@
           <p>Ngày booking: <b>{{$bookTour->created_at}}</b></p>
           <p>Ngày Huỷ: <b>{{$bookTour->updated_at}}</b></p>
           <p style="color:red; font-weight:bold;">
-            Nếu có thắc mắc, quý khách vui lòng liên hệ kq909981@gmail.com
+            Nếu có thắc mắc, quý khách vui lòng liên hệ nguyendunghk789@gmail.com
           </p>
         </div>
 
