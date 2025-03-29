@@ -1,51 +1,100 @@
-<nav class="navbar navbar-expand-lg navbar-light sticky-top" id="ftco-navbar" style="box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-    <!-- Chèn CSS tùy chỉnh -->
+<nav class="navbar navbar-expand-lg navbar-light sticky-top modern-navbar" id="ftco-navbar">
     <style>
-        /* Nền gradient cho navbar */
-        #ftco-navbar {
-            background: linear-gradient(to right, #28d3c6, #28a8cf);
+        .modern-navbar {
+            background: linear-gradient(90deg, #007bff, #00c6ff);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem 1rem;
         }
 
-        /* Thiết lập font chữ, màu sắc và hiệu ứng border-bottom cho các mục menu */
-        .navbar-nav .nav-link {
-            font-size: 16px;
-            color: #ffffff !important;
+        .modern-navbar .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .modern-navbar .navbar-brand span {
+            font-size: 0.9rem;
+            margin-left: 8px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .modern-navbar .navbar-toggler {
+            border: none;
+        }
+
+        .modern-navbar .navbar-toggler-icon {
+            filter: invert(100%);
+        }
+
+        .modern-navbar .navbar-nav .nav-link {
+            font-size: 0.9rem;
+            color: #fff !important;
             text-transform: uppercase;
+            margin: 0 10px;
             position: relative;
+            transition: color 0.3s, border-bottom 0.3s;
             border-bottom: 2px solid transparent;
-            /* Dự phòng không gian cho underline */
-            transition: border-color 0.3s;
         }
 
-        /* Khi hover hoặc active thì đổi màu border-bottom */
-        .navbar-nav .nav-link:hover,
-        .navbar-nav .nav-item.active .nav-link {
-            border-bottom-color: #ffffff;
+        .modern-navbar .navbar-nav .nav-link:hover,
+        .modern-navbar .navbar-nav .nav-item.active .nav-link {
+            color: #fff;
+            border-bottom: 2px solid #fff;
         }
 
-        /* Định dạng cho dropdown */
-        .navbar .dropdown-toggle {
-            background-color: transparent;
-            color: #ffffff;
+        .modern-navbar .dropdown-menu {
+            border: none;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 0;
+            background: white;
+            min-width: 200px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modern-navbar .dropdown-item {
+            font-size: 0.9rem;
+            padding: 0.5rem 1.5rem;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .modern-navbar .dropdown-item:hover {
+            background: #f8f9fa;
+            color: #007bff;
+            transform: translateX(5px);
+        }
+
+        .modern-navbar .nav-item.dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 
     <div class="container">
-        <!-- Logo / Thương hiệu -->
         <a class="navbar-brand" href="{{ route('page.home') }}">
             DU LỊCH HUẾ
-            <span style="font-size: 0.9rem; margin-left: 5px; color: #4a4a4a;">DU LỊCH HUẾ</span>
+            <span>DU LỊCH HUẾ</span>
         </a>
 
-        <!-- Nút toggle khi thu nhỏ màn hình -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="oi oi-menu"></span> Menu
+            <span class="navbar-toggler-icon"></span> Menu
         </button>
 
-        <!-- Menu chính -->
         <div class="collapse navbar-collapse" id="ftco-nav">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item {{ request()->is('/') ? 'active' : ''}}">
+                <li class="nav-item {{ request()->is('/') ? 'active' : '' }}">
                     <a href="{{ route('page.home') }}" class="nav-link">TRANG CHỦ</a>
                 </li>
                 <li class="nav-item {{ request()->is('tour.html') || request()->is('tour/*') ? 'active' : '' }}">
@@ -63,7 +112,6 @@
                 <li class="nav-item {{ request()->is('lien-he.html') ? 'active' : '' }}">
                     <a href="{{ route('contact.index') }}" class="nav-link">LIÊN HỆ</a>
                 </li>
-
                 @if (Auth::guard('users')->check())
                 @php $user = Auth::guard('users')->user(); @endphp
                 <li class="nav-item dropdown {{ request()->is('thong-tin-tai-khoan.html') || request()->is('thay-doi-mat-khau.html') || request()->is('danh-sach-tour.html') ? 'active' : '' }}">
@@ -87,3 +135,20 @@
 
 @include('page.common.login-modal')
 @include('page.common.register-modal')
+
+<script>
+    $(document).ready(function() {
+        // Initialize Bootstrap dropdowns
+        $('.dropdown-toggle').dropdown();
+
+        // Add hover functionality for dropdowns
+        $('.nav-item.dropdown').hover(
+            function() {
+                $(this).find('.dropdown-menu').stop(true, true).delay(200).fadeIn(300);
+            },
+            function() {
+                $(this).find('.dropdown-menu').stop(true, true).delay(200).fadeOut(300);
+            }
+        );
+    });
+</script>

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\RegisterRequest;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\ReCaptcha;
 
 class RegisterController extends Controller
 {
@@ -54,6 +55,20 @@ class RegisterController extends Controller
 
     public function postRegister(RegisterRequest $request)
     {
+        // Validate captcha
+        $captchaResponse = $request->get('g-recaptcha-response');
+        if (!$captchaResponse) {
+            return redirect()->back()
+                ->withErrors(['g-recaptcha-response' => 'Vui lòng xác nhận captcha'])
+                ->withInput();
+        }
+
+        if (!ReCaptcha::validateCaptcha($captchaResponse)) {
+            return redirect()->back()
+                ->withErrors(['g-recaptcha-response' => 'Xác thực captcha không thành công'])
+                ->withInput();
+        }
+
         \DB::beginTransaction();
         try {
             $user = new User();
