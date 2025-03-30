@@ -15,9 +15,6 @@ use App\Mail\PagePasswordResetEmail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
-
-
-
 class AccountController extends Controller
 {
     public function __construct(BookTour $bookTour)
@@ -38,23 +35,34 @@ class AccountController extends Controller
     {
         DB::beginTransaction();
         try {
-            $user =  User::find(Auth::guard('users')->user()->id);
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->phone = $request->phone;
-            $user->address = $request->address;
+            $user = User::find(Auth::guard('users')->user()->id);
+            $data = $request->except('_token', 'images');
 
-            if (isset($request->images) && !empty($request->images)) {
-                $image = upload_image('images');
-                if ($image['code'] == 1)
-                    $user->avatar = $image['name'];
+            if ($request->hasFile('images')) {
+                $file = $request->file('images');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path_upload = 'uploads/users/';
+                
+                // Create directory if it doesn't exist
+                if (!file_exists(public_path($path_upload))) {
+                    mkdir(public_path($path_upload), 0755, true);
+                }
+
+                // Delete old avatar if exists
+                if ($user->avatar && file_exists(public_path($user->avatar))) {
+                    unlink(public_path($user->avatar));
+                }
+
+                // Upload file mới
+                $file->move(public_path($path_upload), $filename);
+                $data['avatar'] = $path_upload . $filename;
             }
-
-            $user->save();
+            $user->update($data);
             DB::commit();
-            return redirect()->back()->with('success', 'Cập nhật thành công.');
+            return redirect()->back()->with('success', 'Cập nhật thông tin thành công');
         } catch (\Exception $exception) {
             DB::rollBack();
+            \Log::error('Error updating account: ' . $exception->getMessage());
             return redirect()->back()->with('error', 'Đã xảy ra lỗi không thể cập nhật tài khoản');
         }
     }
@@ -68,7 +76,7 @@ class AccountController extends Controller
     {
         DB::beginTransaction();
         try {
-            $user =  User::find(Auth::guard('users')->user()->id);
+            $user = User::find(Auth::guard('users')->user()->id);
             $user->password = bcrypt($request->password);
             $user->save();
             DB::commit();
