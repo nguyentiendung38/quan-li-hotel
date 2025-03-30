@@ -64,7 +64,8 @@
         border-radius: 20px;
         box-shadow: var(--box-shadow);
         padding: 2rem;
-        margin-top: 43px; /* Changed from -50px to 30px to move the form down */
+        margin-top: 43px;
+        /* Changed from -50px to 30px to move the form down */
         position: relative;
         z-index: 1;
         backdrop-filter: blur(8px);
@@ -99,18 +100,13 @@
         margin: 0 auto;
     }
 
-    .avatar-wrapper img {
-        width: 100%;
-        height: 100%;
+    .avatar-preview {
+        width: 150px !important;
+        height: 150px !important;
         object-fit: cover;
         border-radius: 50%;
         border: 3px solid #fff;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s;
-    }
-
-    .avatar-wrapper img:hover {
-        transform: scale(1.05);
     }
 
     .avatar-upload {
@@ -185,11 +181,13 @@
                         <div class="row">
                             <div class="col-md-3 mb-4 mb-md-0">
                                 <div class="avatar-wrapper mb-3">
-                                    <img src="{{ $user->avatar ? asset(pare_url_file($user->avatar)) : asset('page/images/user_default.png') }}" alt="Avatar">
+                                    <img src="{{ $user->avatar ? asset($user->avatar) : asset('page/images/user_default.png') }}"
+                                        alt="Avatar" id="preview-avatar"
+                                        class="avatar-preview">
                                     <label for="avatar" class="avatar-upload mb-0">
                                         <i class="fas fa-camera"></i>
                                     </label>
-                                    <input type="file" id="avatar" name="images" class="d-none">
+                                    <input type="file" id="avatar" name="images" class="d-none" accept="image/*">
                                 </div>
                             </div>
 
@@ -246,12 +244,11 @@
 @section('script')
 <script>
     $(document).ready(function() {
-        // Preview avatar image before upload
         $("#avatar").change(function() {
             if (this.files && this.files[0]) {
                 var reader = new FileReader();
                 reader.onload = function(e) {
-                    $('.avatar-wrapper img').attr('src', e.target.result);
+                    $('#preview-avatar').attr('src', e.target.result);
                 }
                 reader.readAsDataURL(this.files[0]);
             }

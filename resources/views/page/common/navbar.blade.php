@@ -26,7 +26,16 @@
             filter: invert(100%);
         }
 
-        .modern-navbar .navbar-nav .nav-link {
+        .modern-navbar .navbar-nav {
+            align-items: center;
+            /* Align all nav items vertically */
+        }
+
+        .modern-navbar .nav-link {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding: 0.5rem 1rem !important;
             font-size: 0.9rem;
             color: #fff !important;
             text-transform: uppercase;
@@ -50,6 +59,9 @@
             background: white;
             min-width: 200px;
             animation: fadeIn 0.3s ease;
+            position: absolute;
+            right: -60px; /* Thêm vào để lùi menu sang phải */
+            left: -25px; /* Đảm bảo không bị ảnh hưởng bởi căn trái */
         }
 
         .modern-navbar .dropdown-item {
@@ -57,6 +69,16 @@
             padding: 0.5rem 1.5rem;
             color: #333;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modern-navbar .dropdown-item i {
+            font-size: 1.1rem;
+            color: #007bff;
+            width: 20px;
+            text-align: center;
         }
 
         .modern-navbar .dropdown-item:hover {
@@ -79,6 +101,32 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+
+        .user-avatar-wrapper {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 0;
+            /* Remove any margin */
+        }
+
+        .modern-navbar .navbar-nav .nav-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .modern-navbar .dropdown-toggle::after {
+            margin-left: 0.5rem;
         }
     </style>
 
@@ -115,17 +163,22 @@
                 @if (Auth::guard('users')->check())
                 @php $user = Auth::guard('users')->user(); @endphp
                 <li class="nav-item dropdown {{ request()->is('thong-tin-tai-khoan.html') || request()->is('thay-doi-mat-khau.html') || request()->is('danh-sach-tour.html') ? 'active' : '' }}">
-                    <a href="#" class="nav-link dropdown-toggle" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        TÀI KHOẢN
+                    <a href="#" class="nav-link dropdown-toggle user-avatar-wrapper" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img src="{{ $user->avatar ? asset($user->avatar) : asset('page/images/user_default.png') }}"
+                            alt="Avatar" class="user-avatar">
                     </a>
                     <div class="dropdown-menu" aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="{{ route('info.account') }}">Thông tin tài khoản</a>
-                        <a class="dropdown-item" href="{{ route('page.user.logout') }}">ĐĂNG XUẤT</a>
+                        <a class="dropdown-item" href="{{ route('info.account') }}">
+                            <i class="fas fa-user-circle"></i>Thông tin tài khoản
+                        </a>
+                        <a class="dropdown-item" href="{{ route('page.user.logout') }}">
+                            <i class="fas fa-sign-out-alt"></i>ĐĂNG XUẤT
+                        </a>
                     </div>
                 </li>
                 @else
                 <li class="nav-item {{ request()->is('dang-nhap.html') ? 'active' : '' }}">
-                    <a href="#" class="nav-link" data-toggle="modal" data-target="#loginModal">TÀI KHOẢN</a>
+                    <a href="#" class="nav-link" data-toggle="modal" data-target="#loginModal">ĐĂNG NHẬP</a>
                 </li>
                 @endif
             </ul>
