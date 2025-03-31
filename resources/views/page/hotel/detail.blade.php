@@ -8,7 +8,7 @@
         background-position: center;
         background-size: cover;
     }
-    
+
     .hero-wrap::before {
         content: '';
         position: absolute;
@@ -16,7 +16,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0,0,0,0.4);
+        background: rgba(0, 0, 0, 0.4);
     }
 
     .hotel-header {
@@ -61,9 +61,9 @@
     .info-table {
         background: #fff;
         border-radius: 10px;
-        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     }
-    
+
     .info-table td {
         padding: 15px;
         border: none;
@@ -74,14 +74,14 @@
         background: #fff;
         padding: 15px;
         border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         margin-bottom: 15px;
         transition: all 0.3s ease;
     }
 
     .facility-item:hover {
         transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
 
     .facility-icon {
@@ -93,7 +93,7 @@
         background: #fff;
         padding: 25px;
         border-radius: 15px;
-        box-shadow: 0 0 30px rgba(0,0,0,0.1);
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
     }
 
     .price-amount {
@@ -118,14 +118,14 @@
 
     .action-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
 
     .rating-card {
         background: #fff;
         padding: 20px;
         border-radius: 10px;
-        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     }
 
     .rating-stars {
@@ -137,12 +137,16 @@
         background: #fff;
         padding: 25px;
         border-radius: 10px;
-        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     }
 
     .map-container iframe {
         border-radius: 15px;
-        box-shadow: 0 0 30px rgba(0,0,0,0.1);
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .ftco-section {
+        margin-bottom: 40px; /* Add spacing before footer */
     }
 </style>
 @stop
@@ -155,7 +159,7 @@
                 <p class="breadcrumbs"><span class="mr-2"><a href="{{ route('page.home') }}">Trang chủ <i class="fa fa-chevron-right"></i></a></span> <span>Khách sạn <i class="fa fa-chevron-right"></i></span></p>
                 <h1 class="mb-0 bread">Khách Sạn</h1>
             </div>
-        </div>
+        </div>style="margin-bottom: 40px;">
     </div>
 </section>
 
@@ -174,15 +178,15 @@
                         @endphp
                         @for($i = 1; $i <= 5; $i++)
                             @if($totalRatings==0)
-                                <i class="far fa-star text-warning"></i>
+                            <i class="far fa-star text-warning"></i>
                             @elseif($i <= $fullStars)
                                 <i class="fas fa-star text-warning"></i>
-                            @elseif($i == $fullStars + 1 && $halfStar)
+                                @elseif($i == $fullStars + 1 && $halfStar)
                                 <i class="fas fa-star-half-alt text-warning"></i>
-                            @else
+                                @else
                                 <i class="far fa-star text-warning"></i>
-                            @endif
-                        @endfor
+                                @endif
+                                @endfor
                     </div>
                     <span class="rating-count">{{ number_format($avgRating, 2) }}/5 trong {{ $totalRatings }} ĐÁNH GIÁ</span>
                 </div>
@@ -255,46 +259,46 @@
                     <h2 class="section-title"><i class="fas fa-concierge-bell" style="color: orange;"></i> Tiện nghi</h2>
                     <div class="row">
                         @if(!empty($hotel->h_facilities))
-                            @foreach($hotel->h_facilities as $facility)
-                            <div class="col-md-4">
-                                <div class="facility-item">
-                                    <div class="d-flex align-items-center">
-                                        @switch($facility)
-                                            @case('Wifi miễn phí')
-                                                <i class="fas fa-wifi text-primary"></i>
-                                                @break
-                                            @case('Bãi đậu xe')
-                                                <i class="fas fa-parking text-primary"></i>
-                                                @break
-                                            @case('Hồ bơi')
-                                                <i class="fas fa-swimming-pool text-primary"></i>
-                                                @break
-                                            @case('Nhà hàng')
-                                                <i class="fas fa-utensils text-primary"></i>
-                                                @break
-                                            @case('Phòng tập gym')
-                                                <i class="fas fa-dumbbell text-primary"></i>
-                                                @break
-                                            @case('Spa & Massage')
-                                                <i class="fas fa-spa text-primary"></i>
-                                                @break
-                                            @case('Điều hòa')
-                                                <i class="fas fa-snowflake text-primary"></i>
-                                                @break
-                                            @case('Phòng không hút thuốc')
-                                                <i class="fas fa-smoking-ban text-primary"></i>
-                                                @break
-                                            @case('Thang máy')
-                                                <i class="fas fa-level-up-alt text-primary"></i>
-                                                @break
-                                            @default
-                                                <i class="fas fa-check text-primary"></i>
-                                        @endswitch
-                                        <span class="ml-2">{{ $facility }}</span>
-                                    </div>
+                        @foreach($hotel->h_facilities as $facility)
+                        <div class="col-md-4">
+                            <div class="facility-item">
+                                <div class="d-flex align-items-center">
+                                    @switch($facility)
+                                    @case('Wifi miễn phí')
+                                    <i class="fas fa-wifi text-primary"></i>
+                                    @break
+                                    @case('Bãi đậu xe')
+                                    <i class="fas fa-parking text-primary"></i>
+                                    @break
+                                    @case('Hồ bơi')
+                                    <i class="fas fa-swimming-pool text-primary"></i>
+                                    @break
+                                    @case('Nhà hàng')
+                                    <i class="fas fa-utensils text-primary"></i>
+                                    @break
+                                    @case('Phòng tập gym')
+                                    <i class="fas fa-dumbbell text-primary"></i>
+                                    @break
+                                    @case('Spa & Massage')
+                                    <i class="fas fa-spa text-primary"></i>
+                                    @break
+                                    @case('Điều hòa')
+                                    <i class="fas fa-snowflake text-primary"></i>
+                                    @break
+                                    @case('Phòng không hút thuốc')
+                                    <i class="fas fa-smoking-ban text-primary"></i>
+                                    @break
+                                    @case('Thang máy')
+                                    <i class="fas fa-level-up-alt text-primary"></i>
+                                    @break
+                                    @default
+                                    <i class="fas fa-check text-primary"></i>
+                                    @endswitch
+                                    <span class="ml-2">{{ $facility }}</span>
                                 </div>
                             </div>
-                            @endforeach
+                        </div>
+                        @endforeach
                         @endif
                     </div>
 
@@ -323,7 +327,7 @@
                                         @else
                                         <i class="fa fa-star-o text-warning"></i>
                                         @endif
-                                    @endfor
+                                        @endfor
                                 </div>
                                 <div class="total-ratings">({{ $hotel->total_ratings }} đánh giá)</div>
                             </div>
@@ -417,7 +421,7 @@
                                 <div class="price-section p-4 border-bottom">
                                     @if($hotel->h_sale > 0)
                                     <div class="text-center">
-                                        <p class="text-muted mb-1">Giá gốc: 
+                                        <p class="text-muted mb-1">Giá gốc:
                                             <del class="text-secondary">{{ number_format($hotel->h_price, 0, ',', '.') }} vnđ</del>
                                         </p>
                                         <div class="price-amount mb-2">
@@ -437,9 +441,9 @@
                                         <a href="#" class="btn btn-secondary py-3" style="width:48%; border-radius: 25px;" data-toggle="modal" data-target="#contactModal">
                                             <i class="fas fa-phone-alt"></i> Liên hệ
                                         </a>
-                                        <a href="{{ route('hotel.booking.form', ['id' => $hotel->id, 'slug' => Str::slug($hotel->h_name)]) }}" 
-                                           class="btn btn-primary py-3" 
-                                           style="width:48%; border-radius: 25px;">
+                                        <a href="{{ route('hotel.booking.form', ['id' => $hotel->id, 'slug' => Str::slug($hotel->h_name)]) }}"
+                                            class="btn btn-primary py-3"
+                                            style="width:48%; border-radius: 25px;">
                                             <i class="fas fa-calendar-check"></i> Đặt phòng
                                         </a>
                                     </div>
@@ -455,7 +459,7 @@
                             <div class="related-hotels">
                                 <?php $itemHotel = 'item-related-tour' ?>
                                 @foreach($hotels as $relatedHotel)
-                                    @include('page.common.itemHotel', compact('relatedHotel', 'itemHotel'))
+                                @include('page.common.itemHotel', compact('relatedHotel', 'itemHotel'))
                                 @endforeach
                             </div>
                         </div>
