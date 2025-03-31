@@ -97,29 +97,28 @@
             <!-- Body -->
             <div class="body">
                 <h2>
-                    <b style="color:red; border:1px solid red; padding:2px 6px;">ĐẶT PHÒNG ĐÃ ĐƯỢC THANH TOÁN</b>
+                    <b style="color:red; border:1px solid red; padding:2px 6px;">ĐẶT PHÒNG ĐÃ ĐƯỢC TIẾP NHẬN</b>
                 </h2>
-                <!-- Thông tin khách sạn -->
+                <!-- Thông tin Khách Sạn -->
                 <div class="section">
                     <p>Mã đặt phòng: <b class="important">{{ $booking->id }}</b></p>
                     <p>Tên khách sạn: <b>{{ $hotel->h_name }}</b></p>
                     <p>Địa chỉ khách sạn: <b>{{ $hotel->h_address }}</b></p>
                     <p>Loại phòng: <b>{{ $hotel->room_type_name }}</b></p>
                 </div>
-                <!-- Thông tin đặt phòng -->
+                <!-- Thông tin Booking -->
                 <div class="section">
-                    <p>Ngày nhận phòng: <b>{{ $bookRoom->checkin_date }}</b></p>
-                    <p>Ngày trả phòng: <b>{{ $bookRoom->checkout_date }}</b></p>
-                    <p>Số đêm: <b>{{ $bookRoom->nights }}</b></p>
-                    <p>Số phòng: <b>{{ $bookRoom->rooms }}</b></p>
-                    <p>Số người: <b>{{ $bookRoom->guests }}</b></p>
-                    @if($bookRoom->coupon)
-                    <p>Mã giảm giá: <b>{{ $bookRoom->coupon }}</b> (Được giảm 5%)</p>
-                    @endif
-                    <p>Tổng tiền sau giảm giá: <b>{{ number_format($bookRoom->total_price_with_discount, 0, ',', '.') }} VNĐ</b></p>
-                    <p>Thời hạn thanh toán: <b>Cảm ơn quý khách đã sử dụng dịch vụ của chúng tôi.</b></p>
+                    <p>Ngày nhận phòng: <b>{{ \Carbon\Carbon::parse($booking->checkin_date)->format('d/m/Y') }}</b></p>
+                    <p>Ngày trả phòng: <b>{{ \Carbon\Carbon::parse($booking->checkout_date)->format('d/m/Y') }}</b></p>
+                    <p>Số đêm: <b>{{ $booking->nights }}</b></p>
+                    <p>Số phòng: <b>{{ $booking->rooms }}</b></p>
+                    <p>Số khách: <b>{{ $booking->guests }}</b></p>
+                    <p>Tổng giá: <b>{{ number_format($totalPrice, 0, ',', '.') }} VNĐ</b></p>
+                    <p>Ngày đặt phòng: <b>{{ $booking->created_at->format('d/m/Y H:i') }}</b></p>
+                    <p>Thời hạn xác nhận: <b>3 ngày sau đặt phòng</b></p>
+                    <p class="important">Quý khách vui lòng nhớ mã đặt phòng để thuận tiện cho các giao dịch sau này</p>
                 </div>
-                <!-- Thông tin khách hàng -->
+                <!-- Thông tin Khách hàng -->
                 <div class="section">
                     <p>Họ tên: <b>{{ $bookRoom->name }}</b></p>
                     <p>Phone: <b>{{ $bookRoom->phone }}</b></p>
@@ -129,7 +128,7 @@
             </div>
             <!-- Footer -->
             <div class="footer">
-                &copy; 2025 MyHotel. Mọi quyền được bảo lưu.
+                © 2025 Hotel Booking. All rights reserved.
             </div>
         </div>
     </div>

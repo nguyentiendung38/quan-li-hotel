@@ -255,6 +255,38 @@
     .modal-content::-webkit-scrollbar-thumb:hover {
         background: #555;
     }
+
+    .rating-info {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .stats-container {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+    }
+
+    .view-count {
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+
+    .view-count i {
+        margin-right: 8px;
+        font-size: 16px;
+    }
+
+    .stars-row {
+        margin-bottom: 0;
+        line-height: 1;
+    }
+
+    .rating-count {
+        white-space: nowrap;
+    }
 </style>
 @stop
 @section('seo')
@@ -274,7 +306,7 @@
     <div class="container">
         <div class="tour-header">
             <h2 class="mb-3">{{ $tour->t_title }}</h2>
-            <div class="d-flex align-items-center" style="gap: 30px;">
+            <div class="stats-container">
                 <div class="rating-info">
                     <div class="stars-row">
                         @php
@@ -297,9 +329,9 @@
                     </div>
                     <span class="rating-count">{{ number_format($avgRating, 2) }}/5 trong {{ $totalRatings }} ĐÁNH GIÁ</span>
                 </div>
-                <div class="d-flex align-items-center">
+                <div class="view-count">
                     <i class="fa fa-eye"></i>
-                    <span style="margin-left: 8px;">{{ $tour->t_view }} lượt xem</span>
+                    <span>{{ $tour->t_view }} lượt xem</span>
                 </div>
             </div>
         </div>

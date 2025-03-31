@@ -37,7 +37,7 @@ class Hotel extends Model
         'h_room_type', // Added room type field for mass assignment
         'h_facilities'
     ];
-
+ 
     // Thêm mapping tiện nghi
     public static $facilityNames = [
         'wifi' => 'Wifi miễn phí',

@@ -297,7 +297,16 @@ Route::group(['namespace' => 'Page'], function () {
     // Thêm route cho đặt phòng khách sạn
     Route::post('/hotel/booking', [App\Http\Controllers\Page\HotelController::class, 'booking'])
         ->name('hotel.booking');
+
+    // Sửa lại routes cho đặt phòng khách sạn
+    Route::get('/dat-phong/{id}/{slug?}.html', [PageHotelController::class, 'bookingForm'])
+        ->name('hotel.booking.form');
+    
+    Route::post('/dat-phong/process/{id}', [PageHotelController::class, 'processBooking'])
+        ->name('hotel.booking.process');
 });
+
+
 // contack email
 Route::post('/gui-lien-he', [ContactController::class, 'send'])->name('contact.send');
 

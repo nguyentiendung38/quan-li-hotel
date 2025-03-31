@@ -1,139 +1,136 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 
 <head>
-    <meta charset="utf-8">
-    <title>Đặt phòng đã xác nhận</title>
+    <meta charset="UTF-8">
+    <title>Phiếu Tiếp Nhận Đặt Phòng Khách Sạn</title>
     <style>
-        /* RESET CƠ BẢN VÀ NỀN */
+        /* Thiết lập cơ bản cho toàn trang */
         body {
             margin: 0;
             padding: 0;
-            background-color: rgb(116, 112, 112);
-            font-family: Arial, sans-serif;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
         }
 
-        /* CONTAINER CHÍNH */
+        /* Bao ngoài */
         .container {
+            width: 100%;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        /* Khối chính chứa nội dung */
+        .content {
             max-width: 600px;
-            margin: 30px auto;
+            margin: 0 auto;
             background-color: #ffffff;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* PHẦN HEADER */
+        /* Header với nền gradient xanh, chữ trắng */
         .header {
-            background-color: #1E88E5;
-            color: #ffffff;
+            background: linear-gradient(135deg, #3490dc, #2779bd);
             padding: 20px;
             text-align: center;
+            color: #fff;
         }
 
-        .header h1 {
+        .header h4 {
             margin: 0;
-            font-size: 22px;
+            line-height: 1.4;
         }
 
-        /* PHẦN NỘI DUNG */
-        .content {
-            padding: 20px;
+        /* Nội dung chính */
+        .body {
+            padding: 30px;
+            line-height: 1.6;
         }
 
-        .content p {
-            margin: 0 0 15px;
-            line-height: 1.5;
-        }
-
-        /* DANH SÁCH THÔNG TIN BOOKING */
-        .booking-details {
-            list-style: none;
-            padding: 0;
-            margin: 20px 0;
-            border: 1px solid #ececec;
-            border-radius: 6px;
-        }
-
-        .booking-details li {
-            padding: 10px 15px;
-            border-bottom: 1px solid #ececec;
-        }
-
-        .booking-details li:last-child {
-            border-bottom: none;
-        }
-
-        .booking-details li b {
-            display: inline-block;
-            width: 150px;
-        }
-
-        /* PHẦN FOOTER */
-        .footer {
-            background-color: #fafafa;
-            color: #555;
+        .body h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
             text-align: center;
-            font-size: 14px;
-            padding: 15px;
-            border-top: 1px solid #ececec;
         }
 
-        /* RESPONSIVE CHO MÀN HÌNH NHỎ */
-        @media only screen and (max-width: 600px) {
-            .container {
-                margin: 10px;
-            }
+        /* Các khối thông tin */
+        .section {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
 
-            .booking-details li {
-                display: block;
-            }
+        .section p {
+            margin: 8px 0;
+        }
 
-            .booking-details li b {
-                width: auto;
-                display: block;
-                margin-bottom: 5px;
-            }
+        .important {
+            color: red;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #f0f0f0;
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: #888;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <!-- HEADER -->
-        <div class="header">
-            <h1>Đặt phòng đã xác nhận</h1>
-        </div>
-        <!-- NỘI DUNG -->
         <div class="content">
-            <p>Xin chào, <strong>{{ $bookRoom->name }}</strong></p>
-            <p>
-                Chúng tôi vui mừng thông báo rằng đặt phòng của bạn tại khách sạn
-                <strong>"{{ $bookRoom->hotel->h_name ?? '---' }}"</strong> đã được xác nhận.
-            </p>
-            <p>Vui lòng xem lại thông tin đặt phòng chi tiết bên dưới:</p>
-            <!-- THÔNG TIN BOOKING -->
-            <ul class="booking-details">
-                <li><b>Mã phòng:</b> {{ $bookRoom->room_code ?? '---' }}</li>
-                <li><b>Mã đặt phòng:</b> {{ $bookRoom->booking_code ?? '---' }}</li>
-                <li><b>Ngày nhận phòng:</b> {{ $bookRoom->checkin_date }}</li>
-                <li><b>Ngày trả phòng:</b> {{ $bookRoom->checkout_date }}</li>
-                <li><b>Số đêm:</b> {{ $bookRoom->nights }}</li>
-                <li><b>Số phòng:</b> {{ $bookRoom->rooms }}</li>
-                <li><b>Số người:</b> {{ $bookRoom->guests }}</li>
-                @if($bookRoom->coupon)
-                <li><b>Mã giảm giá:</b> {{ $bookRoom->coupon }} (Được giảm 5%)</li>
-                @endif
-                <li><b>Tổng tiền sau giảm giá:</b> {{ number_format($bookRoom->total_price_with_discount, 0, ',', '.') }} VNĐ</li>
-                <!-- Bổ sung thời hạn thanh toán -->
-                <li><b>Thời hạn thanh toán:</b> Quý khách vui lòng thanh toán trong vòng 24 giờ kể từ khi nhận được email này.</li>
-            </ul>
-            <p>Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi để được hỗ trợ.</p>
-            <p>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.</p>
-        </div>
-        <!-- FOOTER -->
-        <div class="footer">
-            &copy; 2025 MyHotel. Mọi quyền được bảo lưu.
+            <!-- Header -->
+            <div class="header">
+                <h4>
+                    Cảm ơn quý khách đã sử dụng dịch vụ của chúng tôi,<br>
+                    Đơn đặt phòng của quý khách đã được tiếp nhận
+                </h4>
+            </div>
+            <!-- Body -->
+            <div class="body">
+                <h2>
+                    <b style="color:red; border:1px solid red; padding:2px 6px;">ĐẶT PHÒNG ĐÃ ĐƯỢC XÁC NHẬN</b>
+                </h2>
+                <!-- Thông tin khách sạn -->
+                <div class="section">
+                    <p>Mã đặt phòng: <b class="important">{{ $booking->id }}</b></p>
+                    <p>Tên khách sạn: <b>{{ $hotel->h_name }}</b></p>
+                    <p>Địa chỉ khách sạn: <b>{{ $hotel->h_address }}</b></p>
+                    <p>Loại phòng: <b>{{ $hotel->room_type_name }}</b></p>
+                </div>
+                <!-- Thông tin đặt phòng -->
+                <div class="section">
+                    <p>Ngày nhận phòng: <b>{{ $bookRoom->checkin_date }}</b></p>
+                    <p>Ngày trả phòng: <b>{{ $bookRoom->checkout_date }}</b></p>
+                    <p>Số đêm: <b>{{ $bookRoom->nights }}</b></p>
+                    <p>Số phòng: <b>{{ $bookRoom->rooms }}</b></p>
+                    <p>Số người: <b>{{ $bookRoom->guests }}</b></p>
+                    @if($bookRoom->coupon)
+                    <p>Mã giảm giá: <b>{{ $bookRoom->coupon }}</b> (Được giảm 5%)</p>
+                    @endif
+                    <p>Tổng tiền sau giảm giá: <b>{{ number_format($bookRoom->total_price_with_discount, 0, ',', '.') }} VNĐ</b></p>
+                    <p>Thời hạn thanh toán: <b>Quý khách vui lòng thanh toán trong vòng 24 giờ kể từ khi nhận được email này</b></p>
+                </div>
+                <!-- Thông tin khách hàng -->
+                <div class="section">
+                    <p>Họ tên: <b>{{ $bookRoom->name }}</b></p>
+                    <p>Phone: <b>{{ $bookRoom->phone }}</b></p>
+                    <p>Email: <b>{{ $bookRoom->email }}</b></p>
+                    <p>Họ tên: <b>{{ $bookRoom->address }}</b></p>
+                </div>
+            </div>
+            <!-- Footer -->
+            <div class="footer">
+                &copy; 2025 MyHotel. Mọi quyền được bảo lưu.
+            </div>
         </div>
     </div>
 </body>
