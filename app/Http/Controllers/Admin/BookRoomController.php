@@ -9,6 +9,8 @@ use App\Models\Hotel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Mail\BookingConfirmed;
+use App\Mail\BookingPaid;
+use App\Mail\BookingCancelled;
 use Illuminate\Support\Facades\Mail;
 
 class BookRoomController extends Controller
@@ -135,7 +137,7 @@ class BookRoomController extends Controller
      */
     public function updateStatus($status, $id)
     {
-        $bookRoom = BookRoom::find($id);
+        $bookRoom = BookRoom::with(['hotel'])->find($id);
         if (!$bookRoom) {
             return response()->json(['success' => false, 'message' => 'Dữ liệu không tồn tại']);
         }
@@ -145,18 +147,28 @@ class BookRoomController extends Controller
             $bookRoom->status = $status;
             $bookRoom->save();
             DB::commit();
-            // When status becomes 1 (Đã xác nhận), send booking confirmation
-            if ($status == 1) {
-                Mail::to($bookRoom->email)->send(new BookingConfirmed($bookRoom));
+
+            try {
+                // When status becomes 1 (Đã xác nhận)
+                if ($status == 1) {
+                    Mail::to($bookRoom->email)->send(new BookingConfirmed($bookRoom));
+                    Log::info('Confirmation email sent to: ' . $bookRoom->email);
+                } elseif ($status == 2) {
+                    Mail::to($bookRoom->email)->send(new BookingPaid($bookRoom));
+                    Log::info('Payment confirmation email sent to: ' . $bookRoom->email);
+                } elseif ($status == 3) {
+                    Mail::to($bookRoom->email)->send(new BookingCancelled($bookRoom));
+                    Log::info('Cancellation email sent to: ' . $bookRoom->email);
+                }
+            } catch (\Exception $e) {
+                Log::error('Failed to send email: ' . $e->getMessage());
             }
-            // When status becomes 2 (Đã thanh toán), send payment confirmation
-            if ($status == 2) {
-                Mail::to($bookRoom->email)->send(new \App\Mail\BookingPaid($bookRoom));
-            }
+
             return response()->json(['success' => true, 'message' => 'Cập nhật trạng thái thành công']);
         } catch (\Exception $exception) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Đã xảy ra lỗi khi cập nhật trạng thái']);
+            Log::error('Error updating status: ' . $exception->getMessage());
+            return response()->json(['success' => false, 'message' => 'Đã xảy ra lỗi khi cập nhật trạng thái: ' . $exception->getMessage()]);
         }
     }
 }

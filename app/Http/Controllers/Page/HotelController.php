@@ -14,6 +14,7 @@ use App\Mail\BookingConfirmation;
 use Illuminate\Support\Facades\Log; // Add this line
 use App\Mail\AdminHotelBookingMail; // ensure this line exists
 use App\Mail\CustomerHotelBookingMail; // Thêm use statement này
+use App\Mail\HotelBookingConfirmation; // Fix the namespace import at the top
 
 class HotelController extends Controller
 {
@@ -339,6 +340,76 @@ class HotelController extends Controller
         } catch (\Exception $e) {
             \Log::error($e->getMessage());
             return redirect()->back()->with('error', 'Có lỗi xảy ra, vui lòng thử lại sau.');
+        }
+    }
+
+    public function bookingForm($id) 
+    {
+        $hotel = Hotel::findOrFail($id);
+        return view('page.hotel.booking', compact('hotel'));
+    }
+
+    public function processBooking(Request $request, $id)
+    {
+        $hotel = Hotel::findOrFail($id);
+        
+        if (!Auth::guard('users')->check() && !Auth::guard('web')->check()) {
+            return redirect()->back()->with('error', 'Vui lòng đăng nhập để đặt phòng');
+        }
+
+        try {
+            $userId = Auth::guard('users')->check() ? Auth::guard('users')->id() : Auth::guard('web')->id();
+            $user = Auth::guard('users')->check() ? Auth::guard('users')->user() : Auth::guard('web')->user();
+            
+            // Include coupon in validation
+            $data = $request->validate([
+                'name'         => 'required|string|max:255',
+                'phone'        => 'required|string|max:15',
+                'address'      => 'required|string|max:255',
+                'checkin_date' => 'required|date',
+                'checkout_date'=> 'required|date',
+                'nights'       => 'required|integer',
+                'rooms'        => 'required|integer',
+                'guests'       => 'required|integer',
+                'email'        => 'required|email',
+                'note'         => 'nullable|string|max:500',
+                'agreePolicy'  => 'required',
+                'coupon'       => 'nullable|string'  // Added coupon validation rule
+            ]);
+            
+            $totalPrice = $hotel->h_price * $data['nights'] * $data['rooms'];
+            if ($hotel->h_sale > 0) {
+                $totalPrice = $totalPrice - ($totalPrice * $hotel->h_sale / 100);
+            }
+
+            // Add the coupon field to the booking data:
+            $data['hotel_id']   = $hotel->id;
+            $data['user_id']    = $userId;
+            $data['total_price']= $totalPrice;
+            $data['status']     = 0;
+            // Ensure coupon is stored even if null
+            $data['coupon']     = $request->coupon;
+
+            $booking = BookRoom::create($data);
+            
+            // Send booking confirmation email
+            try {
+                Mail::to($booking->email)
+                    ->send(new HotelBookingConfirmation(
+                        $booking,
+                        $hotel,
+                        $user,
+                        $totalPrice
+                    ));
+                Log::info('Confirmation email sent to: ' . $booking->email);
+            } catch (\Exception $e) {
+                Log::error('Failed to send confirmation email: ' . $e->getMessage());
+            }
+
+            return redirect()->back()->with('success', 'Đặt phòng thành công! Vui lòng kiểm tra email để xem chi tiết.');
+        } catch (\Exception $e) {
+            Log::error('Booking failed: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Có lỗi xảy ra, vui lòng thử lại!')->withInput();
         }
     }
 }

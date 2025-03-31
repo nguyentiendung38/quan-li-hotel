@@ -97,7 +97,7 @@
             <!-- Body -->
             <div class="body">
                 <h2>
-                    <b style="color:red; border:1px solid red; padding:2px 6px;">ĐẶT PHÒNG ĐÃ ĐƯỢC THANH TOÁN</b>
+                    <b style="color:red; border:1px solid red; padding:2px 6px;">ĐẶT PHÒNG ĐÃ ĐƯỢC HỦY</b>
                 </h2>
                 <!-- Thông tin khách sạn -->
                 <div class="section">
@@ -117,7 +117,7 @@
                     <p>Mã giảm giá: <b>{{ $bookRoom->coupon }}</b> (Được giảm 5%)</p>
                     @endif
                     <p>Tổng tiền sau giảm giá: <b>{{ number_format($bookRoom->total_price_with_discount, 0, ',', '.') }} VNĐ</b></p>
-                    <p>Thời hạn thanh toán: <b>Cảm ơn quý khách đã sử dụng dịch vụ của chúng tôi.</b></p>
+                    <p class="important"><b>Lưu ý: Đơn đặt phòng này đã được hủy. Nếu bạn đã thanh toán, chúng tôi sẽ hoàn tiền trong vòng 3-5 ngày làm việc.</b></p>
                 </div>
                 <!-- Thông tin khách hàng -->
                 <div class="section">

@@ -56,7 +56,7 @@ class HotelController extends Controller
             'junior_suite'    => 'Phòng Suite Junior gia đình',
             'deluxe_quad'     => 'Phòng Deluxe cho 4 người'
         ];
-        
+
         return view('admin.hotel.create', compact('status', 'locations', 'roomTypes'));
     }
 
@@ -69,7 +69,7 @@ class HotelController extends Controller
     public function store(HotelRequest $request)
     {
         try {
-            $data = $request->except('_token');
+            $data = $request->except('_token', 'submit');
             $data['h_room_type'] = $request->input('h_room_type');
             // Set a default value for h_rooms if not provided
             $data['h_rooms'] = isset($data['h_rooms']) ? $data['h_rooms'] : 0;
