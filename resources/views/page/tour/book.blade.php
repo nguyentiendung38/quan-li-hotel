@@ -25,12 +25,15 @@
 
     /* Promotion Banner */
     .promotion-banner {
-        background: linear-gradient(45deg, #ffc107, #ffca2c);
+        background: linear-gradient(45deg, #3490dc, #2779bd); /* Changed from orange to blue gradient */
         font-weight: bold;
         font-size: 1.2rem;
         color: #fff;
         margin-bottom: 20px;
-        padding: 10px 0;
+        padding: 15px 0;
+        text-align: center; /* Added center alignment */
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     /* Booking Form Card */
@@ -189,8 +192,13 @@
 </section>
 
 <!-- Promotion Banner -->
-<div class="text-center py-2 promotion-banner">
-    Ưu đãi đặc biệt: Giảm giá lên đến 20% cho đặt Tour ngay hôm nay!
+<div class="container">
+    @if($tour->t_sale > 0)
+    <div class="promotion-banner">
+        <i class="fas fa-gift mr-2"></i>
+        Ưu đãi đặc biệt: Giảm {{ $tour->t_sale }}% khi đặt tour ngay hôm nay!
+    </div>
+    @endif
 </div>
 
 <!-- Main Booking Section -->
