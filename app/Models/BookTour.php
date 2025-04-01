@@ -32,7 +32,7 @@ class BookTour extends Model
 
     public function tour()
     {
-        return $this->belongsTo(Tour::class, 'b_tour_id', 'id');
+        return $this->belongsTo(Tour::class, 'b_tour_id', 'id')->withDefault();
     }
 
     public function user()
@@ -42,6 +42,7 @@ class BookTour extends Model
 
     public function payment()
     {
-        return $this->hasOne(Payment::class, 'p_book_tour_id', 'id');
+        return $this->hasOne(Payment::class, 'p_transaction_id', 'id');
     }
+    
 }

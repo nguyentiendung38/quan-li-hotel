@@ -97,7 +97,7 @@
                                     <th>Tên tour-Mã tour</th>
                                     <th>Thông tin khách hàng</th>
                                     <th>Dữ liệu tour</th>
-                                    <th>Hình thức</th>
+                                    <th>Hình thức thanh toán</th>
                                     <th class="text-center">Trạng thái</th>
                                     @if(Auth::user()->can(['full-quyen-quan-ly', 'xoa-va-cap-nhat-trang-thai']))
                                     <th class=" text-center">Hành động</th>
@@ -137,15 +137,17 @@
                                     </td>
                                     <td style="width: 20%;vertical-align: middle">
                                         @if($book->payment)
-                                        <ul>
-                                            <li>Ngân hàng: {{ $book->payment->p_code_bank }}</li>
-                                            <li>Mã thanh toán: {{ $book->payment->p_code_vnpay }}</li>
-                                            <li>Tổng tiền: {{ number_format($book->payment->p_money / 100,0,',','.') }} VNĐ</li>
-                                            <li>Nội dung: {{ $book->payment->p_note }}</li>
-                                            <li>Thời gian: {{ date('Y-m-d H:i', strtotime($book->payment->p_time)) }}</li>
+                                        <ul style="list-style: none; padding-left: 0;">
+                                            <li><strong>Ngân hàng:</strong> {{ $book->payment->p_bank_name ?: $book->payment->p_code_bank ?: 'Ví điện tử MOMO' }}</li>
+                                            <li><strong>Mã thanh toán:</strong> {{ $book->payment->p_transaction_code }}</li>
+                                            <li><strong>Mã giao dịch:</strong> {{ $book->payment->p_code_momo ?: $book->payment->p_code_vnpay }}</li>
+                                            <li><strong>Tổng tiền:</strong> {{ number_format($book->payment->p_money,0,',','.') }} VNĐ</li>
+                                            <li><strong>Nội dung:</strong> {{ $book->payment->p_note }}</li>
+                                            <li><strong>Thời gian:</strong> {{ $book->payment->p_time ? date('d/m/Y H:i:s', strtotime($book->payment->p_time)) : date('d/m/Y H:i:s', strtotime($book->payment->created_at)) }}</li>
+                                            <li><strong>Trạng thái:</strong> <span class="text-success">Thành công</span></li>
                                         </ul>
                                         @else
-                                        Thanh toán thường
+                                        <p class="mb-0">Thanh toán thường</p>
                                         @endif
                                     </td>
                                     <td style="vertical-align: middle; width: 11%">

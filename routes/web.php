@@ -337,3 +337,4 @@ Route::post('/tour/booking', [App\Http\Controllers\Page\TourController::class, '
 // thanh toán mômo:
 Route::post('/payment/momo', [\App\Http\Controllers\Page\TourController::class, 'createMomoPayment'])->name('payment.momo');
 Route::get('/payment/momo/callback', [\App\Http\Controllers\Page\TourController::class, 'momoCallback'])->name('payment.momo.callback');
+Route::post('/payment/momo/callback', [TourController::class, 'momoTourCallback'])->name('payment.momo.tour.callback');
