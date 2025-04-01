@@ -5,21 +5,35 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class MomoPaymentSuccessMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $payment;
+    public $emailData;
 
-    public function __construct($payment)
+    public function __construct($emailData)
     {
-        $this->payment = $payment;
+        $this->emailData = $emailData;
+        Log::info('Email data received:', $emailData); // Add logging
     }
 
     public function build()
     {
-        return $this->subject('Thanh toán MOMO thành công')
-                    ->view('emails.momo_payment_success');
+        try {
+            Log::info('Building email with data:', $this->emailData);
+            
+            return $this->subject('Xác nhận thanh toán tour thành công qua MOMO')
+                        ->view('emails.momo-payment-tour')
+                        ->with([
+                            'payment' => $this->emailData['payment'],
+                            'booking' => $this->emailData['booking'],
+                            'tour' => $this->emailData['tour']
+                        ]);
+        } catch (\Exception $e) {
+            Log::error('Email build error: ' . $e->getMessage());
+            throw $e;
+        }
     }
 }

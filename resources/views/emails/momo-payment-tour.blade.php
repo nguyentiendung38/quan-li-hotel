@@ -126,6 +126,17 @@ $booking = \App\Models\BookTour::find($payment->p_transaction_id);
                     <p>Mã giao dịch: <strong>{{ $payment->p_transaction_code }}</strong> đã được xử lý thành công.</p>
                     <p><strong>Số tiền:</strong> {{ number_format($payment->p_money, 0, ',', '.') }} VND</p>
                 </div>
+                <!-- Thông tin giao dịch MOMO -->
+                <div class="section" style="background-color: #fce4f3; border: 1px solid #a50064;">
+                    <h3 style="color: #a50064; margin-bottom: 10px;">Thông tin giao dịch MOMO</h3>
+                    <p>Ngân hàng: <b>{{ $payment->p_bank_name ?? 'Ví điện tử MOMO' }}</b></p>
+                    <p>Mã thanh toán: <b>{{ $payment->p_transaction_code }}</b></p>
+                    <p>Mã giao dịch MOMO: <b>{{ $payment->p_code_momo ?? $payment->p_code_vnpay }}</b></p>
+                    <p>Số tiền: <b>{{ number_format($payment->p_money, 0, ',', '.') }} VND</b></p>
+                    <p>Nội dung: <b>{{ $payment->p_note }}</b></p>
+                    <p>Thời gian: <b>{{ date('d/m/Y H:i:s', strtotime($payment->created_at)) }}</b></p>
+                    <p>Trạng thái: <b style="color: #27ae60;">Thành công</b></p>
+                </div>
                 @if($booking)
                 <!-- Thông tin khách hàng -->
                 <div class="section">

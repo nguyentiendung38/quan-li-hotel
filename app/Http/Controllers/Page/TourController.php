@@ -314,18 +314,21 @@ class TourController extends Controller
 
         // 3. Cập nhật các thông tin từ VNPay
         $payment->p_vnp_response_code = $vnp_ResponseCode;
-        $payment->p_code_vnpay = $vnp_TransactionStatus; // hoặc vnp_TransactionNo
+        $payment->p_code_vnpay = $request->get('vnp_TransactionNo'); // Mã giao dịch VNPay
+        $payment->p_transaction_code = $vnp_TxnRef; // Mã thanh toán
         $payment->p_code_bank = $vnp_BankCode;
-        $payment->p_time = $vnp_PayDate; // Lưu thô, hoặc convert sang datetime
+        $payment->p_bank_name = $this->getBankName($vnp_BankCode);
+        $payment->p_time = date('Y-m-d H:i:s', strtotime($vnp_PayDate));
         $payment->save();
 
         // 4. Kiểm tra giao dịch thành công
         // - vnp_ResponseCode == '00' và vnp_TransactionStatus == '00' => thanh toán thành công
         if ($vnp_ResponseCode == '00' && $vnp_TransactionStatus == '00') {
-            // Cập nhật trạng thái booking, ví dụ:
-            // $book = BookTour::find($payment->transaction_id);
-            // $book->b_status = 2; // 2 = đã thanh toán
-            // $book->save();
+            $book = BookTour::find($payment->p_transaction_id);
+            if ($book) {
+                $book->b_status = 3; // Đã thanh toán
+                $book->save();
+            }
 
             // Retrieve user's email (assuming the user is logged in)
             $user = Auth::guard('users')->user();
@@ -339,42 +342,56 @@ class TourController extends Controller
         }
     }
 
+    // Add helper method to get bank name
+    private function getBankName($bankCode)
+    {
+        $banks = [
+            'NCB' => 'Ngân hàng NCB',
+            'VNPAY' => 'VNPAY',
+            'VIETCOMBANK' => 'Ngân hàng Vietcombank',
+            'VIETINBANK' => 'Ngân hàng Vietinbank',
+            'BIDV' => 'Ngân hàng BIDV',
+            'AGRIBANK' => 'Ngân hàng Agribank',
+            'SACOMBANK' => 'Ngân hàng Sacombank',
+            'TECHCOMBANK' => 'Ngân hàng Techcombank',
+            // Thêm các ngân hàng khác nếu cần
+        ];
+
+        return $banks[$bankCode] ?? $bankCode;
+    }
+
     // thanh toán bằng mmo
     public function createMomoPayment(Request $request)
     {
         try {
             $bookId = session('book_id');
             $booking = BookTour::find($bookId);
-            
             if (!$booking) {
                 Log::error('Booking not found:', ['booking_id' => $bookId]);
                 return redirect()->back()->with('error', 'Không tìm thấy thông tin đặt tour');
             }
-
-            $booking->update(['b_status' => 0]); // 0 = chờ thanh toán
 
             $endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
             $partnerCode = 'MOMOBKUN20180529';
             $accessKey = 'klm05TvNBzhg7h7j';
             $secretKey = 'at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa';
             $orderInfo = "Thanh toán tour du lịch #" . $bookId;
-            $amount = (int)$booking->b_total_money; // Chuyển đổi sang integer
+            $amount = $booking->b_total_money;
             $orderId = $bookId . "_" . time();
-            $redirectUrl = route('payment.momo.callback');
-            $ipnUrl = route('payment.momo.callback');
-            
+            $redirectUrl = route('payment.momo.tour.callback'); // Update route name
+            $ipnUrl = route('payment.momo.tour.callback'); // Update route name
+
+            $extraData = "";
             $requestId = time() . "";
             $requestType = "payWithATM";
-            $extraData = "";
 
-            // Raw hash để tạo chữ ký
             $rawHash = "accessKey=" . $accessKey . "&amount=" . $amount . "&extraData=" . $extraData . "&ipnUrl=" . $ipnUrl . "&orderId=" . $orderId . "&orderInfo=" . $orderInfo . "&partnerCode=" . $partnerCode . "&redirectUrl=" . $redirectUrl . "&requestId=" . $requestId . "&requestType=" . $requestType;
             $signature = hash_hmac("sha256", $rawHash, $secretKey);
 
-            $data = array(
+            $data = [
                 'partnerCode' => $partnerCode,
                 'partnerName' => "Test",
-                'storeId' => "MomoTestStore",
+                "storeId" => "MomoTestStore",
                 'requestId' => $requestId,
                 'amount' => $amount,
                 'orderId' => $orderId,
@@ -385,88 +402,101 @@ class TourController extends Controller
                 'extraData' => $extraData,
                 'requestType' => $requestType,
                 'signature' => $signature
-            );
+            ];
 
             $result = $this->execPostRequest($endpoint, json_encode($data));
             $jsonResult = json_decode($result, true);
 
-            Log::info('MOMO Payment request:', [
-                'request' => $data,
-                'response' => $jsonResult
-            ]);
-
             if (isset($jsonResult['payUrl'])) {
-                // Tạo payment record với trạng thái pending
-                $payment = Payment::create([
-                    'p_transaction_id' => $bookId,
-                    'p_transaction_code' => $orderId,
-                    'p_user_id' => auth()->id() ?? 0,
-                    'p_money' => $amount,
-                    'p_note' => $orderInfo,
-                    'p_type' => 'MOMO',
-                    'p_status' => 0 // 0 = pending
+                Log::info('MOMO Payment processing for booking:', [
+                    'booking_id' => $bookId,
+                    'email' => $booking->b_email
                 ]);
 
                 return redirect()->to($jsonResult['payUrl']);
             }
 
             Log::error('MOMO Payment failed:', ['response' => $jsonResult]);
-            return redirect()->back()->with('error', 'Không thể kết nối tới MOMO: ' . ($jsonResult['message'] ?? 'Unknown error'));
-
+            return redirect()->back()->with('error', 'Không thể kết nối tới MOMO');
         } catch (\Exception $e) {
-            Log::error('MOMO Payment error:', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return redirect()->back()->with('error', 'Đã xảy ra lỗi trong quá trình thanh toán: ' . $e->getMessage());
+            Log::error('MOMO Payment error:', ['error' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Đã xảy ra lỗi trong quá trình thanh toán');
         }
     }
 
-    public function momoCallback(Request $request)
+    public function momoTourCallback(Request $request)
     {
-        // Kiểm tra kết quả trả về từ MOMO
+        Log::info('MOMO callback received:', $request->all());
+        
         if ($request->resultCode == '0') {
-            // Tìm payment record
-            $orderId = $request->orderId;
-            $payment = Payment::where('p_transaction_code', $orderId)->first();
-            
-            if ($payment) {
-                // Cập nhật trạng thái payment
-                $payment->update([
-                    'p_status' => 1,
-                    'p_code_momo' => $request->transId,
-                    'p_time' => now()
-                ]);
+            try {
+                $orderId = explode('_', $request->orderId)[0];
+                $booking = BookTour::with(['tour', 'user'])->find($orderId);
 
-                // Tìm booking
-                $booking = BookTour::find($payment->p_transaction_id);
                 if ($booking) {
-                    // Cập nhật trạng thái booking
-                    $booking->update(['b_status' => 2]); // 2 = đã thanh toán
+                    // Kiểm tra xem đã có payment chưa
+                    $existingPayment = Payment::where('p_transaction_code', $request->orderId)->first();
+                    
+                    if (!$existingPayment) {
+                        // Chỉ tạo payment mới nếu chưa tồn tại
+                        $payment = Payment::create([
+                            'p_transaction_id' => $booking->id,
+                            'p_user_id' => $booking->b_user_id,
+                            'p_money' => $request->amount,
+                            'p_transaction_code' => $request->orderId,
+                            'p_code_bank' => 'MOMO',
+                            'p_bank_name' => 'Ví điện tử MOMO',
+                            'p_code_momo' => $request->transId,
+                            'p_time' => date('Y-m-d H:i:s'),
+                            'p_note' => 'Thanh toán MOMO thành công cho booking #' . $booking->id,
+                            'p_status' => 1
+                        ]);
 
-                    // Gửi email xác nhận
-                    try {
-                        Mail::to($booking->b_email)
-                            ->send(new MomoPaymentSuccessMail($payment));
-                        
-                        Log::info('MOMO payment success email sent', [
-                            'booking_id' => $booking->id,
-                            'email' => $booking->b_email
-                        ]);
-                    } catch (\Exception $e) {
-                        Log::error('Error sending MOMO success email', [
-                            'error' => $e->getMessage()
-                        ]);
+                        // Cập nhật trạng thái booking
+                        $booking->b_status = 3; // Đã thanh toán
+                        $booking->save();
+
+                        // Gửi email xác nhận
+                        $this->sendPaymentConfirmationEmail($booking, $payment);
                     }
                 }
 
-                return redirect()->route('page.home')
-                    ->with('success', 'Thanh toán MOMO thành công');
+                return redirect()->route('page.home')->with('success', 'Thanh toán thành công!');
+            } catch (\Exception $e) {
+                Log::error('MOMO Payment Error:', [
+                    'message' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+                throw $e;
             }
         }
+        return redirect()->route('page.home')->with('error', 'Thanh toán không thành công');
+    }
 
-        return redirect()->route('page.home')
-            ->with('error', 'Thanh toán MOMO không thành công');
+    // Add alias method for backward compatibility
+    public function momoCallback(Request $request)
+    {
+        return $this->momoTourCallback($request);
+    }
+
+    private function sendPaymentConfirmationEmail($booking, $payment)
+    {
+        try {
+            Mail::to($booking->b_email)
+                ->send(new MomoPaymentSuccessMail([
+                    'payment' => $payment,
+                    'booking' => $booking,
+                    'tour' => $booking->tour,
+                    'transactionId' => $payment->p_code_momo,
+                    'bankName' => 'Ví điện tử MOMO',
+                    'paymentCode' => $payment->p_transaction_code,
+                    'amount' => number_format($payment->p_money, 0, ',', '.'),
+                    'payTime' => date('d/m/Y H:i:s')
+                ]));
+            Log::info('Payment confirmation email sent successfully');
+        } catch (\Exception $e) {
+            Log::error('Failed to send payment confirmation email: ' . $e->getMessage());
+        }
     }
 
     public function execPostRequest($url, $data)
@@ -556,12 +586,9 @@ class TourController extends Controller
 
     public function processPayment(Request $request, $id)
     {
-        // Lưu book_id vào session trước
-        session(['book_id' => $id]);
-
         if ($request->get('payment_type') === 'MOMO') {
             return $this->createMomoPayment($request);
-        } 
+        }
         return $this->createPayMent($request);
     }
 }
