@@ -146,7 +146,8 @@
     }
 
     .ftco-section {
-        margin-bottom: 40px; /* Add spacing before footer */
+        margin-bottom: 40px;
+        /* Add spacing before footer */
     }
 </style>
 @stop
@@ -167,7 +168,7 @@
     <div class="container">
         <div class="hotel-header">
             <h2 class="mb-3">{{ $hotel->h_name }}</h2>
-            <div class="stats-container">
+            <div class="stats-container d-flex align-items-center justify-content-between">
                 <div class="rating-info">
                     <div class="stars-row">
                         @php
@@ -186,9 +187,10 @@
                                 @else
                                 <i class="far fa-star text-warning"></i>
                                 @endif
-                                @endfor
+                        @endfor
+                        <span class="rating-count ml-2">{{ number_format($avgRating, 2) }}/5 trong {{ $totalRatings }} ĐÁNH GIÁ</span>
+                        <span class="ml-3"><i class="fa fa-eye"></i> {{ $hotel->h_view ?? 0 }} lượt xem</span>
                     </div>
-                    <span class="rating-count">{{ number_format($avgRating, 2) }}/5 trong {{ $totalRatings }} ĐÁNH GIÁ</span>
                 </div>
             </div>
         </div>

@@ -26,27 +26,27 @@
             <!-- Add Star Rating Display -->
             <div class="rating-stars mb-2">
                 @if($hotel->total_ratings > 0)
-                    @php
-                    $rating = $hotel->average_rating;
-                    $fullStars = floor($rating);
-                    $halfStar = $rating - $fullStars >= 0.5;
-                    @endphp
+                @php
+                $rating = $hotel->average_rating;
+                $fullStars = floor($rating);
+                $halfStar = $rating - $fullStars >= 0.5;
+                @endphp
 
-                    @for($i = 1; $i <= 5; $i++)
-                        @if($i <= $fullStars)
-                            <i class="fas fa-star text-warning"></i>
-                        @elseif($i == $fullStars + 1 && $halfStar)
-                            <i class="fas fa-star-half-alt text-warning"></i>
-                        @else
-                            <i class="far fa-star text-warning"></i>
-                        @endif
+                @for($i = 1; $i <= 5; $i++)
+                    @if($i <=$fullStars)
+                    <i class="fas fa-star text-warning"></i>
+                    @elseif($i == $fullStars + 1 && $halfStar)
+                    <i class="fas fa-star-half-alt text-warning"></i>
+                    @else
+                    <i class="far fa-star text-warning"></i>
+                    @endif
                     @endfor
-                @else
+                    @else
                     @for($i = 1; $i <= 5; $i++)
                         <i class="far fa-star text-warning"></i>
-                    @endfor
-                @endif
-                <span class="rating-count">({{ $hotel->total_ratings }} đánh giá)</span>
+                        @endfor
+                        @endif
+                        <span class="rating-count">({{ $hotel->total_ratings }} đánh giá)</span>
             </div>
             <!-- Dòng hiển thị vị trí -->
             <p class="location">
@@ -56,18 +56,18 @@
             <!-- Thông tin booking hiển thị giống vị trí -->
             <p class="location mb-0">
                 <span class="fa fa-user" style="margin-right: 10px;"></span>
-                Loại phòng: 
+                Loại phòng:
                 @php
-                    $roomTypes = [
-                        'standard_double' => 'Phòng tiêu chuẩn giường đôi',
-                        'superior_double' => 'Phòng Superior giường đôi',
-                        'superior_twin'   => 'Phòng Superior 2 giường đơn',
-                        'deluxe_double'   => 'Phòng Deluxe giường đôi',
-                        'deluxe_triple'   => 'Phòng Deluxe cho 3 người',
-                        'family_room'     => 'Phòng gia đình',
-                        'junior_suite'    => 'Phòng Suite Junior gia đình',
-                        'deluxe_quad'     => 'Phòng Deluxe cho 4 người'
-                    ];
+                $roomTypes = [
+                'standard_double' => 'Phòng tiêu chuẩn giường đôi',
+                'superior_double' => 'Phòng Superior giường đôi',
+                'superior_twin' => 'Phòng Superior 2 giường đơn',
+                'deluxe_double' => 'Phòng Deluxe giường đôi',
+                'deluxe_triple' => 'Phòng Deluxe cho 3 người',
+                'family_room' => 'Phòng gia đình',
+                'junior_suite' => 'Phòng Suite Junior gia đình',
+                'deluxe_quad' => 'Phòng Deluxe cho 4 người'
+                ];
                 @endphp
                 {{ $roomTypes[$hotel->h_room_type] ?? 'Chưa chọn' }}
             </p>
@@ -75,13 +75,14 @@
                 <span class="fa fa-home" style="margin-right: 10px;"></span>
                 Tổng số phòng: {{ $hotel->h_rooms }}
             </p>
+            <!-- Thay đổi cách tính phòng trống và đã đặt -->
             <p class="location mb-0">
                 <span class="fa fa-check" style="margin-right: 10px;"></span>
-                Phòng trống: {{ $hotel->h_rooms - ($hotel->bookRooms->where('status', '!=', 2)->sum('rooms')) }}
+                Phòng trống: {{ $hotel->h_rooms - ($hotel->bookRooms->where('status', 1)->sum('rooms')) }}
             </p>
             <p class="location mb-0">
                 <span class="fa fa-user" style="margin-right: 10px;"></span>
-                Đã đặt: {{ $hotel->bookRooms->sum('rooms') ?? '0' }}
+                Đã đặt: {{ $hotel->bookRooms->where('status', 1)->sum('rooms') }}
             </p>
             <!-- Thêm div wrapper cho các nút -->
             <div class="text-center" style="margin-top:10px;">

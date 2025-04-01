@@ -351,27 +351,30 @@ class TourController extends Controller
                 return redirect()->back()->with('error', 'Không tìm thấy thông tin đặt tour');
             }
 
+            $booking->update(['b_status' => 0]); // 0 = chờ thanh toán
+
             $endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
             $partnerCode = 'MOMOBKUN20180529';
             $accessKey = 'klm05TvNBzhg7h7j';
             $secretKey = 'at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa';
             $orderInfo = "Thanh toán tour du lịch #" . $bookId;
-            $amount = $booking->b_total_money;
+            $amount = (int)$booking->b_total_money; // Chuyển đổi sang integer
             $orderId = $bookId . "_" . time();
-            $redirectUrl = route('payment.momo.callback'); // Thay đổi redirect URL
-            $ipnUrl = route('payment.momo.callback'); // Thay đổi IPN URL
+            $redirectUrl = route('payment.momo.callback');
+            $ipnUrl = route('payment.momo.callback');
             
-            $extraData = "";
             $requestId = time() . "";
             $requestType = "payWithATM";
+            $extraData = "";
 
+            // Raw hash để tạo chữ ký
             $rawHash = "accessKey=" . $accessKey . "&amount=" . $amount . "&extraData=" . $extraData . "&ipnUrl=" . $ipnUrl . "&orderId=" . $orderId . "&orderInfo=" . $orderInfo . "&partnerCode=" . $partnerCode . "&redirectUrl=" . $redirectUrl . "&requestId=" . $requestId . "&requestType=" . $requestType;
             $signature = hash_hmac("sha256", $rawHash, $secretKey);
 
-            $data = [
+            $data = array(
                 'partnerCode' => $partnerCode,
                 'partnerName' => "Test",
-                "storeId" => "MomoTestStore",
+                'storeId' => "MomoTestStore",
                 'requestId' => $requestId,
                 'amount' => $amount,
                 'orderId' => $orderId,
@@ -382,17 +385,17 @@ class TourController extends Controller
                 'extraData' => $extraData,
                 'requestType' => $requestType,
                 'signature' => $signature
-            ];
+            );
 
             $result = $this->execPostRequest($endpoint, json_encode($data));
             $jsonResult = json_decode($result, true);
 
-            if (isset($jsonResult['payUrl'])) {
-                Log::info('MOMO Payment processing for booking:', [
-                    'booking_id' => $bookId,
-                    'email' => $booking->b_email
-                ]);
+            Log::info('MOMO Payment request:', [
+                'request' => $data,
+                'response' => $jsonResult
+            ]);
 
+            if (isset($jsonResult['payUrl'])) {
                 // Tạo payment record với trạng thái pending
                 $payment = Payment::create([
                     'p_transaction_id' => $bookId,
@@ -408,11 +411,14 @@ class TourController extends Controller
             }
 
             Log::error('MOMO Payment failed:', ['response' => $jsonResult]);
-            return redirect()->back()->with('error', 'Không thể kết nối tới MOMO');
+            return redirect()->back()->with('error', 'Không thể kết nối tới MOMO: ' . ($jsonResult['message'] ?? 'Unknown error'));
 
         } catch (\Exception $e) {
-            Log::error('MOMO Payment error:', ['error' => $e->getMessage()]);
-            return redirect()->back()->with('error', 'Đã xảy ra lỗi trong quá trình thanh toán');
+            Log::error('MOMO Payment error:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect()->back()->with('error', 'Đã xảy ra lỗi trong quá trình thanh toán: ' . $e->getMessage());
         }
     }
 
@@ -550,9 +556,12 @@ class TourController extends Controller
 
     public function processPayment(Request $request, $id)
     {
+        // Lưu book_id vào session trước
+        session(['book_id' => $id]);
+
         if ($request->get('payment_type') === 'MOMO') {
             return $this->createMomoPayment($request);
-        }
+        } 
         return $this->createPayMent($request);
     }
 }

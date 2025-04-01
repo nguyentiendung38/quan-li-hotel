@@ -30,7 +30,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #3490dc, #2779bd);
+            background: linear-gradient(135deg, #a50064, #8e003f);
             padding: 20px;
             text-align: center;
             color: #fff;
@@ -110,33 +110,27 @@
             <div class="header">
                 <h4>
                     Cảm ơn quý khách đã sử dụng dịch vụ của chúng tôi,<br>
-                    Thanh toán phòng khách sạn thành công
+                    Thanh toán MOMO thành công
                 </h4>
             </div>
             <!-- Body -->
             <div class="body">
                 <h2>
-                    <b style="color:red; border:1px solid red; padding:2px 6px;">THANH TOÁN ONLINE VNPAY THÀNH CÔNG</b>
+                    <b style="color:#a50064; border:1px solid #a50064; padding:2px 6px;">THANH TOÁN ONLINE MMO THÀNH CÔNG</b>
                 </h2>
 
-                <!-- Thông tin giao dịch VNPAY -->
-                @if(isset($priceData['payment']))
-                <div class="section" style="background-color: #f0f9ff; border: 1px solid #005baa;">
-                    <h3 style="color: #005baa; margin-bottom: 10px;">Thông tin giao dịch VNPAY</h3>
-                    <p>Mã giao dịch VNPAY: <b>{{ $priceData['payment']->p_transaction_code }}</b></p>
-                    <p>Ngân hàng: <b>{{ $priceData['payment']->p_code_bank }}</b></p>
-                    <p>Mã thanh toán: <b>{{ $priceData['payment']->p_code_vnpay }}</b></p>
-                    <p>Số tiền: <b>{{ number_format($priceData['payment']->p_money, 0, ',', '.') }} VND</b></p>
-                    <p>Thời gian: <b>{{ date('d/m/Y H:i:s', strtotime($priceData['payment']->p_time)) }}</b></p>
+                <!-- Thông tin giao dịch MOMO -->
+                <div class="section" style="background-color: #fce4f3; border: 1px solid #a50064;">
+                    <h3 style="color: #a50064; margin-bottom: 10px;">Thông tin giao dịch MOMO</h3>
+                    <p>Mã giao dịch MOMO: <b>{{ $payment->p_transaction_code }}</b></p>
+                    <p>Số tiền: <b>{{ number_format($payment->p_money, 0, ',', '.') }} VND</b></p>
+                    <p>Thời gian: <b>{{ date('d/m/Y H:i:s', strtotime($payment->created_at)) }}</b></p>
                     <p>Trạng thái: <b style="color: #27ae60;">Thành công</b></p>
                 </div>
-                @else
-                <p>Không có thông tin thanh toán VNPAY.</p>
-                @endif
 
                 <!-- Thông tin khách hàng -->
                 <div class="section">
-                    <h3 style="color: #8e44ad; margin-bottom: 10px;">Thông tin của quý khách</h3>
+                    <h3 style="color: #a50064; margin-bottom: 10px;">Thông tin của quý khách</h3>
                     <p>Tên khách hàng: <b>{{ $booking->name }}</b></p>
                     <p>Điện thoại: <b>{{ $booking->phone }}</b></p>
                     <p>Email: <b>{{ $booking->email }}</b></p>
@@ -144,7 +138,7 @@
                 </div>
                 <!-- Thông tin đặt phòng -->
                 <div class="section">
-                    <h3 style="color: #8e44ad; margin-bottom: 10px;">Thông tin đặt phòng</h3>
+                    <h3 style="color: #a50064; margin-bottom: 10px;">Thông tin đặt phòng</h3>
                     <p>Mã đặt phòng: <b style="color:red;">#{{ $booking->id }}</b></p>
                     <p>Khách sạn: <b>{{ $booking->hotel->h_name }}</b></p>
                     <p>Số phòng: <b>{{ $booking->rooms }}</b></p>
@@ -154,7 +148,7 @@
                 </div>
                 <!-- Tóm tắt dịch vụ -->
                 <div class="section">
-                    <h3 style="color: #8e44ad; margin-bottom: 10px;">Tóm tắt dịch vụ</h3>
+                    <h3 style="color: #a50064; margin-bottom: 10px;">Tóm tắt dịch vụ</h3>
                     <table class="summary-table">
                         <thead>
                             <tr>
@@ -188,8 +182,8 @@
                 </div>
                 <!-- Lời cảm ơn -->
                 <div class="section" style="text-align: center;">
-                    <p style="font-size:16px; font-weight:bold; color:#000; margin-top:20px;">
-                        Cám ơn Quý khách đã sử dụng dịch vụ của chúng tôi!<br>
+                    <p style="font-size:16px; font-weight:bold; color:#a50064; margin-top:20px;">
+                        Cám ơn Quý khách đã thanh toán qua MOMO!<br>
                         Hotline: 0773 398 244
                     </p>
                 </div>

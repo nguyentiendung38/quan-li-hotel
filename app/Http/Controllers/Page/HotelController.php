@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Log; // Add this line
 use App\Mail\AdminHotelBookingMail; // ensure this line exists
 use App\Mail\CustomerHotelBookingMail; // Thêm use statement này
 use App\Mail\HotelBookingConfirmation; // Fix the namespace import at the top
+use App\Mail\MomoPaymentHotel; // Add this line and remove MomoPaymentSuccess if it exists
 
 class HotelController extends Controller
 {
@@ -58,8 +59,18 @@ class HotelController extends Controller
             return redirect()->back()->with('error', 'Dữ liệu không tồn tại');
         }
 
+        // Kiểm tra xem người dùng đã xem bài này trong session chưa
+        $viewedHotels = session('viewed_hotels', []);
+        if (!in_array($id, $viewedHotels)) {
+            // Chỉ tăng view khi người dùng chưa xem trong session hiện tại
+            $hotel->increment('h_view');
+            // Thêm ID khách sạn vào danh sách đã xem
+            $viewedHotels[] = $id;
+            session(['viewed_hotels' => $viewedHotels]);
+        }
+
         // Decode facilities for display
-        $hotel->h_facilities = json_decode($hotel->h_facilities ?? '[]'); // Ensure this line exists
+        $hotel->h_facilities = json_decode($hotel->h_facilities ?? '[]');
 
         $hotels = Hotel::with('user')->where(['h_location_id' => $hotel->h_location_id])
             ->where('id', '<>', $id)->active()->orderByDesc('id')->limit(NUMBER_PAGINATION_PAGE)->get();
@@ -270,18 +281,17 @@ class HotelController extends Controller
         if (!$payment) {
             return redirect()->route('page.home')->with('error', 'Giao dịch không tồn tại.');
         }
+        
+        // Update payment information
         $payment->p_vnp_response_code = $vnp_ResponseCode;
         $payment->p_code_vnpay = $vnp_TransactionStatus;
         $payment->p_code_bank = $vnp_BankCode;
         $payment->p_time = $vnp_PayDate;
         $payment->save();
 
-        // Only mark success if a secure hash is verified (simulate a more robust check)
         if ($vnp_ResponseCode === '00' && $vnp_TransactionStatus === '00' && $request->has('vnp_SecureHash')) {
-            // Lấy thông tin booking
             $booking = BookRoom::with('hotel')->find($payment->p_transaction_id);
             
-            // Tính giá gốc và giá sau khuyến mãi
             $originalPrice = $booking->hotel->h_price * $booking->rooms * $booking->nights;
             $discountedPrice = $originalPrice;
             
@@ -289,23 +299,26 @@ class HotelController extends Controller
                 $discountedPrice = $originalPrice - ($originalPrice * $booking->hotel->h_sale / 100);
             }
             
-            // Gửi email xác nhận thanh toán thành công
+            $priceData = [
+                'originalPrice' => $originalPrice,
+                'discountedPrice' => $discountedPrice,
+                'discountPercent' => $booking->hotel->h_sale,
+                'payment' => $payment // Add payment information here
+            ];
+            
+            Log::info('Sending BookingConfirmation email with payment data:', ['payment' => $payment->toArray()]);
+
             try {
-                Mail::to($booking->email)->send(new BookingConfirmation($booking, [
-                    'originalPrice' => $originalPrice,
-                    'discountedPrice' => $discountedPrice,
-                    'discountPercent' => $booking->hotel->h_sale
-                ]));
+                Mail::to($booking->email)->send(new BookingConfirmation($booking, $priceData));
             } catch (\Exception $e) {
                 Log::error('Không thể gửi email: ' . $e->getMessage());
             }
 
             return redirect()->route('page.home')->with('success', 'Thanh toán thành công!');
-        } else {
-            // During testing, you may want to redirect to the payment page for further review
-            return redirect()->route('get.from.payment.hotel', $payment->p_transaction_id)
-        ->with('error', 'Thông tin thanh toán chưa xác minh, vui lòng kiểm tra lại!');
         }
+
+        return redirect()->route('get.from.payment.hotel', $payment->p_transaction_id)
+            ->with('error', 'Thông tin thanh toán chưa xác minh, vui lòng kiểm tra lại!');
     }
 
     public function booking(Request $request)
@@ -411,5 +424,212 @@ class HotelController extends Controller
             Log::error('Booking failed: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Có lỗi xảy ra, vui lòng thử lại!')->withInput();
         }
+    }
+
+    // Thêm phương thức createMomoHotelPayment nếu chưa có
+    public function createMomoHotelPayment(Request $request)
+    {
+        try {
+            $bookingId = session('booking_id');
+            $booking = BookRoom::with('hotel')->find($bookingId);
+            if (!$booking) {
+                Log::error('Hotel booking not found', ['booking_id' => $bookingId]);
+                return redirect()->back()->with('error', 'Không tìm thấy thông tin đặt phòng');
+            }
+            // Tính số tiền cần thanh toán
+            if ($booking->hotel->h_sale > 0) {
+                $priceAfterDiscount = $booking->hotel->h_price - ($booking->hotel->h_price * $booking->hotel->h_sale / 100);
+                $amount = $priceAfterDiscount * $booking->rooms * $booking->nights;
+            } else {
+                $amount = $booking->total_price;
+            }
+            $endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
+            $partnerCode = 'MOMOBKUN20180529';
+            $accessKey   = 'klm05TvNBzhg7h7j';
+            $secretKey   = 'at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa';
+            $orderInfo   = "Thanh toán đặt phòng khách sạn #" . $bookingId;
+            $orderId     = $bookingId . "_" . time();
+            $redirectUrl = route('payment.momo.hotel.callback'); // Thay đổi route này
+            $ipnUrl      = route('payment.momo.hotel.callback'); // Và cả route này
+            $extraData   = "";
+            $requestId   = time() . "";
+            $requestType = "payWithATM";
+    
+            $rawHash = "accessKey=" . $accessKey . "&amount=" . $amount . "&extraData=" . $extraData . "&ipnUrl=" . $ipnUrl . "&orderId=" . $orderId . "&orderInfo=" . $orderInfo . "&partnerCode=" . $partnerCode . "&redirectUrl=" . $redirectUrl . "&requestId=" . $requestId . "&requestType=" . $requestType;
+            $signature = hash_hmac("sha256", $rawHash, $secretKey);
+    
+            $data = [
+                'partnerCode' => $partnerCode,
+                'partnerName' => "Test",
+                "storeId"     => "MomoTestStore",
+                'requestId'   => $requestId,
+                'amount'      => $amount,
+                'orderId'     => $orderId,
+                'orderInfo'   => $orderInfo,
+                'redirectUrl' => $redirectUrl,
+                'ipnUrl'      => $ipnUrl,
+                'lang'        => 'vi',
+                'extraData'   => $extraData,
+                'requestType' => $requestType,
+                'signature'   => $signature
+            ];
+    
+            $result = $this->execPostRequest($endpoint, json_encode($data));
+            $jsonResult = json_decode($result, true);
+    
+            if (isset($jsonResult['payUrl'])) {
+                Log::info('MOMO Payment processing for hotel booking', [
+                    'booking_id' => $bookingId,
+                    'email'      => $booking->email
+                ]);
+                // Bạn có thể tạo record Payment tại đây nếu cần
+                return redirect()->to($jsonResult['payUrl']);
+            }
+    
+            Log::error('MOMO Payment failed', ['response' => $jsonResult]);
+            return redirect()->back()->with('error', 'Không thể kết nối tới MOMO');
+    
+        } catch (\Exception $e) {
+            Log::error('MOMO Payment error', ['error' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Đã xảy ra lỗi trong quá trình thanh toán');
+        }
+    }
+
+    public function processPayment(Request $request, $id)
+    {
+        $booking = BookRoom::with('hotel')->find($id);
+        if (!$booking) {
+            return redirect()->back()->with('error', 'Không tìm thấy đơn đặt phòng');
+        }
+
+        $paymentType = $request->input('payment_type');
+
+        switch ($paymentType) {
+            case 'MOMO':
+                return $this->createMomoHotelPayment($request);
+            case 'VNPAY':
+                return $this->createPayMent($request);
+            default:
+                return redirect()->back()->with('error', 'Phương thức thanh toán không hợp lệ');
+        }
+    }
+
+    public function momoHotelCallback(Request $request) 
+    {
+        Log::info('MOMO callback received:', $request->all());
+        
+        if ($request->resultCode == '0' || $request->resultCode == 0) {
+            try {
+                $orderId = explode('_', $request->orderId)[0];
+                $booking = BookRoom::with('hotel')->find($orderId);
+                
+                if ($booking) {
+                    $booking->status = 1;
+                    $booking->save();
+                    
+                    // Cập nhật thêm thông tin cho payment
+                    $payment = \App\Models\Payment::create([
+                        'p_transaction_id' => $booking->id,
+                        'p_user_id' => $booking->user_id,
+                        'p_money' => $request->amount,
+                        'p_transaction_code' => $request->orderId,
+                        'p_code_bank' => 'MOMO', // Thêm thông tin ngân hàng
+                        'p_code_vnpay' => $request->transId, // Thêm mã giao dịch MOMO
+                        'p_time' => date('Y-m-d H:i:s'), // Thêm thời gian hiện tại
+                        'p_note' => 'Thanh toán MOMO thành công cho booking #' . $booking->id,
+                        'book_room_id' => $booking->id
+                    ]);
+                    
+                    // Send MOMO success email
+                    try {
+                        Mail::to($booking->email)->send(new MomoPaymentHotel($booking, $payment));
+                    } catch (\Exception $e) {
+                        Log::error('Failed to send MOMO success email: ' . $e->getMessage());
+                    }
+                    
+                    return redirect()->route('page.home')->with('success', 'Thanh toán thành công! Cảm ơn bạn đã đặt phòng.');
+                }
+            } catch (\Exception $e) {
+                Log::error('MOMO callback processing error: ' . $e->getMessage());
+            }
+        }
+        
+        return redirect()->route('page.home')->with('error', 'Đã xảy ra lỗi trong quá trình thanh toán. Vui lòng liên hệ với chúng tôi để được hỗ trợ.');
+    }
+
+    // VNPAY callback for hotel bookings
+    public function vnpayHotelCallback(Request $request)
+    {
+        Log::info('VNPAY callback received:', $request->all());
+        
+        if ($request->get('vnp_ResponseCode') === '00' && $request->get('vnp_TransactionStatus') === '00') {
+            try {
+                $txnRef = $request->get('vnp_TxnRef');
+                $orderId = explode('_', $txnRef)[0];
+                $booking = \App\Models\BookRoom::with('hotel')->find($orderId);
+                
+                if ($booking) {
+                    // Mark booking as successful
+                    $booking->status = 1;
+                    $booking->save();
+                    
+                    // Create payment record with VNPAY details
+                    $payment = \App\Models\Payment::create([
+                        'p_transaction_id'   => $booking->id,
+                        'p_user_id'          => $booking->user_id,
+                        'p_money'            => $request->get('vnp_Amount') / 100, // Convert amount if needed
+                        'p_transaction_code' => $txnRef,
+                        // Correctly get bank code from vnp_BankCode instead of 'VNPAY'
+                        'p_code_bank'        => $request->get('vnp_BankCode'),
+                        'p_code_vnpay'       => $request->get('vnp_TransactionStatus'),
+                        'p_time'             => $request->get('vnp_PayDate'),
+                        'p_note'             => 'Thanh toán VNPAY thành công cho booking #' . $booking->id,
+                        'book_room_id'       => $booking->id
+                    ]);
+                    
+                    // Calculate price data
+                    $originalPrice = $booking->hotel->h_price * $booking->rooms * $booking->nights;
+                    $discountedPrice = $originalPrice;
+                    if ($booking->hotel->h_sale > 0) {
+                        $discountedPrice = $originalPrice - ($originalPrice * $booking->hotel->h_sale / 100);
+                    }
+                    
+                    $priceData = [
+                        'originalPrice'   => $originalPrice,
+                        'discountedPrice' => $discountedPrice,
+                        'discountPercent' => $booking->hotel->h_sale,
+                        'payment'         => $payment
+                    ];
+                    
+                    try {
+                        Mail::to($booking->email)->send(new BookingConfirmation($booking, $priceData));
+                    } catch (\Exception $e) {
+                        Log::error('Failed to send VNPAY confirmation email: ' . $e->getMessage());
+                    }
+                    
+                    return redirect()->route('page.home')->with('success', 'Thanh toán VNPAY thành công!');
+                }
+            } catch (\Exception $e) {
+                Log::error('VNPAY callback processing error: ' . $e->getMessage());
+            }
+        }
+        
+        return redirect()->route('page.home')->with('error', 'Thông tin thanh toán chưa xác minh, vui lòng kiểm tra lại!');
+    }
+
+    // Add this helper method at the end of the class
+    private function execPostRequest($url, $data)
+    {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($data)
+        ]);
+        $result = curl_exec($ch);
+        curl_close($ch);
+        return $result;
     }
 }
