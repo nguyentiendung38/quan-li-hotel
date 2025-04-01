@@ -2,171 +2,173 @@
 @section('title', 'Đặt tour')
 @section('style')
 <style>
-    /* Hero Section */
+    /* Modern Design Updates */
+    :root {
+        --primary-color: #2d4ea2;
+        --secondary-color: #31d6aa;
+        --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    }
+
+    /* Hero Section Modernization */
     .hero-wrap-2 {
+        min-height: 70vh;
         position: relative;
-        background-size: cover;
-        background-position: center center;
-        min-height: 60vh; /* Tăng chiều cao để ảnh nổi bật */
+        background-attachment: fixed;
     }
+
     .hero-wrap-2::after {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0,0,0,0.4); /* Lớp overlay để chữ hiển thị rõ hơn */
-    }
-    .hero-wrap-2 .bread {
-        color: #fff;
-        font-weight: bold;
-    }
-    .breadcrumbs a {
-        color: #fff !important;
+        background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.6));
     }
 
-    /* Promotion Banner */
-    .promotion-banner {
-        background: linear-gradient(45deg, #3490dc, #2779bd); /* Changed from orange to blue gradient */
-        font-weight: bold;
-        font-size: 1.2rem;
-        color: #fff;
-        margin-bottom: 20px;
-        padding: 15px 0;
-        text-align: center; /* Added center alignment */
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    /* Booking Form Card */
+    /* Modern Card Styling */
     .booking-card {
-        border: none;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        margin-bottom: 20px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        overflow: hidden;
+        transition: transform 0.3s ease;
     }
+
+    .booking-card:hover {
+        transform: translateY(-5px);
+    }
+
     .booking-card .card-header {
-        background: #3490dc;
-        color: #fff;
-        border-top-left-radius: 8px;
-        border-top-right-radius: 8px;
-        padding: 15px;
+        background: var(--gradient);
+        padding: 20px;
     }
-    .booking-card .card-header h4 {
-        margin: 0;
-        font-size: 1.25rem;
+
+    /* Modern Form Controls */
+    .form-control {
+        border: 2px solid #eef2f7;
+        padding: 12px 15px;
+        border-radius: 8px;
+        transition: all 0.3s;
+        font-size: 15px;
     }
-    .booking-card .card-body {
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(45, 78, 162, 0.1);
+    }
+
+    /* Modern Buttons */
+    .btn {
+        border-radius: 30px;
+        padding: 12px 30px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s;
+    }
+
+    .btn-primary {
+        background: var(--gradient);
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(45, 78, 162, 0.3);
+    }
+
+    /* Info Card Modernization */
+    .info-card {
+        border-radius: 16px;
+        background: #fff;
         padding: 30px;
     }
-    .booking-card .form-control {
-        border-radius: 4px;
-    }
-    .booking-card .form-control:focus {
-        box-shadow: none;
-        border-color: #3490dc;
-    }
 
-    /* Info Card (Thông tin Tour) */
-    .info-card {
-        background: #fff;
-        border-radius: 8px;
-        padding: 20px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        margin-bottom: 20px;
-    }
-    .info-card .tour-title {
-        font-size: 1.6rem;
-        margin-bottom: 10px;
-        font-weight: bold;
-    }
-    .info-card .tour-location {
-        font-size: 1.1rem;
-        color: #666;
-        margin-bottom: 20px;
-    }
-    /* CSS Grid chia ô cho thông tin tour */
     .tour-info-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
+        gap: 15px;
     }
+
     .tour-info-item {
-        background: #f9f9f9;
-        padding: 15px;
-        border: 1px solid #e5e5e5;
-        border-radius: 6px;
-    }
-    .tour-info-text {
-        font-size: 16px;
-        color: #555;
-    }
-    .tour-info-text i {
-        margin-right: 8px;
-    }
-    .hotline-wrapper {
-        background: #f7f7f7;
-        padding: 10px;
-        border-radius: 4px;
-        margin: 20px 0;
-        text-align: center;
-    }
-    .hotline-wrapper .hotline {
-        font-size: 1.2rem;
-        color: #e74c3c;
-        font-weight: bold;
-    }
-    .info-card .tour-image img {
-        border-radius: 4px;
-        width: 100%;
-        height: auto;
+        background: #f8fafc;
+        border: none;
+        border-radius: 12px;
+        padding: 20px;
+        transition: all 0.3s;
     }
 
-    /* Price header */
-    .price-header h4 {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: #333;
-        margin-bottom: 10px;
+    .tour-info-item:hover {
+        background: #fff;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        transform: translateY(-3px);
     }
 
-    /* Price Table */
+    /* Price Table Modernization */
     .price-table {
-        margin-top: 15px;
-        font-size: 0.9rem;
+        border-radius: 12px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 0 20px rgba(0,0,0,0.05);
     }
+
     .price-table th {
-        background: #3490dc;
+        background: var(--gradient);
         color: #fff;
-        text-align: center;
+        padding: 15px;
         font-weight: 600;
     }
+
     .price-table td {
-        text-align: center;
+        padding: 15px;
+        border: 1px solid #eef2f7;
     }
 
-    /* Buttons */
-    .btn-primary {
-        background: #3490dc;
-        border-color: #3490dc;
-        transition: background 0.3s ease;
-    }
-    .btn-primary:hover {
-        background: #2779bd;
-        border-color: #2779bd;
-    }
-    .contact-form .form-group.d-flex.justify-content-between .btn {
-        width: 48%; /* canh 2 nút bằng nhau */
+    /* Promotion Banner Enhancement */
+    .promotion-banner {
+        background: var(--gradient);
+        border-radius: 12px;
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
     }
 
-    /* Responsive */
+    .promotion-banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
+    }
+
+    /* Hotline Wrapper Enhancement */
+    .hotline-wrapper {
+        background: var(--gradient);
+        color: #fff;
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .hotline-wrapper .hotline {
+        font-size: 1.5rem;
+        color: #fff;
+    }
+
+    /* Modern Form Labels */
+    label {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 8px;
+    }
+
+    .text-danger {
+        color: #e53e3e;
+    }
+
+    /* Responsive Improvements */
     @media (max-width: 768px) {
-        .hero-wrap-2 {
-            min-height: 40vh;
-        }
         .booking-card .card-body {
             padding: 20px;
         }
-        .info-card {
-            margin-top: 20px;
+        
+        .tour-info-grid {
+            grid-template-columns: 1fr;
         }
     }
 </style>
@@ -276,8 +278,12 @@
                                 <textarea name="b_note" placeholder="Thông tin chi tiết để chúng tôi liên hệ nhanh chóng..." id="message" cols="20" rows="5" class="form-control"></textarea>
                             </div>
                             <div class="form-group d-flex justify-content-between">
-                                <input type="submit" name="submit" value="Đặt Tour" class="btn btn-primary py-3 px-5">
-                                <input type="submit" name="submit" value="Thanh toán online" class="btn btn-primary py-3 px-5">
+                                <button type="submit" name="submit" value="Đặt Tour" class="btn btn-primary py-3 px-5">
+                                    <i class="fas fa-calendar-check"></i> Đặt Tour
+                                </button>
+                                <button type="submit" name="submit" value="Thanh toán online" class="btn btn-primary py-3 px-5">
+                                    <i class="fas fa-credit-card"></i> Thanh toán online
+                                </button>
                             </div>
                         </form>
                     </div>

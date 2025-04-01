@@ -35,7 +35,8 @@ class Hotel extends Model
         'h_user_id',
         'h_rooms',
         'h_room_type', // Added room type field for mass assignment
-        'h_facilities'
+        'h_facilities',
+        'h_view'
     ];
  
     // Thêm mapping tiện nghi
@@ -130,5 +131,10 @@ class Hotel extends Model
         return array_map(function($facility) {
             return self::$facilityNames[$facility] ?? $facility;
         }, $facilities);
+    }
+
+    public function incrementViewCount() 
+    {
+        $this->increment('h_view');
     }
 }

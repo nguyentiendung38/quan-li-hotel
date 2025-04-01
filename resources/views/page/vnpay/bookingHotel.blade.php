@@ -1,154 +1,81 @@
+@extends('page.layouts.page')
+@section('title', 'Thanh toán đặt phòng khách sạn')
+@section('style')
 <style>
-    /* RESET CSS đơn giản */
-    * {
+    /* Giới hạn Reset CSS chỉ trong nội dung trang thanh toán */
+    .payment-page * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
     }
-
-    body {
+    .payment-page body {
         background: #f5f5f5;
-        font-family: Arial, sans-serif;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         color: #333;
     }
-
-    a {
-        text-decoration: none;
-        color: inherit;
-    }
-
-    .top-bar {
-        background: #fff;
-        padding: 10px 20px;
-        border-bottom: 1px solid #ddd;
-    }
-
-    .top-bar-inner {
+    .payment-page .container {
         max-width: 1000px;
-        margin: 0 auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .top-bar-inner .logo {
-        display: flex;
-        align-items: center;
-    }
-
-    .top-bar-inner .logo img {
-        height: 40px;
-        margin-right: 10px;
-    }
-
-    .top-bar-inner .logo span {
-        font-size: 20px;
-        font-weight: bold;
-        color: #27ae60;
-    }
-
-    .hotline-numbers {
-        text-align: right;
-    }
-
-    .hotline-numbers p {
-        line-height: 1.4;
-        font-size: 14px;
-        color: #666;
-    }
-
-    .green-separator {
-        height: 4px;
-        background: #27ae60;
-    }
-
-    /* CONTAINER CHÍNH */
-    .container {
-        max-width: 800px;
-        /* Có thể điều chỉnh rộng hơn, ví dụ 800px, 900px,... */
-        margin: 30px auto;
+        margin: 40px auto;
         background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 5px;
+        border-radius: 12px;
         overflow: hidden;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        padding: 30px;
+        animation: fadeIn 1s ease;
     }
-
-    /* HEADER NỘI DUNG TRONG CONTAINER */
-    .header-content {
-        background: #e9f7ef;
-        padding: 20px;
+    .payment-page .header-content {
+        background: linear-gradient(135deg, #27ae60, #2ecc71);
+        padding: 40px;
         text-align: center;
+        color: #fff;
+        border-radius: 8px;
     }
-
-    .header-content h1 {
-        margin: 0;
-        color: #27ae60;
-        font-size: 24px;
-        font-weight: bold;
-    }
-
-    /* NỘI DUNG CHÍNH */
-    .content {
+    .payment-page .content {
         padding: 20px;
     }
-
-    .content p {
-        margin: 8px 0;
-        line-height: 1.5;
-    }
-
-    .section-title {
+    .payment-page .content h2.section-title {
         font-size: 18px;
         margin: 20px 0 10px;
         color: #27ae60;
         border-bottom: 1px solid #eee;
         padding-bottom: 5px;
     }
-
-    table {
+    .payment-page table {
         width: 100%;
         border-collapse: collapse;
         margin: 10px 0 20px;
     }
-
-    table td,
-    table th {
+    .payment-page table td,
+    .payment-page table th {
         padding: 8px;
         border: 1px solid #eee;
         vertical-align: top;
     }
-
-    table th {
+    .payment-page table th {
         background: #fafafa;
     }
-
-    .text-right {
+    .payment-page .text-right {
         text-align: right;
     }
-
-    .highlight {
+    .payment-page .highlight {
         color: #e74c3c;
         font-weight: bold;
     }
-
-    /* CHỌN PHƯƠNG THỨC THANH TOÁN */
-    .payment-method {
+    .payment-page .payment-method {
         margin: 20px 0;
         background: #f9fafb;
         padding: 20px;
         border: 1px solid #ddd;
         border-radius: 5px;
     }
-
-    .payment-method h3 {
+    .payment-page .payment-method h3 {
         margin-bottom: 15px;
         font-size: 16px;
         color: #27ae60;
         border-bottom: 1px solid #eee;
         padding-bottom: 5px;
     }
-
-    .method-item {
+    .payment-page .method-item {
         display: block;
         margin-bottom: 10px;
         background: #fff;
@@ -157,25 +84,20 @@
         border-radius: 5px;
         cursor: pointer;
     }
-
-    .method-item input[type="radio"] {
+    .payment-page .method-item input[type="radio"] {
         margin-right: 10px;
         transform: scale(1.2);
     }
-
-    .method-item span {
+    .payment-page .method-item span {
         font-weight: bold;
         color: #333;
     }
-
-    .method-item p {
+    .payment-page .method-item p {
         margin: 5px 0 0 26px;
-        /* canh lề dưới radio + text */
         font-size: 14px;
         color: #666;
     }
-
-    .btn-pay-now {
+    .payment-page .btn-pay-now {
         display: inline-block;
         padding: 10px 20px;
         background: #27ae60;
@@ -185,131 +107,157 @@
         border-radius: 5px;
         cursor: pointer;
     }
-
-    .btn-pay-now:hover {
+    .payment-page .btn-pay-now:hover {
         background: #219150;
     }
-
-    .container {
-        max-width: 1000px;
-        /* Tăng từ 600px lên 800px */
-        margin: 30px auto;
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        overflow: hidden;
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 </style>
-<div class="container">
-    <!-- HEADER - Tiêu đề -->
-    <div class="header-content">
-        <h1>Thanh toán đặt phòng khách sạn</h1>
-    </div>
-    <!-- PHẦN NỘI DUNG -->
-    <div class="content">
-        <p>
-            Cảm ơn quý khách đã đặt phòng tại khách sạn.
-            Xin vui lòng kiểm tra lại thông tin đặt phòng và tiến hành thanh toán.
-        </p>
-        <!-- Thông tin khách hàng -->
-        <h2 class="section-title">Thông tin của quý khách</h2>
-        <table>
-            <tr>
-                <td><strong>Tên khách hàng:</strong></td>
-                <td>{{ $booking->name }}</td>
-            </tr>
-            <tr>
-                <td><strong>Số điện thoại:</strong></td>
-                <td>{{ $booking->phone }}</td>
-            </tr>
-            <tr>
-                <td><strong>Email:</strong></td>
-                <td>{{ $booking->email }}</td>
-            </tr>
-            <tr>
-                <td><strong>Địa chỉ:</strong></td>
-                <td>{{ $booking->address }}</td>
-            </tr>
-        </table>
-        <!-- Thông tin đặt phòng -->
-        <h2 class="section-title">Thông tin đặt phòng</h2>
-        <table>
-            <tr>
-                <td><strong>Mã booking:</strong></td>
-                <td>{{ $booking->id }}</td>
-            </tr>
-            <tr>
-                <td><strong>Số phòng:</strong></td>
-                <td>{{ $booking->rooms }}</td>
-            </tr>
-            <tr>
-                <td><strong>Số người:</strong></td>
-                <td>{{ $booking->guests }}</td>
-            </tr>
-            <tr>
-                <td><strong>Ngày nhận phòng:</strong></td>
-                <td>{{ $booking->checkin_date }}</td>
-            </tr>
-            <tr>
-                <td><strong>Ngày trả phòng:</strong></td>
-                <td>{{ $booking->checkout_date }}</td>
-            </tr>
-        </table>
-        <!-- Tóm tắt dịch vụ & giá -->
-        <h2 class="section-title">Tóm tắt dịch vụ</h2>
-        <table>
-            <thead>
+@stop
+
+@section('content')
+<div class="payment-page">
+    <div class="container">
+        <div class="header-content">
+            <h1>Thanh toán đặt phòng khách sạn</h1>
+        </div>
+        <div class="content">
+            <!-- Thông tin khách hàng -->
+            <h2 class="section-title">Thông tin của quý khách</h2>
+            <table>
                 <tr>
-                    <th>Tên dịch vụ</th>
-                    <th class="text-right">Thành tiền</th>
+                    <td><strong>Tên khách hàng:</strong></td>
+                    <td>{{ $booking->name }}</td>
                 </tr>
-            </thead>
-            <tbody>
                 <tr>
-                    <td>{{ $booking->hotel->h_name }} - {{ $booking->rooms }} phòng x {{ $booking->nights }} đêm</td>
-                    <td class="text-right">
-                        @if($booking->hotel->h_sale > 0)
-                        <span style="text-decoration: line-through; color: #999; font-size: 0.9em;">
-                            {{ number_format($booking->total_price, 0, ',', '.') }} VND
-                        </span><br>
-                        <strong>{{ number_format($totalMoney, 0, ',', '.') }} VND</strong>
-                        <span style="color: #e74c3c; font-size: 0.9em;">(-{{ $booking->hotel->h_sale }}%)</span>
-                        @else
-                        {{ number_format($totalMoney, 0, ',', '.') }} VND
-                        @endif
-                    </td>
+                    <td><strong>Số điện thoại:</strong></td>
+                    <td>{{ $booking->phone }}</td>
                 </tr>
-            </tbody>
-            <tfoot>
                 <tr>
-                    <th class="text-right">Tổng cộng</th>
-                    <th class="text-right highlight">
-                        {{ number_format($totalMoney, 0, ',', '.') }} VND
-                    </th>
+                    <td><strong>Email:</strong></td>
+                    <td>{{ $booking->email }}</td>
                 </tr>
-            </tfoot>
-        </table>
-        <!-- CHỌN PHƯƠNG THỨC THANH TOÁN -->
-        <div class="payment-method">
-            <h3>Chọn phương thức thanh toán</h3>
-            <label class="method-item">
-                <input type="radio" name="payment_type" value="VNPAY">
-                <span>Thanh toán qua VNPAY</span>
-                <p>Quý khách có thể thanh toán qua VNPAY bằng cách quét mã QR hoặc sử dụng tài khoản ngân hàng liên kết với VNPAY.</p>
-            </label>
-            <!-- Nút thanh toán -->
-            <div style="margin-top: 20px; text-align: center;">
-                <form action="{{ route('post.payment.hotel') }}" method="POST">
+                <tr>
+                    <td><strong>Địa chỉ:</strong></td>
+                    <td>{{ $booking->address }}</td>
+                </tr>
+            </table>
+
+            <!-- Thông tin đặt phòng -->
+            <h2 class="section-title">Thông tin đặt phòng</h2>
+            <table>
+                <tr>
+                    <td><strong>Mã booking:</strong></td>
+                    <td>{{ $booking->id }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Số phòng:</strong></td>
+                    <td>{{ $booking->rooms }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Số người:</strong></td>
+                    <td>{{ $booking->guests }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Ngày nhận phòng:</strong></td>
+                    <td>{{ $booking->checkin_date }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Ngày trả phòng:</strong></td>
+                    <td>{{ $booking->checkout_date }}</td>
+                </tr>
+            </table>
+
+            <!-- Tóm tắt dịch vụ -->
+            <h2 class="section-title">Thông tin tóm tắt dịch vụ</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tên dịch vụ</th>
+                        <th class="text-right">Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ $booking->hotel->h_name }} - {{ $booking->rooms }} phòng x {{ $booking->nights }} đêm</td>
+                        <td class="text-right">
+                            @if($booking->hotel->h_sale > 0)
+                            <span style="text-decoration: line-through; color: #999; font-size: 0.9em;">
+                                {{ number_format($booking->total_price, 0, ',', '.') }} VND
+                            </span><br>
+                            <strong>{{ number_format($totalMoney, 0, ',', '.') }} VND</strong>
+                            <span style="color: #e74c3c; font-size: 0.9em;">(-{{ $booking->hotel->h_sale }}%)</span>
+                            @else
+                            {{ number_format($totalMoney, 0, ',', '.') }} VND
+                            @endif
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th class="text-right">Tổng cộng</th>
+                        <th class="text-right highlight">
+                            {{ number_format($totalMoney, 0, ',', '.') }} VND
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <!-- Phương thức thanh toán -->
+            <div class="payment-method">
+                <h3>Chọn phương thức thanh toán</h3>
+                <form method="POST" id="paymentForm" action="{{ route('process.payment.hotel', ['id' => $booking->id]) }}">
                     @csrf
                     <input type="hidden" name="amount" value="{{ $totalMoney }}">
-                    <button type="submit" name="redirect" class="btn-pay-now">Thanh Toán ngay</button>
+                    
+                    <label class="method-item">
+                        <input type="radio" name="payment_type" value="MOMO" checked>
+                        <span>Thanh toán qua MOMO</span>
+                        <p>Quý khách có thể thanh toán qua ứng dụng MOMO.</p>
+                    </label>
+
+                    <label class="method-item">
+                        <input type="radio" name="payment_type" value="VNPAY">
+                        <span>Thanh toán qua VNPAY</span>
+                        <p>Quý khách có thể thanh toán qua VNPAY bằng cách quét mã QR hoặc sử dụng tài khoản ngân hàng liên kết.</p>
+                    </label>
+
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button type="submit" name="redirect" class="btn-pay-now">Thanh Toán ngay</button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
-    <!-- FOOTER -->
-    <div class="footer">
-        &copy; 2025 Chudu24 - Hotline: 0123 456 789
-    </div>
 </div>
-</body>
+@stop
+
+@section('script')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('paymentForm');
+    const radioButtons = document.querySelectorAll('input[name="payment_type"]');
+
+    // Set initial form action based on default selected radio
+    setFormAction(document.querySelector('input[name="payment_type"]:checked').value);
+
+    radioButtons.forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            setFormAction(this.value);
+        });
+    });
+
+    function setFormAction(paymentType) {
+        if(paymentType === 'MOMO') {
+            form.action = "{{ route('payment.momo.hotel') }}";
+        } else {
+            form.action = "{{ route('post.payment.hotel') }}";
+        }
+        console.log('Payment type:', paymentType);
+        console.log('Form action updated to:', form.action);
+    }
+});
+</script>
+@stop

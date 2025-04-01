@@ -143,6 +143,17 @@
     .modal-error {
         background: #ffebee;
     }
+
+    /* Add styles for password toggle icon */
+    .password-toggle {
+        cursor: pointer;
+        color: #ccc;
+        transition: color 0.3s ease;
+    }
+
+    .password-toggle:hover {
+        color: #fff;
+    }
 </style>
 <div class="auth-container">
     <div class="auth-welcome-text">
@@ -171,6 +182,7 @@
                         <div class="input-group">
                             <i class="fas fa-lock"></i>
                             <input id="password" name="password" type="password" class="form-control" placeholder="Password">
+                            <i class="fas fa-eye password-toggle" onclick="togglePassword()" id="togglePassword"></i>
                         </div>
                         <!-- Updated Forgot Password link with route -->
                         <div class="forgot-password mt-2">
@@ -238,5 +250,20 @@
             }, 2000);
         @endif
     });
+
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const toggleIcon = document.getElementById('togglePassword');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.classList.remove('fa-eye');
+            toggleIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            toggleIcon.classList.remove('fa-eye-slash');
+            toggleIcon.classList.add('fa-eye');
+        }
+    }
 </script>
 @stop

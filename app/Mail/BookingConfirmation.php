@@ -17,11 +17,13 @@ class BookingConfirmation extends Mailable
     {
         $this->booking = $booking;
         $this->priceData = $priceData;
+        // The payment information will be available in $priceData['payment']
     }
 
     public function build()
     {
-        return $this->subject('Xác nhận đặt phòng khách sạn')
+        return $this->subject('Xác nhận thanh toán VNPAY cho đặt phòng khách sạn thành công
+')
                     ->view('emails.booking-confirmation');
     }
 }

@@ -275,15 +275,19 @@ Route::group(['namespace' => 'Page'], function () {
 
     // Route thanh toán khách sạn
     Route::get('/{id}/thanhtoan-khach-san.html', [\App\Http\Controllers\Page\HotelController::class, 'getFromPayment'])
-    ->name('get.from.payment.hotel');
+        ->name('get.from.payment.hotel');
+    Route::post('/{id}/thanhtoan-khach-san.html', [\App\Http\Controllers\Page\HotelController::class, 'processPayment'])
+        ->name('process.payment.hotel');
     Route::post('/post/payment/hotel', [\App\Http\Controllers\Page\HotelController::class, 'createPayMent'])
         ->name('post.payment.hotel');
-    Route::get('vnpay/return/hotel', [\App\Http\Controllers\Page\HotelController::class, 'vnPayReturn'])
+    Route::get('vnpay/return/hotel', [\App\Http\Controllers\Page\HotelController::class, 'vnpayHotelCallback'])
         ->name('vnpay.return.hotel');
     Route::post('vnpay/create/hotel', [\App\Http\Controllers\Page\HotelController::class, 'createPayMent'])
         ->name('vnpay.create.hotel');
     Route::post('hotel/{id}/payment', [App\Http\Controllers\Page\HotelController::class, 'paymentOnline'])
         ->name('post.payment.online.hotel');
+    Route::post('/payment/momo/hotel', [PageHotelController::class, 'createMomoHotelPayment'])->name('payment.momo.hotel');
+    Route::get('/payment/momo/callback/hotel', [PageHotelController::class, 'momoHotelCallback'])->name('payment.momo.hotel.callback');
 
     // Add these new routes
     Route::get('/chinh-sach-khach-san', function () {
@@ -305,7 +309,6 @@ Route::group(['namespace' => 'Page'], function () {
     Route::post('/dat-phong/process/{id}', [PageHotelController::class, 'processBooking'])
         ->name('hotel.booking.process');
 });
-
 
 // contack email
 Route::post('/gui-lien-he', [ContactController::class, 'send'])->name('contact.send');
