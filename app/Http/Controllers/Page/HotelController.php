@@ -219,14 +219,8 @@ class HotelController extends Controller
         }
 
         $vnp_TxnRef = $booking->id . '_' . time();
-        $payment = \App\Models\Payment::create([
-            'p_transaction_id'   => $booking->id,
-            'p_user_id'          => auth()->id(),
-            'p_money'            => $totalMoney, // Sử dụng giá đã giảm
-            'p_transaction_code' => $vnp_TxnRef,
-            'p_note'             => 'Thanh toán cho booking #' . $booking->id,
-        ]);
-
+        // Remove payment creation from here since it will be created in callback
+        
         $vnp_OrderInfo = 'Thanh toán đặt phòng khách sạn #' . $booking->id;
         $vnp_OrderType = 'billpayment';
         $vnp_Amount = $totalMoney * 100; // Sử dụng giá đã giảm
@@ -527,16 +521,16 @@ class HotelController extends Controller
                     $booking->status = 1;
                     $booking->save();
                     
-                    // Cập nhật thêm thông tin cho payment
                     $payment = \App\Models\Payment::create([
                         'p_transaction_id' => $booking->id,
                         'p_user_id' => $booking->user_id,
                         'p_money' => $request->amount,
                         'p_transaction_code' => $request->orderId,
-                        'p_code_bank' => 'MOMO', // Thêm thông tin ngân hàng
-                        'p_code_vnpay' => $request->transId, // Thêm mã giao dịch MOMO
-                        'p_time' => date('Y-m-d H:i:s'), // Thêm thời gian hiện tại
-                        'p_note' => 'Thanh toán MOMO thành công cho booking #' . $booking->id,
+                        'p_code_momo' => $request->transId,
+                        'p_code_bank' => 'MOMO',
+                        'p_bank_name' => 'Ví điện tử MOMO', // Added this line
+                        'p_time' => date('Y-m-d H:i:s'),
+                        'p_note' => 'Thanh toán MOMO Hotel #' . $booking->id,
                         'book_room_id' => $booking->id
                     ]);
                     
@@ -569,22 +563,28 @@ class HotelController extends Controller
                 $booking = \App\Models\BookRoom::with('hotel')->find($orderId);
                 
                 if ($booking) {
-                    // Mark booking as successful
+                    // Check if payment already exists
+                    $existingPayment = \App\Models\Payment::where('p_transaction_code', $txnRef)->first();
+                    if ($existingPayment) {
+                        return redirect()->route('page.home')->with('error', 'Giao dịch đã được xử lý trước đó.');
+                    }
+
                     $booking->status = 1;
                     $booking->save();
                     
-                    // Create payment record with VNPAY details
+                    // Create single payment record here
                     $payment = \App\Models\Payment::create([
                         'p_transaction_id'   => $booking->id,
                         'p_user_id'          => $booking->user_id,
-                        'p_money'            => $request->get('vnp_Amount') / 100, // Convert amount if needed
+                        'p_money'            => $request->get('vnp_Amount') / 100,
                         'p_transaction_code' => $txnRef,
-                        // Correctly get bank code from vnp_BankCode instead of 'VNPAY'
                         'p_code_bank'        => $request->get('vnp_BankCode'),
-                        'p_code_vnpay'       => $request->get('vnp_TransactionStatus'),
-                        'p_time'             => $request->get('vnp_PayDate'),
-                        'p_note'             => 'Thanh toán VNPAY thành công cho booking #' . $booking->id,
-                        'book_room_id'       => $booking->id
+                        'p_code_vnpay'       => $request->get('vnp_TransactionNo'),
+                        'p_bank_name'        => $this->getBankName($request->get('vnp_BankCode')),
+                        'p_time'             => date('Y-m-d H:i:s', strtotime($request->get('vnp_PayDate'))),
+                        'p_note'             => 'Thanh toán VNPay Hotel #' . $booking->id,
+                        'book_room_id'       => $booking->id,
+                        'p_vnp_response_code' => $request->get('vnp_ResponseCode')
                     ]);
                     
                     // Calculate price data
@@ -631,5 +631,26 @@ class HotelController extends Controller
         $result = curl_exec($ch);
         curl_close($ch);
         return $result;
+    }
+
+    // Add helper method to get bank name
+    private function getBankName($bankCode)
+    {
+        $banks = [
+            'NCB' => 'Ngân hàng NCB',
+            'VIETCOMBANK' => 'Ngân hàng Vietcombank',
+            'VIETINBANK' => 'Ngân hàng VietinBank',
+            'BIDV' => 'Ngân hàng BIDV',
+            'AGRIBANK' => 'Ngân hàng Agribank',
+            'SACOMBANK' => 'Ngân hàng SacomBank',
+            'TECHCOMBANK' => 'Ngân hàng Techcombank',
+            'MBBANK' => 'Ngân hàng MBBank',
+            'ACB' => 'Ngân hàng ACB',
+            'VPB' => 'Ngân hàng VPBank',
+            'TPB' => 'Ngân hàng TPBank',
+            // Add more banks as needed
+        ];
+        
+        return $banks[$bankCode] ?? $bankCode;
     }
 }

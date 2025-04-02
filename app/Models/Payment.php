@@ -23,7 +23,9 @@ class Payment extends Model
         'p_bank_name',
         'p_time',
         'p_status',
-        'p_vnp_response_code'
+        'p_vnp_response_code',
+        'book_room_id',
+        'book_tour_id'
     ];
 
     public function getBankNameAttribute()
@@ -36,8 +38,7 @@ class Payment extends Model
         return $this->p_code_momo ?: null;
     }
 
-    // Add accessor to help debug
-    public function getMomoTransactionAttribute() 
+    public function getMomoTransactionAttribute()
     {
         return [
             'p_code_momo' => $this->p_code_momo,
@@ -48,7 +49,7 @@ class Payment extends Model
 
     public function bookRoom()
     {
-        return $this->belongsTo(BookRoom::class);
+        return $this->belongsTo(BookRoom::class, 'book_room_id', 'id');
     }
 
     public function bookTour()
