@@ -41,7 +41,7 @@ class BookRoom extends Model
 
     public function payment()
     {
-        return $this->hasOne(Payment::class);
+        return $this->hasOne(Payment::class, 'book_room_id', 'id');
     }
 
     public function getTotalPriceWithDiscountAttribute()

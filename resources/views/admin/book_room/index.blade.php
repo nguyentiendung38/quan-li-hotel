@@ -163,9 +163,16 @@
                                     <td style="vertical-align: middle;">
                                         @if($bookRoom->payment)
                                         <ul>
-                                            <li>Ngân hàng: {{ $bookRoom->payment->p_code_bank }}</li>
-                                            <li>Mã thanh toán: {{ $bookRoom->payment->p_code_vnpay }}</li>
-                                            <li>Tổng tiền: {{ number_format($bookRoom->payment->p_money / 100,0,',','.') }} VNĐ</li>
+                                            @if($bookRoom->payment->p_code_momo)
+                                                <li>Phương thức: MOMO</li>
+                                                <li>Mã giao dịch MOMO: {{ $bookRoom->payment->p_code_momo }}</li>
+                                            @elseif($bookRoom->payment->p_code_vnpay)
+                                                <li>Phương thức: VNPay</li>
+                                                <li>Ngân hàng: {{ $bookRoom->payment->p_code_bank }}</li>
+                                                <li>Mã thanh toán VNPay: {{ $bookRoom->payment->p_code_vnpay }}</li>
+                                            @endif
+                                            <li>Mã giao dịch: {{ $bookRoom->payment->p_transaction_code }}</li>
+                                            <li>Tổng tiền: {{ number_format($bookRoom->payment->p_money, 0, ',', '.') }} VNĐ</li>
                                             <li>Nội dung: {{ $bookRoom->payment->p_note }}</li>
                                             <li>Thời gian: {{ date('Y-m-d H:i', strtotime($bookRoom->payment->p_time)) }}</li>
                                         </ul>
