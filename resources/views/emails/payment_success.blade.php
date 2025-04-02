@@ -125,6 +125,19 @@ $booking = \App\Models\BookTour::find($payment->p_transaction_id);
                     <p>Mã giao dịch: <strong>{{ $payment->p_transaction_code }}</strong> đã được xử lý thành công.</p>
                     <p><strong>Số tiền:</strong> {{ number_format($payment->p_money, 0, ',', '.') }} VND</p>
                 </div>
+
+                <!-- Thông tin giao dịch VNPAY -->
+                <div class="section" style="background-color: #e6f2ff; border: 1px solid #005aa9; padding: 15px; margin-bottom: 20px;">
+                    <h3 style="color: #005aa9; margin-bottom: 10px;">Thông tin giao dịch VNPAY</h3>
+                    <p>Ngân hàng: <b>{{ $payment->p_bank_name ?? 'VNPAY' }}</b></p>
+                    <p>Mã thanh toán: <b>{{ $payment->p_transaction_code }}</b></p>
+                    <p>Mã giao dịch VNPAY: <b>{{ $payment->p_code_vnpay }}</b></p>
+                    <p>Số tiền: <b>{{ number_format($payment->p_money, 0, ',', '.') }} VND</b></p>
+                    <p>Nội dung: <b>{{ $payment->p_note }}</b></p>
+                    <p>Thời gian: <b>{{ date('d/m/Y H:i:s', strtotime($payment->p_time)) }}</b></p>
+                    <p>Trạng thái: <b style="color: #27ae60;">Thành công</b></p>
+                </div>
+
                 @if($booking)
                 <!-- Thông tin khách hàng -->
                 <div class="section">

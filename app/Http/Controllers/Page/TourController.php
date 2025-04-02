@@ -232,7 +232,7 @@ class TourController extends Controller
             'p_user_id'        => Auth::id(),       // ID người dùng (nếu có)
             'p_money'        => $book->b_total_money, // Số tiền, tùy logic
             'p_transaction_code' => $vnp_TxnRef,  // Mã giao dịch của bạn
-            'p_note'         => 'Thanh toán cho booking #' . $book->id,
+            'p_note'         => 'Thanh toán Vnpay cho booking Tour #' . $book->id,
             // Các trường còn lại như vnp_response_code, p_code_vnpay
             // sẽ cập nhật sau khi nhận callback từ VNPay
         ]);
@@ -448,7 +448,7 @@ class TourController extends Controller
                             'p_bank_name' => 'Ví điện tử MOMO',
                             'p_code_momo' => $request->transId,
                             'p_time' => date('Y-m-d H:i:s'),
-                            'p_note' => 'Thanh toán MOMO thành công cho booking #' . $booking->id,
+                            'p_note' => 'Thanh toán MOMO thành công cho booking Tour #' . $booking->id,
                             'p_status' => 1
                         ]);
 
