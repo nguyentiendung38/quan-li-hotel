@@ -164,9 +164,9 @@
 <section class="ftco-section no-padding-top" style="padding-bottom: 0 !important;">
     <div class="container">
         <div class="row justify-content-center pb-4">
-            <div class="col-md-12 heading-section text-center ftco-animate">
+            <div class="col-md-12 heading-section text-center">
                 <span class="subheading">Khách Sạn</span>
-                <h2 class="mb-4">Khách sạn mới nhất</h2>
+                <h2 class="mb-4" style="display: block !important;">Khách sạn mới nhất</h2>
             </div>
         </div>
         <div class="row">
@@ -250,4 +250,14 @@
 </section>
 @stop
 @section('script')
+<script>
+$(document).ready(function() {
+    // Force reload CSS for headings
+    $('.heading-section h2').css({
+        'display': 'block',
+        'visibility': 'visible',
+        'opacity': '1'
+    });
+});
+</script>
 @stop

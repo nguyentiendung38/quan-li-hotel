@@ -29,8 +29,8 @@ use App\Http\Controllers\Admin\BookRoomController;
 use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TestEmail;
-
-
+use App\Http\Controllers\GeminiController;
+use App\Http\Controllers\LogViewerController;
 
 Route::get('/clear-cache', function () {
     $exitCode = Artisan::call('cache:clear');
@@ -176,6 +176,11 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin'], function () {
             Route::get('/update-status/{status}/{id}', [App\Http\Controllers\Admin\BookRoomController::class, 'updateStatus'])->name('book.room.update.status');
             Route::post('/dat-phong/{id}/{slug}', [BookRoomController::class, 'store'])->name('post.book.room');
         });
+
+        // Add route for viewing logs - place this with your admin routes
+        Route::get('/logs', [LogViewerController::class, 'view'])
+            ->middleware(['auth'])
+            ->name('admin.logs');
     });
 });
 
@@ -338,3 +343,6 @@ Route::post('/tour/booking', [App\Http\Controllers\Page\TourController::class, '
 Route::post('/payment/momo', [\App\Http\Controllers\Page\TourController::class, 'createMomoPayment'])->name('payment.momo');
 Route::get('/payment/momo/callback', [\App\Http\Controllers\Page\TourController::class, 'momoCallback'])->name('payment.momo.callback');
 Route::post('/payment/momo/callback', [TourController::class, 'momoTourCallback'])->name('payment.momo.tour.callback');
+
+// chat gemini
+Route::post('/gemini/chat', [GeminiController::class, 'generateContent'])->name('gemini.chat');
