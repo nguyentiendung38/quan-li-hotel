@@ -6,72 +6,136 @@
     <title>Chatbot Gemini</title>
     <script src="{{ asset('page/js/jquery.min.js') }}"></script>
     <style>
-        /* CSS cho icon Zalo */
-        .zalo-chat-icon {
+        /* Chat icons container */
+        .chat-icons-container {
             position: fixed;
-            top: 350px;
-            right: 10px;
+            right: 20px;
+            bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
             z-index: 1000;
-            padding: 10px;
-            border-radius: 50%;
-            cursor: pointer;
-            animation: shake 1s ease-in-out 3;
         }
 
-        .zalo-chat-icon img {
+        /* Common styles for all chat icons */
+        .chat-icon {
             width: 50px;
             height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
         }
 
-        /* CSS cho icon Facebook */
+        .chat-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .chat-icon img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+        }
+
+        .zalo-chat-icon {
+            background: #0068ff;
+        }
+
         .fb-chat-icon {
-            position: fixed;
-            top: 410px;
-            right: 10px;
-            z-index: 1001;
-            padding: 10px;
-            border-radius: 50%;
-            cursor: pointer;
-            animation: shake 1s ease-in-out 3;
+            background: #0084ff;
         }
 
-        .fb-chat-icon img {
-            width: 50px;
-            height: 50px;
+        .gemini-chat-icon {
+            background: #007bff;
         }
 
+        /* Modern chatbot container styling */
         #gemini-chatbot-container {
             position: fixed;
-            bottom: 80px;
-            right: 20px;
-            width: 400px; /* Increased from 300px to 400px */
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            bottom: 20px; /* Adjusted to align with chat icons, considering their size and spacing */
+            right: 70px;
+            width: 380px;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.15);
             display: none;
             flex-direction: column;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            margin-bottom: 0; /* Remove any bottom margin */
         }
 
         #gemini-chatbot-header {
-            padding: 15px;
-            background: #007bff;
+            padding: 20px;
+            background: linear-gradient(135deg, #0062cc, #007bff);
             color: white;
-            border-radius: 10px 10px 0 0;
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        #gemini-chatbot-header:before {
+            content: '';
+            width: 12px;
+            height: 12px;
+            background: #4CAF50;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        /* Close button styling */
+        .header-controls {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .close-chat {
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-chat:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
         }
 
         #gemini-chatbot-body {
-            height: 350px; /* Reduced from 400px */
+            height: 410px; /* Điều chỉnh chiều cao form chat ở đây */
             display: flex;
             flex-direction: column;
+            background: #f8f9fa;
             position: relative;
         }
 
         #gemini-chatbot-messages {
-            flex-grow: 1;
+            flex: 1;
             overflow-y: auto;
-            padding: 15px;
-            padding-bottom: 100px; /* Make space for input area */
+            padding: 20px 20px 0 20px; /* Changed to remove bottom padding */
+            background: #fff;
+            margin-bottom: 0; /* Changed from 80px to 0 */
+            border-bottom: none; /* Add this line to remove border */
         }
 
         .input-container {
@@ -79,116 +143,144 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: white;
             padding: 15px;
-            border-top: 1px solid #ddd;
-            border-radius: 0 0 10px 10px;
+            background: #fff;
+            border-top: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            position: relative;
         }
 
         #gemini-chatbot-input {
-            width: calc(100% - 16px); /* Account for padding */
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            width: 100%;
+            padding: 12px 15px;
+            padding-right: 100px; /* Space for the button */
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            background: #f8f9fa;
+        }
+
+        #gemini-chatbot-input:focus {
+            outline: none;
+            border-color: #007bff;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(0,123,255,0.1);
         }
 
         #gemini-chatbot-send {
-            width: 100%;
+            position: absolute;
+            right: 25px;
             padding: 8px;
-            background: #007bff;
-            color: white;
+            background: transparent;
+            color: #007bff;
             border: none;
-            border-radius: 4px;
+            border-radius: 50%;
             cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: none; /* Hide by default */
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
         }
 
+        #gemini-chatbot-send i {
+            font-size: 20px;
+        }
+
+        #gemini-chatbot-send:hover {
+            background: rgba(0,123,255,0.1);
+            transform: translateY(-1px);
+        }
+
+        /* Message bubbles styling */
         .chat-message {
-            display: flex;
-            align-items: start;
-            margin-bottom: 15px;
-            padding: 8px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .message-content {
-            flex: 1;
-            padding: 8px 12px;
-            border-radius: 15px;
-            max-width: 80%;
-        }
-
-        .user-message {
-            flex-direction: row-reverse;
+            padding: 12px 18px;
+            border-radius: 18px;
+            max-width: 85%;
+            font-size: 14px;
+            line-height: 1.5;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         .user-message .message-content {
-            background: #e9ecef;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            border-bottom-right-radius: 5px;
             margin-left: auto;
         }
 
         .bot-message .message-content {
-            background: #f8f9fa;
-        }
-
-        .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            margin-right: 8px;
-            flex-shrink: 0;
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        .avatar_primary {
-            background: #007bff;
-            color: white;
-            text-align: center;
-            line-height: 32px;
-            font-weight: bold;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 5px;
         }
 
         .error {
             color: red;
         }
 
-        /* Add new CSS for chat icon */
-        .chat-icon-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1003;
-            cursor: pointer;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
+        .gemini-icon {
+            width: 24px;
+            height: 24px;
             background: #007bff;
-            display: flex;
+            border-radius: 50%;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
+            margin-right: 8px;
+            vertical-align: middle;
         }
 
-        .chat-icon-toggle:hover {
-            transform: scale(1.1);
-            background: #0056b3;
+        .gemini-icon img {
+            width: 16px;
+            height: 16px;
         }
 
-        .chat-icon-toggle img {
-            width: 30px;
-            height: 30px;
+        .customer-icon {
+            width: 24px;
+            height: 24px;
+            background: #28a745;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .customer-icon img {
+            width: 16px;
+            height: 16px;
         }
     </style>
 </head>
 <body>
 
-    <div class="zalo-chat-icon" onclick="openZaloChat()">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1024px-Icon_of-Zalo.svg.png" alt="Chat Zalo">
-    </div>
+    <!-- New structure for chat icons -->
+    <div class="chat-icons-container">
+        <div class="chat-icon zalo-chat-icon" onclick="openZaloChat()">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1024px-Icon_of-Zalo.svg.png" alt="Chat Zalo">
+        </div>
 
-    <div class="fb-chat-icon" onclick="openFbChat()">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Chat Facebook">
+        <div class="chat-icon fb-chat-icon" onclick="openFbChat()">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Chat Facebook">
+        </div>
+
+        <div id="gemini-chatbot-toggle" class="chat-icon gemini-chat-icon">
+            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" alt="Chat Gemini">
+        </div>
     </div>
 
     <script src="https://sp.zalo.me/plugins/sdk.js"></script>
@@ -205,19 +297,23 @@
 
     <div id="gemini-chatbot-container">
         <div id="gemini-chatbot-header">
-            Gemini Chatbot
+            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" alt="Bot Avatar" style="width: 24px; height: 24px;">
+            Fun Travel Assistant
+            <div class="header-controls">
+                <button class="close-chat">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
         </div>
         <div id="gemini-chatbot-body">
             <div id="gemini-chatbot-messages"></div>
             <div class="input-container">
-                <input type="text" id="gemini-chatbot-input" placeholder="Type your message...">
-                <button id="gemini-chatbot-send">Send</button>
+                <input type="text" id="gemini-chatbot-input" placeholder="Hỏi Gemini">
+                <button id="gemini-chatbot-send">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
             </div>
         </div>
-    </div>
-
-    <div id="gemini-chatbot-toggle" class="chat-icon-toggle">
-        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" alt="Chat Icon">
     </div>
 
     <script>
@@ -225,6 +321,18 @@
             $("#gemini-chatbot-toggle").click(function() {
                 $("#gemini-chatbot-container").toggle();
                 $("#gemini-chatbot-body").show();
+            });
+
+            $(".close-chat").click(function() {
+                $("#gemini-chatbot-container").hide();
+            });
+
+            $("#gemini-chatbot-input").on('input', function() {
+                if ($(this).val().trim().length > 0) {
+                    $("#gemini-chatbot-send").css('display', 'flex');
+                } else {
+                    $("#gemini-chatbot-send").hide();
+                }
             });
 
             $("#gemini-chatbot-input").keypress(function(e) {
@@ -237,23 +345,24 @@
                 var message = $("#gemini-chatbot-input").val().trim();
                 if (!message) return;
 
-                // Add user message with avatar
+                // Update user message with customer icon
                 $("#gemini-chatbot-messages").append(`
                     <div class="chat-message user-message">
                         <div class="message-content">
-                            <strong>You:</strong> ${message}
+                            <div class="customer-icon">
+                                <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" alt="User">
+                            </div>
+                            ${message}
                         </div>
-                        <div class="avatar avatar_primary">U</div>
                     </div>
                 `);
 
                 $("#gemini-chatbot-input").val('').prop('disabled', true);
                 $("#gemini-chatbot-send").prop('disabled', true);
 
-                // Show loading indicator with avatar
+                // Update loading message without avatar
                 $("#gemini-chatbot-messages").append(`
                     <div class="chat-message bot-message" id="loading-message">
-                        <div class="avatar avatar_primary">G</div>
                         <div class="message-content">
                             Gemini is thinking...
                         </div>
@@ -275,16 +384,17 @@
                         if (response.success) {
                             $("#gemini-chatbot-messages").append(`
                                 <div class="chat-message bot-message">
-                                    <div class="avatar avatar_primary">G</div>
                                     <div class="message-content">
-                                        <strong>Gemin:</strong> ${response.response}
+                                        <div class="gemini-icon">
+                                            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" alt="Gemini">
+                                        </div>
+                                        ${response.response}
                                     </div>
                                 </div>
                             `);
                         } else {
                             $("#gemini-chatbot-messages").append(`
                                 <div class="chat-message bot-message error">
-                                    <div class="avatar avatar_primary">G</div>
                                     <div class="message-content">
                                         Error: ${response.error || 'Could not get response from Gemini'}
                                     </div>
@@ -297,7 +407,6 @@
                         $("#loading-message").remove();
                         $("#gemini-chatbot-messages").append(`
                             <div class="chat-message bot-message error">
-                                <div class="avatar avatar_primary">G</div>
                                 <div class="message-content">
                                     Error: ${error}
                                 </div>

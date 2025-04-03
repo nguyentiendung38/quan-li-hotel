@@ -13,6 +13,66 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
     
     <style>
+        /* Fix hero section */
+        .hero-wrap {
+            width: 100%;
+            height: 100vh;
+            min-height: 700px;
+            position: relative;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+        }
+
+        .hero-wrap .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            content: '';
+            opacity: .3;
+            background: #000000;
+        }
+
+        .hero-wrap.js-fullheight {
+            height: 100vh !important;
+        }
+
+        .slider-text {
+            color: #fff;
+            height: 700px;
+            display: flex !important;
+            align-items: center !important; 
+        }
+
+        .slider-text h1 {
+            font-size: 60px;
+            color: #fff;
+            line-height: 1.2;
+            font-weight: 800;
+        }
+
+        .slider-text p {
+            font-size: 20px;
+            line-height: 1.5;
+            font-weight: 400;
+            color: rgba(255,255,255,.9);
+        }
+
+        @media (max-width: 767.98px) {
+            .hero-wrap {
+                height: 600px;
+                min-height: 600px;
+            }
+            .slider-text {
+                height: 600px;
+            }
+            .slider-text h1 {
+                font-size: 40px;
+            }
+        }
+
         /* Fix heading section display */
         .heading-section {
             position: relative;
