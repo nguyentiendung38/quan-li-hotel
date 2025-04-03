@@ -41,4 +41,10 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'), // Your callback URL
     ],
 
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+        'model' => 'gemini-2.0-flash',
+        'base_url' => 'https://generativelanguage.googleapis.com/v1beta'
+    ],
+
 ];
