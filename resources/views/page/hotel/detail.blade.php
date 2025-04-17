@@ -1,5 +1,6 @@
 @extends('page.layouts.page')
 @section('title', $hotel->h_name)
+
 @section('style')
 <style>
     .hero-wrap {
@@ -149,8 +150,76 @@
         margin-bottom: 40px;
         /* Add spacing before footer */
     }
+
+    /* Contact Modal Styles */
+    .contact-modal .modal-content {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .contact-modal .modal-header {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        padding: 20px;
+    }
+
+    .contact-modal .modal-title {
+        font-weight: 600;
+        font-size: 1.25rem;
+    }
+
+    .contact-modal .modal-body {
+        padding: 30px;
+    }
+
+    /* Update Contact Modal Styles */
+    .contact-options {
+        display: flex;
+        gap: 15px;
+        padding: 10px;
+    }
+
+    .contact-option {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 15px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .contact-option.call {
+        background: linear-gradient(135deg, #4CAF50, #45a049);
+    }
+
+    .contact-option.sms {
+        background: linear-gradient(135deg, #2196F3, #1976D2);
+    }
+
+    .contact-icon {
+        font-size: 24px;
+        margin-bottom: 8px;
+        color: white;
+    }
+
+    .contact-label {
+        font-weight: 500;
+        color: white;
+        margin-bottom: 4px;
+    }
+
+    .contact-description {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.9);
+        text-align: center;
+    }
 </style>
-@stop
+@endsection
 
 @section('content')
 <section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url({{ asset('/page/images/trangchu.jpg') }});">
@@ -160,7 +229,7 @@
                 <p class="breadcrumbs"><span class="mr-2"><a href="{{ route('page.home') }}">Trang chủ <i class="fa fa-chevron-right"></i></a></span> <span>Khách sạn <i class="fa fa-chevron-right"></i></span></p>
                 <h1 class="mb-0 bread">Khách Sạn</h1>
             </div>
-        </div>style="margin-bottom: 40px;">
+        </div>
     </div>
 </section>
 
@@ -397,16 +466,26 @@
                         <!-- END comment-list -->
 
                         <div class="comment-form-wrap pt-2">
-                            <h3 class="mb-2" style="font-size: 20px; font-weight: bold;">{{ Auth::guard('users')->check() ? 'Bình luận về khách sạn' : 'Bạn cần đăng nhập để bình luận' }}</h3>
+                            <h3 class="mb-2" style="font-size: 20px; font-weight: bold;">
+                                {{ Auth::guard('users')->check() ? 'Bình luận về khách sạn' : 'Bạn cần đăng nhập để bình luận' }}
+                            </h3>
                             @if (Auth::guard('users')->check())
-                            <form action="#" class="p-2 bg-light">
+                            <form action="{{ route('hotel.comment', $hotel->id) }}" method="POST" class="p-2 bg-light" enctype="multipart/form-data">
+                                @csrf
                                 <div class="form-group">
                                     <label for="message">Nội dung</label>
-                                    <textarea name="" id="message" cols="30" rows="5" class="form-control"></textarea>
+                                    <textarea name="comment" id="message" cols="30" rows="5" class="form-control"></textarea>
                                     <span class="text-errors-comment" style="display: none;">Vui lòng nhập nội dung bình luận !!!</span>
                                 </div>
                                 <div class="form-group">
-                                    <input type="" value="Gửi bình luận" class="btn py-3 px-4 btn-primary btn-comment" hotel_id="{{ $hotel->id }}">
+                                    <label for="comment_image">Hình ảnh (không bắt buộc)</label>
+                                    <input type="file" name="comment_image" id="comment_image" class="form-control" accept="image/*">
+                                    <div id="image_preview" class="mt-2" style="display: none;">
+                                        <img src="" alt="Preview" style="max-width: 200px; max-height: 200px;">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" value="Gửi bình luận" class="btn py-3 px-4 btn-primary btn-comment">
                                 </div>
                             </form>
                             @endif
@@ -414,7 +493,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-lg-4">
                 <div class="sidebar-sticky">
                     <div class="card border-0 rounded-lg shadow-sm overflow-hidden">
@@ -427,17 +505,18 @@
                                             <del class="text-secondary">{{ number_format($hotel->h_price, 0, ',', '.') }} vnđ</del>
                                         </p>
                                         <div class="price-amount mb-2">
-                                            {{ number_format($hotel->h_price - ($hotel->h_price * $hotel->h_sale / 100), 0, ',', '.') }} vnđ
+                                            {{ number_format($hotel->h_price - ($hotel->h_price * $hotel->h_sale / 100), 0, ',', '.') }} vnđ/đêm
                                         </div>
                                         <span class="badge badge-danger">Giảm {{ $hotel->h_sale }}%</span>
                                     </div>
                                     @else
                                     <div class="text-center">
-                                        <div class="price-amount">{{ number_format($hotel->h_price, 0, ',', '.') }} vnđ</div>
+                                        <p class="text-muted mb-1">Giá phòng:</p>
+                                        <div class="price-amount mb-2">{{ number_format($hotel->h_price, 0, ',', '.') }} vnđ/đêm</div>
+                                        <small class="text-muted">Đã bao gồm thuế và phí</small>
                                     </div>
                                     @endif
                                 </div>
-
                                 <div class="action-buttons p-4">
                                     <div class="d-flex justify-content-between" style="gap:10px;">
                                         <a href="#" class="btn btn-secondary py-3" style="width:48%; border-radius: 25px;" data-toggle="modal" data-target="#contactModal">
@@ -453,7 +532,6 @@
                             </div>
                         </div>
                     </div>
-
                     @if ($hotels->count() > 0)
                     <div class="card border-0 rounded-lg shadow-sm mt-4">
                         <div class="card-body">
@@ -473,24 +551,36 @@
     </div>
 </section>
 
-<div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+<!-- Update Contact Modal Structure -->
+<div class="modal fade contact-modal" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="contactModalLabel">Liên hệ</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
+            <div class="modal-header" style="background: linear-gradient(135deg, #2196F3, #1976D2); color: white;">
+                <h5 class="modal-title" id="contactModalLabel">
+                    <i class="fas fa-headset mr-2"></i>Liên hệ với chúng tôi
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Đóng">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body text-center">
-                <p>Chọn phương thức liên hệ:</p>
-                <button type="button" class="btn btn-primary mx-1" onclick="window.location.href='tel:0773398244';">Gọi điện</button>
-                <button type="button" class="btn btn-secondary mx-1" onclick="window.location.href='sms:{{ $hotel->h_phone }}';">SMS</button>
+            <div class="modal-body">
+                <div class="contact-options">
+                    <a href="tel:0773398244" class="contact-option call">
+                        <i class="fas fa-phone-alt contact-icon"></i>
+                        <span class="contact-label">Gọi điện</span>
+                        <small class="contact-description">Tư vấn trực tiếp</small>
+                    </a>
+                    <a href="sms:0773398244" class="contact-option sms">
+                        <i class="fas fa-comment-alt contact-icon"></i>
+                        <span class="contact-label">Nhắn tin</span>
+                        <small class="contact-description">Phản hồi nhanh</small>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </div>
-@stop
+@endsection
 
 @section('script')
 <script>
@@ -509,6 +599,21 @@
             interval: 3000,
             pause: "hover"
         });
+
+        // Image preview
+        $('#comment_image').change(function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#image_preview img').attr('src', e.target.result);
+                    $('#image_preview').show();
+                }
+                reader.readAsDataURL(file);
+            } else {
+                $('#image_preview').hide();
+            }
+        });
     });
 </script>
-@stop
+@endsection

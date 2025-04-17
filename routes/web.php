@@ -46,6 +46,7 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin'], function () {
     Route::group(['namespace' => 'Auth'], function () {
         Route::get('/login', [LoginController::class, 'login'])->name('admin.login');
         Route::post('/login', [LoginController::class, 'postLogin']);
+        Route::post('/admin/login', [App\Http\Controllers\Admin\Auth\LoginController::class, 'postLogin'])->name('admin.login.post');
         Route::get('/register', [RegisterController::class, 'getRegister'])->name('admin.register');
         Route::post('/register', [RegisterController::class, 'postRegister']);
         Route::get('/logout', [LoginController::class, 'logout'])->name('admin.logout');
@@ -215,6 +216,10 @@ Route::group(['namespace' => 'Page'], function () {
         Route::post('cancel/order/tour/{status}/{id}', [AccountController::class, 'updateStatus'])->name('post.cancel.order.tour');
     });
 
+    Route::group(['prefix' => 'account', 'middleware' => 'auth:users'], function() {
+        Route::get('/danh-sach-phong.html', [App\Http\Controllers\Page\BookRoomController::class, 'myRooms'])->name('my.rooms');
+    });
+
     Route::get('account/forgot-password', [AccountController::class, 'forgotPassword'])
         ->name('account.forgot.password');
 
@@ -255,7 +260,10 @@ Route::group(['namespace' => 'Page'], function () {
     Route::group(['prefix' => 'hotel'], function () {
         Route::post('/rate/{id}', [\App\Http\Controllers\Page\HotelController::class, 'rateHotel'])->name('hotel.rate');
     });
+    // bình luận
     Route::post('tour/{id}/comment', [PageTourController::class, 'comment'])->name('tour.comment');
+    Route::post('hotel/{id}/comment', [PageHotelController::class, 'comment'])->name('hotel.comment');
+
     Route::post('tour/rate/{id}', [\App\Http\Controllers\Page\TourController::class, 'rate'])->name('tour.rate');
     
     Route::get('/gioi-thieu-chung.html', function () {

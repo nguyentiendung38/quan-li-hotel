@@ -5,7 +5,7 @@
     .contact-card {
         background: #fff;
         border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
         transition: transform 0.3s ease;
     }
 
@@ -38,7 +38,8 @@
         color: #333;
     }
 
-    .contact-card p, .contact-card a {
+    .contact-card p,
+    .contact-card a {
         color: #666;
         margin: 0;
         transition: color 0.3s ease;
@@ -50,8 +51,8 @@
     }
 
     .welcome-section {
-        background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
-                    url({{ asset('page/images/bg_2.jpg') }});
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                    url({{ asset('page/images/bg_2.jpg') }}); /* Fixed syntax */
         background-size: cover;
         background-position: center;
         border-radius: 15px;
@@ -79,35 +80,153 @@
         transform: translateY(-2px);
     }
 
+    /* Modern Contact Form Popup Styling */
     .modal-content {
-        border-radius: 15px;
+        border: none;
+        border-radius: 20px;
         overflow: hidden;
-    }
-
-    .modal-body {
-        padding: 0;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
     }
 
     .form-section {
-        padding: 30px;
+        padding: 40px;
+        background: linear-gradient(135deg, #f8f9fa, #ffffff);
     }
 
     .form-section h4 {
-        font-size: 1.2rem;
-        margin-bottom: 25px;
+        font-size: 24px;
+        font-weight: 600;
         color: #333;
+        margin-bottom: 30px;
+        position: relative;
+    }
+
+    .form-section h4:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -10px;
+        width: 50px;
+        height: 3px;
+        background: #00B2BF;
+        border-radius: 2px;
     }
 
     .form-control {
-        border-radius: 8px;
-        padding: 12px 15px;
-        border: 1px solid #e0e0e0;
-        margin-bottom: 15px;
+        height: auto;
+        padding: 15px 20px;
+        border: 2px solid #eef0f5;
+        border-radius: 12px;
+        font-size: 15px;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+        background: #fff;
     }
 
     .form-control:focus {
         border-color: #00B2BF;
-        box-shadow: 0 0 0 0.2rem rgba(0,178,191,0.25);
+        box-shadow: 0 0 0 4px rgba(0,178,191,0.1);
+    }
+
+    .form-control::placeholder {
+        color: #aab2bd;
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+        resize: none;
+    }
+
+    .btn-submit {
+        width: 100%;
+        padding: 15px 30px;
+        background: linear-gradient(135deg, #00B2BF, #008a94);
+        border: none;
+        border-radius: 12px;
+        color: #fff;
+        font-weight: 600;
+        font-size: 16px;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,178,191,0.3);
+    }
+
+    .form-group {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .form-group i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #00B2BF;
+        font-size: 18px;
+    }
+
+    .modal-image-container {
+        position: relative;
+        height: 100%;
+        min-height: 500px;
+        overflow: hidden;
+    }
+
+    .modal-image-container:after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(0,178,191,0.8), rgba(0,138,148,0.8));
+    }
+
+    .modal-image-text {
+        position: absolute;
+        bottom: 40px;
+        left: 40px;
+        right: 40px;
+        color: #fff;
+        z-index: 1;
+    }
+
+    .company-info {
+        padding: 20px;
+        background: rgba(0,0,0,0.5);
+        border-radius: 12px;
+        margin-top: 20px;
+    }
+
+    .company-info h4 {
+        color: #fff;
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+
+    .company-info ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .company-info ul li {
+        color: rgba(255,255,255,0.9);
+        margin-bottom: 10px;
+        font-size: 14px;
+        display: flex;
+        align-items: start;
+    }
+
+    .company-info ul li i {
+        min-width: 20px;
+        margin-right: 10px;
+        color: #00B2BF;
     }
 </style>
 @stop
@@ -198,29 +317,70 @@
     </div>
 </section>
 
-<!-- Popup Form -->
+<!-- Updated Contact Form Popup -->
 <div class="modal fade" id="contactPopup" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-body">
+            <div class="modal-body p-0">
                 <div class="row g-0">
                     <div class="col-md-6">
                         <div class="form-section">
                             <h4>Gửi thông tin liên hệ</h4>
                             <form action="{{ route('contact.send') }}" method="POST">
                                 @csrf
-                                <input type="text" class="form-control" name="name" placeholder="Họ và tên" required>
-                                <input type="text" class="form-control" name="phone" placeholder="Số điện thoại" required>
-                                <input type="email" class="form-control" name="email" placeholder="Email" required>
-                                <input type="text" class="form-control" name="partner" placeholder="Đối tác">
-                                <textarea class="form-control" name="message" placeholder="Nội dung tin nhắn" rows="5" required></textarea>
-                                <button type="submit" class="btn btn-primary">Gửi</button>
+                                <div class="form-group">
+                                    <i class="fa fa-user"></i>
+                                    <input type="text" class="form-control pl-5" name="name" placeholder="Họ và tên" required>
+                                </div>
+                                <div class="form-group">
+                                    <i class="fa fa-phone"></i>
+                                    <input type="text" class="form-control pl-5" name="phone" placeholder="Số điện thoại" required>
+                                </div>
+                                <div class="form-group">
+                                    <i class="fa fa-envelope"></i>
+                                    <input type="email" class="form-control pl-5" name="email" placeholder="Email" required>
+                                </div>
+                                <div class="form-group">
+                                    <i class="fa fa-building"></i>
+                                    <input type="text" class="form-control pl-5" name="partner" placeholder="Đối tác">
+                                </div>
+                                <div class="form-group">
+                                    <i class="fa fa-comment"></i>
+                                    <textarea class="form-control pl-5" name="message" placeholder="Nội dung tin nhắn" rows="5" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-submit">
+                                    <i class="fa fa-paper-plane mr-2"></i> Gửi thông tin
+                                </button>
                             </form>
                         </div>
                     </div>
                     <div class="col-md-6 d-none d-md-block">
-                        <img src="{{ asset('/page/images/cskh.jpg') }}" alt="Customer Service" 
-                             class="img-fluid w-100 h-100" style="object-fit: cover;">
+                        <div class="modal-image-container">
+                            <img src="{{ asset('/page/images/cskh.jpg') }}" alt="Customer Service" 
+                                class="img-fluid w-100 h-100" style="object-fit: cover;">
+                            <div class="modal-image-text">
+                                <h3 class="text-white mb-3">Chúng tôi luôn lắng nghe bạn</h3>
+                                <p class="mb-0">Hãy để lại thông tin, chúng tôi sẽ liên hệ với bạn sớm nhất có thể.</p>
+                                
+                                <div class="company-info">
+                                    <h4>CÔNG TY CỔ PHẦN TRUYỀN THÔNG DU LỊCH VIỆT</h4>
+                                    <ul>
+                                        <li>
+                                            <i class="fa fa-map-marker-alt"></i>
+                                            <span>217 Bis Nguyễn Thị Minh Khai, Phường Nguyễn Cư Trinh, Quận 1, TP. Hồ Chí Minh</span>
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-phone-alt"></i>
+                                            <span>1900 1177</span>
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-envelope"></i>
+                                            <span>info@dulichviet.com.vn</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

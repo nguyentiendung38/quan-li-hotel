@@ -31,6 +31,7 @@ class Comment extends Model
         'cm_tour_id', // Ensure this column is included
         'cm_content',
         'cm_images',
+        'cm_image'  // Thêm trường này
     ];
 
     public function user()

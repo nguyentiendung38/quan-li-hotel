@@ -17,6 +17,7 @@ use App\Models\Payment;
 use App\Mail\AdminBookingMail;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\MomoPaymentSuccessMail; // Thêm use statement này ở đầu file
+use Illuminate\Support\Facades\File; // Add this import for file handling
 
 class TourController extends Controller
 {
@@ -148,7 +149,8 @@ class TourController extends Controller
                 // Cập nhật số lượng người đã đăng ký của tour
                 $tour->t_follow += $numberUser;
                 $tour->save();
-                // Gửi email tiếp nhận đặt tour
+                
+                // Gửi email
                 $mailuser = $user->email;
                 Mail::send('emailtiepnhan', [
                     'user' => $user,
@@ -162,16 +164,21 @@ class TourController extends Controller
 
             DB::commit();
 
-            // Nếu người dùng chọn "Thanh toán online" thì chuyển hướng sang trang VNPay
-            if ($request->submit == 'Thanh toán online') {
-                return redirect()->route('get.from.payment', $book->id);
+            // Nếu là nút "Đặt Tour"
+            if ($request->submit === 'book_tour') {
+                session()->flash('success', 'Đặt tour thành công ! ');
+                return redirect()->route('page.home');
             }
 
-            return redirect()->route('page.home')->with('success', 'Cám ơn bạn đã đặt tour, chúng tôi sẽ liên hệ sớm.');
+            // Nếu là nút "Thanh toán online"
+            return redirect()->route('get.from.payment', $book->id);
+
         } catch (Exception $exception) {
             DB::rollBack();
             Log::error('Error booking tour: ' . $exception->getMessage());
-            return redirect()->back()->with('error', 'Đã xảy ra lỗi khi lưu dữ liệu');
+            return redirect()->back()
+                ->with('error', 'Đã xảy ra lỗi khi lưu dữ liệu')
+                ->withInput();
         }
     }
 
@@ -336,7 +343,7 @@ class TourController extends Controller
                 \Mail::to($user->email)->send(new \App\Mail\PaymentSuccess($payment));
             }
 
-            return redirect()->route('page.home')->with('success', 'Thanh toán thành công!');
+            return redirect()->route('page.home')->with('success', 'Thanh toán Tour Vnpay thành công !');
         } else {
             return redirect()->route('page.home')->with('error', 'Thanh toán không thành công hoặc bị hủy.');
         }
@@ -461,7 +468,7 @@ class TourController extends Controller
                     }
                 }
 
-                return redirect()->route('page.home')->with('success', 'Thanh toán thành công!');
+                return redirect()->route('page.home')->with('success', 'Thanh toán Tour MOMO thành công !');
             } catch (\Exception $e) {
                 Log::error('MOMO Payment Error:', [
                     'message' => $e->getMessage(),
@@ -520,18 +527,41 @@ class TourController extends Controller
     {
         $request->validate([
             'comment' => 'required|string',
+            'comment_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
-        $tour = Tour::findOrFail($id);
+        try {
+            $commentData = [
+                'cm_user_id' => Auth::guard('users')->id(),
+                'cm_content' => $request->comment,
+                'cm_hotel_id' => null,
+                'cm_tour_id' => $id
+            ];
 
-        $tour->comments()->create([
-            'cm_user_id'  => Auth::guard('users')->id(),   // correct user id column
-            'cm_content'  => $request->comment,              // store comment text
-            'cm_hotel_id' => null,                          // set hotel id to null for tour comments
-            'cm_tour_id'  => $tour->id,                       // assign the tour id
-        ]);
+            // Handle image upload
+            if ($request->hasFile('comment_image')) {
+                $image = $request->file('comment_image');
+                $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                
+                // Create comments directory if it doesn't exist
+                $uploadPath = public_path('uploads/comments');
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0777, true);
+                }
+                
+                // Move uploaded file
+                $image->move($uploadPath, $imageName);
+                $commentData['cm_image'] = 'uploads/comments/' . $imageName;
+            }
 
-        return back()->with('success', 'Bình luận của bạn đã được gửi!');
+            $tour = Tour::findOrFail($id);
+            $comment = $tour->comments()->create($commentData);
+
+            return back()->with('success', 'Bình luận của bạn đã được gửi thành công!');
+        } catch (\Exception $e) {
+            \Log::error('Comment Error: ' . $e->getMessage());
+            return back()->with('error', 'Có lỗi xảy ra khi gửi bình luận.');
+        }
     }
 
     public function rate(Request $request, $id)

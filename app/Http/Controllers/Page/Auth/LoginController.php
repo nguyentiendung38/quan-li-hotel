@@ -11,34 +11,14 @@ use App\Models\User;
 
 class LoginController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-
     use AuthenticatesUsers;
 
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
-    // protected $redirectTo = RouteServiceProvider::HOME;
+    protected $user;
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct(User $user)
     {
-        //$this->middleware('guest')->except('logout');
+        // Nếu bạn muốn middleware guest cho các route khác, mở dòng dưới
+        // $this->middleware('guest')->except('logout');
         $this->user = $user;
     }
 
@@ -47,7 +27,6 @@ class LoginController extends Controller
         if (Auth::guard('users')->check()) {
             return redirect()->back();
         }
-
         return view('page.auth.login');
     }
 
@@ -57,13 +36,30 @@ class LoginController extends Controller
         $user = $this->user->getInfoEmail($data['email']);
 
         if (!$user) {
-            return redirect()->back()->with('danger', 'Thông tin tài khoản không tồn tại');
+            $message = 'Email không tồn tại.';
+            if ($request->ajax()) {
+                return response()->json(['message' => $message], 422);
+            }
+            return redirect()->back()
+                ->with('error', $message) // changed key from 'danger' to 'success'
+                ->withInput($request->except('password'));
         }
 
         if (Auth::guard('users')->attempt($data)) {
-            return redirect()->route('page.home');
+            if ($request->ajax()) {
+                return response()->json(['message' => 'Đăng nhập thành công.']);
+            }
+            return redirect()->route('page.home')
+                ->with('success', 'Bạn đã đăng nhập thành công !');
         }
-        return redirect()->back()->with('danger', 'Thông tin đăng nhập không chính xác,vui lòng kiểm tra lại');
+
+        $message = 'Mật khẩu không chính xác.';
+        if ($request->ajax()) {
+            return response()->json(['message' => $message], 422);
+        }
+        return redirect()->back()
+            ->with('error', $message) // changed key from 'danger' to 'success'
+            ->withInput($request->except('password'));
     }
 
     public function logout()

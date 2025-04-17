@@ -76,35 +76,84 @@
                 Tổng số phòng: {{ $hotel->h_rooms }}
             </p>
             <!-- Thay đổi cách tính phòng trống và đã đặt -->
+            @php
+            $availableRooms = $hotel->h_rooms - ($hotel->bookRooms->where('status', 1)->sum('rooms'));
+            @endphp
             <p class="location mb-0">
                 <span class="fa fa-check" style="margin-right: 10px;"></span>
-                Phòng trống: {{ $hotel->h_rooms - ($hotel->bookRooms->where('status', 1)->sum('rooms')) }}
+                Phòng trống:
+                @if($availableRooms <= 0)
+                    <span class="badge badge-danger">Hết Phòng</span>
+                    @else
+                    {{ $availableRooms }}
+                    @endif
             </p>
             <p class="location mb-0">
                 <span class="fa fa-user" style="margin-right: 10px;"></span>
                 Đã đặt: {{ $hotel->bookRooms->where('status', 1)->sum('rooms') }}
             </p>
             <!-- Thêm div wrapper cho các nút -->
-            <div class="text-center" style="margin-top:10px;">
+            <div class="text-center" style="margin-top:20px;">
                 <a href="{{ route('hotel.detail', ['id' => $hotel->id, 'slug' => safeTitle($hotel->h_name)]) }}"
-                    title="{{ $hotel->h_name }}"
-                    class="btn btn-primary"
-                    style="margin-right:10px;">
-                    Xem thêm
+                    class="btn custom-btn-view"
+                    style="background: linear-gradient(45deg, #2196F3, #1976D2);
+                          color: white;
+                          padding: 10px 25px;
+                          border-radius: 25px;
+                          font-weight: 500;
+                          border: none;
+                          box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+                          transition: all 0.3s ease;">
+                    <i class="fas fa-eye" style="margin-right: 8px;"></i>
+                    Xem chi tiết
                 </a>
-                <button type="button"
-                    class="btn btn-success"
-                    data-toggle="modal"
-                    data-target="#hotelBookingModal"
-                    data-hotel_id="{{ $hotel->id }}"
-                    data-title="{{ $hotel->h_name }}"
-                    data-price="{{ number_format($hotel->h_price * (1 - $hotel->h_sale/100), 0, ',', '.') }}">
-                    Đặt Ngay
-                </button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Include modal booking -->
-@include('modals.hotel.bookingModal')
+<style>
+    .price {
+        background: #2196F3 !important;
+        /* Change from orange to blue */
+        color: white !important;
+    }
+
+    .custom-btn-hotel {
+        background: linear-gradient(45deg, #3182ce, #4299e1);
+        color: white;
+        padding: 10px 25px;
+        border-radius: 25px;
+        font-weight: 500;
+        border: none;
+        box-shadow: 0 4px 15px rgba(49, 130, 206, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .custom-btn-hotel:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4);
+        color: white;
+    }
+
+    .custom-btn-hotel.disabled {
+        background: linear-gradient(45deg, #e53e3e, #f56565);
+        cursor: not-allowed;
+        opacity: 0.8;
+    }
+
+    .custom-btn-hotel i {
+        margin-right: 8px;
+    }
+
+    .custom-btn-view:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+        color: white !important;
+    }
+
+    .custom-btn-view:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+    }
+</style>
