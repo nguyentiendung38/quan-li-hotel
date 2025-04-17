@@ -298,7 +298,7 @@
     <div id="gemini-chatbot-container">
         <div id="gemini-chatbot-header">
             <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" alt="Bot Avatar" style="width: 24px; height: 24px;">
-            Fun Travel Assistant
+            Assistant Gemini
             <div class="header-controls">
                 <button class="close-chat">
                     <i class="fas fa-times"></i>

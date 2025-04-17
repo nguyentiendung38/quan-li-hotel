@@ -236,10 +236,15 @@
                     </div>
                     <div class="card-body">
                         <div id="departure-dates">
-                            @if(isset($tour) && !empty($tour->t_start_date))
-                                @php
-                                    $dates = json_decode($tour->t_start_date) ?? [];
-                                @endphp
+                            @php
+                                $dates = [];
+                                if (isset($tour) && !empty($tour->t_start_date)) {
+                                    $dates = is_array($tour->t_start_date) ? $tour->t_start_date : json_decode($tour->t_start_date, true);
+                                    $dates = $dates ?: [];
+                                }
+                            @endphp
+                            
+                            @if(count($dates) > 0)
                                 @foreach($dates as $date)
                                 <div class="form-group departure-date-group">
                                     <div class="d-flex">

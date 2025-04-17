@@ -11,11 +11,12 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Hotel;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BookingConfirmation;
-use Illuminate\Support\Facades\Log; // Add this line
-use App\Mail\AdminHotelBookingMail; // ensure this line exists
-use App\Mail\CustomerHotelBookingMail; // Thêm use statement này
-use App\Mail\HotelBookingConfirmation; // Fix the namespace import at the top
-use App\Mail\MomoPaymentHotel; // Add this line and remove MomoPaymentSuccess if it exists
+use Illuminate\Support\Facades\Log;
+use App\Mail\AdminHotelBookingMail;
+use App\Mail\CustomerHotelBookingMail;
+use App\Mail\HotelBookingConfirmation;
+use App\Mail\MomoPaymentHotel;
+use Illuminate\Support\Facades\File;
 
 class HotelController extends Controller
 {
@@ -46,7 +47,46 @@ class HotelController extends Controller
         $locations = Location::where('l_status', 1)->get();
         return view('page.hotel.index', compact('hotels', 'locations'));
     }
+    public function comment(Request $request, $id)
+    {
+        $request->validate([
+            'comment' => 'required|string',
+            'comment_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
 
+        try {
+            $commentData = [
+                'cm_user_id' => Auth::guard('users')->id(),
+                'cm_content' => $request->comment,
+                'cm_hotel_id' => $id,
+                'cm_tour_id' => null
+            ];
+
+            // Handle image upload
+            if ($request->hasFile('comment_image')) {
+                $image = $request->file('comment_image');
+                $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                
+                // Create comments directory if it doesn't exist
+                $uploadPath = public_path('uploads/comments');
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0777, true);
+                }
+                
+                // Move the uploaded file
+                $image->move($uploadPath, $imageName);
+                $commentData['cm_image'] = 'uploads/comments/' . $imageName;
+            }
+
+            $hotel = Hotel::findOrFail($id);
+            $comment = $hotel->comments()->create($commentData);
+
+            return back()->with('success', 'Bình luận của bạn đã được gửi thành công!');
+        } catch (\Exception $e) {
+            \Log::error('Comment Error: ' . $e->getMessage());
+            return back()->with('error', 'Có lỗi xảy ra khi gửi bình luận.');
+        }
+    }
     public function detail(Request $request, $id)
     {
         $hotel = Hotel::with(['comments' => function($query) use ($id) {
@@ -368,22 +408,42 @@ class HotelController extends Controller
             $userId = Auth::guard('users')->check() ? Auth::guard('users')->id() : Auth::guard('web')->id();
             $user = Auth::guard('users')->check() ? Auth::guard('users')->user() : Auth::guard('web')->user();
             
-            // Include coupon in validation
+            // Add validation for dates
+            $checkinDate = new \DateTime($request->checkin_date);
+            $checkoutDate = new \DateTime($request->checkout_date);
+            $today = new \DateTime();
+            
+            if ($checkinDate < $today) {
+                return redirect()->back()->with('error', 'Ngày nhận phòng không thể là ngày trong quá khứ');
+            }
+
+            if ($checkoutDate <= $checkinDate) {
+                return redirect()->back()->with('error', 'Ngày trả phòng phải sau ngày nhận phòng');
+            }
+
+            $interval = $checkinDate->diff($checkoutDate);
+            $nightsDiff = $interval->days;
+
+            if ($nightsDiff != $request->nights) {
+                return redirect()->back()->with('error', 'Số đêm không khớp với khoảng thời gian đã chọn');
+            }
+
+            // Rest of validation
             $data = $request->validate([
                 'name'         => 'required|string|max:255',
                 'phone'        => 'required|string|max:15',
                 'address'      => 'required|string|max:255',
                 'checkin_date' => 'required|date',
-                'checkout_date'=> 'required|date',
-                'nights'       => 'required|integer',
-                'rooms'        => 'required|integer',
-                'guests'       => 'required|integer',
+                'checkout_date'=> 'required|date|after:checkin_date',
+                'nights'       => 'required|integer|min:1',
+                'rooms'        => 'required|integer|min:1',
+                'guests'       => 'required|integer|min:1',
                 'email'        => 'required|email',
                 'note'         => 'nullable|string|max:500',
                 'agreePolicy'  => 'required',
-                'coupon'       => 'nullable|string'  // Added coupon validation rule
+                'coupon'       => 'nullable|string'
             ]);
-            
+
             $totalPrice = $hotel->h_price * $data['nights'] * $data['rooms'];
             if ($hotel->h_sale > 0) {
                 $totalPrice = $totalPrice - ($totalPrice * $hotel->h_sale / 100);

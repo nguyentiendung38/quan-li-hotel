@@ -31,40 +31,40 @@
             <!-- Add rating display -->
             <div class="rating-stars mb-2">
                 @if($tour->total_ratings > 0)
-                    @php
-                    $avgRating = $tour->average_rating;
-                    $fullStars = floor($avgRating);
-                    $halfStar = $avgRating - $fullStars >= 0.5;
-                    @endphp
+                @php
+                $avgRating = $tour->average_rating;
+                $fullStars = floor($avgRating);
+                $halfStar = $avgRating - $fullStars >= 0.5;
+                @endphp
 
-                    @for($i = 1; $i <= 5; $i++)
-                        @if($i <= $fullStars)
-                            <i class="fas fa-star text-warning"></i>
-                        @elseif($i == $fullStars + 1 && $halfStar)
-                            <i class="fas fa-star-half-alt text-warning"></i>
-                        @else
-                            <i class="far fa-star text-warning"></i>
-                        @endif
+                @for($i = 1; $i <= 5; $i++)
+                    @if($i <=$fullStars)
+                    <i class="fas fa-star text-warning"></i>
+                    @elseif($i == $fullStars + 1 && $halfStar)
+                    <i class="fas fa-star-half-alt text-warning"></i>
+                    @else
+                    <i class="far fa-star text-warning"></i>
+                    @endif
                     @endfor
-                @else
+                    @else
                     @for($i = 1; $i <= 5; $i++)
                         <i class="far fa-star text-warning"></i>
-                    @endfor
-                @endif
-                <span class="rating-count">({{ $tour->total_ratings }} đánh giá)</span>
+                        @endfor
+                        @endif
+                        <span class="rating-count">({{ $tour->total_ratings }} đánh giá)</span>
             </div>
 
             <p class="location">
                 <span class="fa fa-map-marker"></span> Từ : {{ isset($tour->t_starting_gate) ? $tour->t_starting_gate : '' }}
             </p>
-            
+
             <!-- Add hotel star rating display -->
             @if($tour->t_hotel_star)
             <p class="location">
                 <span class="fa fa-hotel"></span> Khách sạn:
                 @for($i = 1; $i <= $tour->t_hotel_star; $i++)
                     <i class="fa fa-star text-warning"></i>
-                @endfor
+                    @endfor
             </p>
             @endif
 
@@ -73,7 +73,12 @@
             </p>
             <?php $number = $tour->t_number_guests - $tour->t_number_registered ?>
             <p class="location">
-                <span class="fa fa-user"></span> Số chỗ : {{ $tour->t_number_guests }} - Còn trống: {{ $number }}
+                <span class="fa fa-user"></span> Số chỗ : {{ $tour->t_number_guests }} -
+                @if($number > 0)
+                Còn trống: {{ $number }}
+                @else
+                <span class="text-danger font-weight-bold">Hết chỗ</span>
+                @endif
             </p>
             <p class="location">
                 <span class="fa fa-user"></span> Đã xác nhận : {{ $tour->t_number_registered }}
@@ -86,18 +91,41 @@
                 @if($number - $tour->t_follow < 2 && $tour->t_number_registered != $tour->t_number_guests)
                     <a style="color:red"> sắp hết </a>
                     @endif
-
                     <!-- Thêm nút "Xem thêm" và "Đặt ngay" -->
-                    <p class="text-center" style="margin-top:10px;">
-                        <a href="{{ route('tour.detail', ['id' => $tour->id, 'slug' => safeTitle($tour->t_title)]) }}" title="{{ $tour->t_title }}" class="btn btn-primary" style="margin-right:10px;">
-                            Xem thêm
+                    <p class="text-center" style="margin-top:20px;">
+                        <a href="{{ route('tour.detail', ['id' => $tour->id, 'slug' => safeTitle($tour->t_title)]) }}"
+                            class="btn custom-btn-view"
+                            style="background: linear-gradient(45deg, #2196F3, #1976D2);
+                                  color: white;
+                                  padding: 10px 25px;
+                                  border-radius: 25px;
+                                  font-weight: 500;
+                                  border: none;
+                                  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+                                  transition: all 0.3s ease;">
+                            <i class="fas fa-eye" style="margin-right: 8px;"></i>
+                            Xem chi tiết
                         </a>
-                        <button type="button" title="Đặt ngay" class="btn btn-success" data-toggle="modal" data-target="#bookingModal" data-tour_id="{{ $tour->id }}" data-t_title="{{ $tour->t_title }}" data-t_schedule="{{ $tour->t_schedule }}" data-price="{{ number_format($tour->t_price_adults - ($tour->t_price_adults * $tour->t_sale / 100), 0, ',', '.') }}">
-                            Đặt ngay
-                        </button>
                     </p>
         </div>
     </div>
 </div>
-<!-- Include modal booking form -->
-@include('modals.tour.bookingModal')
+
+<style>
+    .price {
+        background: #2196F3 !important;
+        /* Change from orange to blue */
+        color: white !important;
+    }
+
+    .custom-btn-view:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+        color: white !important;
+    }
+
+    .custom-btn-view:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+    }
+</style>

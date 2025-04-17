@@ -158,13 +158,6 @@
     <div class="container">
         <div class="row align-items-center justify-content-center">
             <div class="col-md-9 text-center text-white">
-                <h1 class="font-weight-bold mb-4">Thông Tin Tài Khoản</h1>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb justify-content-center">
-                        <li class="breadcrumb-item"><a href="{{ route('page.home') }}" class="text-white">Trang chủ</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Tài khoản</li>
-                    </ol>
-                </nav>
             </div>
         </div>
     </div>

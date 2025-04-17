@@ -12,6 +12,11 @@
                     <i class="fa fa-suitcase"></i> Danh sách tour đặt
                 </a>
             </li>
+            <li class="{{ request()->is('danh-sach-phong.html') ? 'active-user' : '' }}">
+                <a href="{{ route('my.rooms') }}">
+                    <i class="fa fa-bed"></i> Danh sách đặt phòng
+                </a>
+            </li>
             <li class="{{ request()->is('thay-doi-mat-khau.html') ? 'active-user' : '' }}">
                 <a href="{{ route('change.password') }}">
                     <i class="fa fa-lock"></i> Đổi mật khẩu

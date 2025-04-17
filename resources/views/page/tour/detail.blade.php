@@ -98,13 +98,15 @@
     }
 
     .price-tour {
-        font-size: 20px; /* Giảm từ 24px xuống 20px */
+        font-size: 20px;
+        /* Giảm từ 24px xuống 20px */
     }
 
     .price-tour span {
         color: #e74c3c;
         font-weight: bold;
-        font-size: 20px; /* Thêm font-size cho số tiền */
+        font-size: 20px;
+        /* Thêm font-size cho số tiền */
     }
 
     .btn {
@@ -182,20 +184,22 @@
     }
 
     .related-tours .btn {
-        padding: 8px 15px;  /* Giảm padding của buttons */
-        font-size: 13px;    /* Giảm kích thước chữ */
+        padding: 8px 15px;
+        /* Giảm padding của buttons */
+        font-size: 13px;
+        /* Giảm kích thước chữ */
     }
 
     /* Thêm CSS cho modal */
     .modal {
         background-color: rgba(0, 0, 0, 0.5);
     }
-    
+
     .modal-dialog {
         margin: 1.75rem auto;
         max-width: 600px;
     }
-    
+
     .modal-content {
         position: relative;
         z-index: 1051;
@@ -205,7 +209,7 @@
     .modal-backdrop {
         z-index: 1040;
     }
-    
+
     .modal.show {
         display: block;
         z-index: 1050;
@@ -234,7 +238,7 @@
     .modal-content {
         border: none;
         border-radius: 8px;
-        box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
         max-height: 90vh;
         overflow-y: auto;
     }
@@ -287,6 +291,69 @@
     .rating-count {
         white-space: nowrap;
     }
+
+    /* Update Contact Modal Styles */
+    .contact-modal .modal-content {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .contact-modal .modal-header {
+        background: linear-gradient(135deg, #2196F3, #1976D2);
+        color: white;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        padding: 20px;
+    }
+
+    .contact-options {
+        display: flex;
+        gap: 15px;
+        padding: 10px;
+    }
+
+    .contact-option {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 15px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .contact-option.call {
+        background: linear-gradient(135deg, #4CAF50, #45a049);
+    }
+
+    .contact-option.sms {
+        background: linear-gradient(135deg, #2196F3, #1976D2);
+    }
+
+    .contact-icon {
+        font-size: 24px;
+        margin-bottom: 8px;
+        color: white;
+    }
+
+    .contact-label {
+        font-weight: 500;
+        color: white;
+        margin-bottom: 4px;
+    }
+
+    .contact-description {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.9);
+        text-align: center;
+    }
+
+    .contact-option:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
 </style>
 @stop
 @section('seo')
@@ -317,15 +384,15 @@
                         @endphp
                         @for($i = 1; $i <= 5; $i++)
                             @if($totalRatings==0)
-                                <i class="far fa-star text-warning"></i>
+                            <i class="far fa-star text-warning"></i>
                             @elseif($i <= $fullStars)
                                 <i class="fas fa-star text-warning"></i>
-                            @elseif($i == $fullStars + 1 && $halfStar)
+                                @elseif($i == $fullStars + 1 && $halfStar)
                                 <i class="fas fa-star-half-alt text-warning"></i>
-                            @else
+                                @else
                                 <i class="far fa-star text-warning"></i>
-                            @endif
-                        @endfor
+                                @endif
+                                @endfor
                     </div>
                     <span class="rating-count">{{ number_format($avgRating, 2) }}/5 trong {{ $totalRatings }} ĐÁNH GIÁ</span>
                 </div>
@@ -516,12 +583,19 @@
                     <div class="comment-form-wrap pt-2">
                         <h3 class="section-title">{{ Auth::guard('users')->check() ? 'Bình luận về tour du lịch' : 'Bạn cần đăng nhập để bình luận' }}</h3>
                         @if (Auth::guard('users')->check())
-                        <form action="{{ route('tour.comment', $tour->id) }}" method="POST">
+                        <form action="{{ route('tour.comment', $tour->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="form-group">
                                 <label for="message">Nội dung</label>
                                 <textarea name="comment" id="message" cols="30" rows="5" class="form-control"></textarea>
                                 <span class="text-errors-comment" style="display: none;">Vui lòng nhập nội dung bình luận !!!</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="comment_image">Hình ảnh (không bắt buộc)</label>
+                                <input type="file" name="comment_image" id="comment_image" class="form-control" accept="image/*">
+                                <div id="image_preview" class="mt-2" style="display: none;">
+                                    <img src="" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 8px;">
+                                </div>
                             </div>
                             <div class="form-group">
                                 <input type="submit" value="Gửi bình luận" class="btn py-3 px-4 btn-primary">
@@ -537,7 +611,7 @@
                         <div class="register-tour">
                             @if($tour->t_sale > 0)
                             <p class="price-tour">
-                                Giá Tour: 
+                                Giá Tour:
                                 <span>
                                     {{ number_format($tour->t_price_adults - ($tour->t_price_adults * $tour->t_sale / 100), 0, ',', '.') }}<small style="font-size: 15px;">vnd</small>
                                 </span>
@@ -560,18 +634,95 @@
                                         Vui lòng chọn ngày khởi hành
                                     </div>
                                 </div>
+
+                                <script>
+                                    // Lấy ngày khởi hành của tour hiện tại
+                                    const currentTour = @json($tour); // Lấy thông tin tour hiện tại
+                                    const currentTourDates = @json(\App\Helpers\Date::getAvailableDates($tour->t_start_date));
+                                    console.log("Current Tour ID:", currentTour.id, "Available dates:", currentTourDates);
+
+                                    function formatDate(date) {
+                                        return new Date(date).toISOString().split('T')[0];
+                                    }
+
+                                    function bookTour() {
+                                        var date = document.getElementById('departure_date').value;
+                                        if (!date) {
+                                            document.getElementById('departure_date_error').style.display = "block";
+                                            document.getElementById('departure_date_error').textContent = "Vui lòng chọn ngày khởi hành";
+                                            return;
+                                        }
+
+                                        const formattedDate = formatDate(date);
+                                        const isValidDate = currentTourDates.includes(formattedDate);
+
+                                        if (!isValidDate) {
+                                            document.getElementById('departure_date_error').style.display = "block";
+                                            document.getElementById('departure_date_error').textContent = "Ngày bạn chọn không phải là ngày khởi hành của tour này";
+                                            return;
+                                        }
+
+                                        document.getElementById('departure_date_error').style.display = "none";
+                                        window.location.href = "{{ route('book.tour', ['id' => $tour->id, 'slug' => safeTitle($tour->t_title)]) }}" + "?departure_date=" + encodeURIComponent(formattedDate);
+                                    }
+
+                                    // Thiết lập min/max và lắng nghe sự kiện cho input ngày
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        const dateInput = document.getElementById('departure_date');
+                                        if (currentTourDates.length > 0) {
+                                            dateInput.min = currentTourDates[0];
+                                            dateInput.max = currentTourDates[currentTourDates.length - 1];
+                                        }
+
+                                        dateInput.addEventListener('input', function(e) {
+                                            const selectedDate = formatDate(e.target.value);
+                                            const isValidDate = currentTourDates.includes(selectedDate);
+
+                                            if (!isValidDate) {
+                                                document.getElementById('departure_date_error').style.display = "block";
+                                                document.getElementById('departure_date_error').textContent = "Ngày này không phải là ngày khởi hành của tour này";
+                                            } else {
+                                                document.getElementById('departure_date_error').style.display = "none";
+                                            }
+                                        });
+                                    });
+                                </script>
+
                                 <div class="d-flex justify-content-between" style="gap:10px;">
-                                    <a href="#" class="btn btn-secondary py-3" style="width:48%" data-toggle="modal" data-target="#contactModalTour">Liên Hệ</a>
-                                    <button type="button" class="btn btn-primary py-3" style="width:48%" onclick="bookTour()">Đặt Tour</button>
+                                    <a href="#"
+                                        class="btn btn-secondary py-3"
+                                        style="width:48%; border-radius: 20px;"
+                                        data-toggle="modal"
+                                        data-target="#contactModalTour">
+                                        <i class="fas fa-phone-alt mr-2"></i>Liên Hệ
+                                    </a>
+                                    <button type="button"
+                                        class="btn btn-primary py-3"
+                                        style="width:48%; border-radius: 20px;"
+                                        onclick="bookTour()">
+                                        <i class="fas fa-calendar-check mr-2"></i>Đặt Tour
+                                    </button>
                                 </div>
                                 @else
                                 <div class="d-flex justify-content-between" style="gap:10px;">
-                                    <a href="#" class="btn btn-secondary py-3" style="width:48%" data-toggle="modal" data-target="#contactModalTour">Liên Hệ</a>
-                                    <a href="#" class="btn btn-primary py-3" style="width:48%" data-toggle="modal" data-target="#loginAlertModalTour">Đặt Tour</a>
+                                    <a href="#"
+                                        class="btn btn-secondary py-3"
+                                        style="width:48%; border-radius: 20px;"
+                                        data-toggle="modal"
+                                        data-target="#contactModalTour">
+                                        <i class="fas fa-phone-alt mr-2"></i>Liên Hệ
+                                    </a>
+                                    <a href="#"
+                                        class="btn btn-primary py-3"
+                                        style="width:48%; border-radius: 20px;"
+                                        data-toggle="modal"
+                                        data-target="#loginAlertModalTour">
+                                        <i class="fas fa-calendar-check mr-2"></i>Đặt Tour
+                                    </a>
                                 </div>
                                 @endif
                                 @else
-                                <a href="{{ route('loi.loi') }}" class="btn btn-primary py-3 w-100">Đã hết chỗ</a>
+                                <a href="javascript:void(0);" class="btn btn-primary py-3 w-100 disabled" style="pointer-events: none;">Đã hết chỗ</a>
                                 @endif
                         </div>
 
@@ -580,47 +731,15 @@
                         <div class="related-tours mt-4">
                             <h3 class="section-title">Danh Sách Tour Liên Quan</h3>
                             <?php $itemTour = 'item-related-tour' ?>
-                            @foreach($tours as $tour)
-                            @include('page.common.itemTour', compact('tour', 'itemTour'))
+                            @foreach($tours as $relatedTour)
+                            @include('page.common.itemTour', ['tour' => $relatedTour, 'itemTour' => $itemTour])
                             @endforeach
                         </div>
                         @endif
                     </div>
                 </div>
             </div>
-            <script>
-                const availableDates = @json(\App\Helpers\Date::getAvailableDates($tour->t_start_date));
-
-                function bookTour() {
-                    var date = document.getElementById('departure_date').value;
-                    if (!date) {
-                        document.getElementById('departure_date_error').style.display = "block";
-                        document.getElementById('departure_date_error').textContent = "Vui lòng chọn ngày khởi hành";
-                        return;
-                    }
-
-                    if (!availableDates.includes(date)) {
-                        document.getElementById('departure_date_error').style.display = "block";
-                        document.getElementById('departure_date_error').textContent = "Ngày bạn chọn không phải là ngày khởi hành của tour";
-                        return;
-                    }
-
-                    document.getElementById('departure_date_error').style.display = "none";
-                    window.location.href = "{{ route('book.tour', ['id' => $tour->id, 'slug' => safeTitle($tour->t_title)]) }}" + "?departure_date=" + encodeURIComponent(date);
-                }
-
-                document.getElementById('departure_date').addEventListener('input', function(e) {
-                    const selectedDate = e.target.value;
-                    if (selectedDate && !availableDates.includes(selectedDate)) {
-                        document.getElementById('departure_date_error').style.display = "block";
-                        document.getElementById('departure_date_error').textContent = "Ngày khởi hành chưa bắt đầu";
-                    } else {
-                        document.getElementById('departure_date_error').style.display = "none";
-                    }
-                });
-            </script>
         </div>
-    </div>
     </div>
 </section>
 <div class="modal fade" id="loginAlertModalTour" tabindex="-1" role="dialog" aria-labelledby="loginAlertModalTourTitle" aria-hidden="true">
@@ -645,41 +764,87 @@
         </div>
     </div>
 </div>
+
+<!-- Contact Modal -->
+<div class="modal fade contact-modal" id="contactModalTour" tabindex="-1" role="dialog" aria-labelledby="contactModalTourLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="contactModalTourLabel">
+                    <i class="fas fa-headset mr-2"></i>Liên hệ với chúng tôi
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Đóng">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="contact-options">
+                    <a href="tel:0773398244" class="contact-option call">
+                        <i class="fas fa-phone-alt contact-icon"></i>
+                        <span class="contact-label">Gọi điện</span>
+                        <small class="contact-description">Tư vấn trực tiếp</small>
+                    </a>
+                    <a href="sms:0773398244" class="contact-option sms">
+                        <i class="fas fa-comment-alt contact-icon"></i>
+                        <span class="contact-label">Nhắn tin</span>
+                        <small class="contact-description">Phản hồi nhanh</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @stop
 @section('script')
 <script>
-$(document).ready(function() {
-    // Cập nhật lại z-index cho modal khi mở
-    $('.modal').on('show.bs.modal', function () {
-        setTimeout(function() {
-            $('.modal-backdrop').css('z-index', 1040);
-            $('.modal').css('z-index', 1050);
-        }, 0);
-    });
+    $(document).ready(function() {
+        // Cập nhật lại z-index cho modal khi mở
+        $('.modal').on('show.bs.modal', function() {
+            setTimeout(function() {
+                $('.modal-backdrop').css('z-index', 1040);
+                $('.modal').css('z-index', 1050);
+            }, 0);
+        });
 
-    // Xử lý sự kiện click nút đặt tour
-    $('[data-target="#bookingModal"]').click(function(e) {
-        e.preventDefault();
-        var modal = $($(this).data('target'));
-        modal.modal('show');
-    });
+        // Xử lý sự kiện click nút đặt tour
+        $('[data-target="#bookingModal"]').click(function(e) {
+            e.preventDefault();
+            var modal = $($(this).data('target'));
+            modal.modal('show');
+        });
 
-    // Fix modal issues
-    $('.modal').on('show.bs.modal', function () {
-        $('body').addClass('modal-open');
-        $(this).show();
-        setTimeout(() => {
-            $(this).find('.modal-dialog').css({
-                'transform': 'translate(0, 0)',
-                'transition': 'transform .3s ease-out'
-            });
-        }, 50);
-    });
+        // Fix modal issues
+        $('.modal').on('show.bs.modal', function() {
+            $('body').addClass('modal-open');
+            $(this).show();
+            setTimeout(() => {
+                $(this).find('.modal-dialog').css({
+                    'transform': 'translate(0, 0)',
+                    'transition': 'transform .3s ease-out'
+                });
+            }, 50);
+        });
 
-    $('.modal').on('hide.bs.modal', function () {
-        $('body').removeClass('modal-open');
-        $(this).find('.modal-dialog').css('transform', 'translate(0, -100%)');
+        $('.modal').on('hide.bs.modal', function() {
+            $('body').removeClass('modal-open');
+            $(this).find('.modal-dialog').css('transform', 'translate(0, -100%)');
+        });
+
+        // Image preview functionality
+        $('#comment_image').change(function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#image_preview img').attr('src', e.target.result);
+                    $('#image_preview').show();
+                }
+                reader.readAsDataURL(file);
+            } else {
+                $('#image_preview').hide();
+            }
+        });
     });
-});
 </script>
 @stop

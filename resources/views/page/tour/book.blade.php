@@ -278,7 +278,7 @@
                                 <textarea name="b_note" placeholder="Thông tin chi tiết để chúng tôi liên hệ nhanh chóng..." id="message" cols="20" rows="5" class="form-control"></textarea>
                             </div>
                             <div class="form-group d-flex justify-content-between">
-                                <button type="submit" name="submit" value="Đặt Tour" class="btn btn-primary py-3 px-5">
+                                <button type="submit" name="submit" value="book_tour" class="btn btn-primary py-3 px-5">
                                     <i class="fas fa-calendar-check"></i> Đặt Tour
                                 </button>
                                 <button type="submit" name="submit" value="Thanh toán online" class="btn btn-primary py-3 px-5">

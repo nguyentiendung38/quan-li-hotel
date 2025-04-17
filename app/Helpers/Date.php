@@ -33,14 +33,15 @@ class Date
     {
         if (empty($dates)) return '';
         
-        $dates = json_decode($dates, true);
-        if (!is_array($dates)) return '';
+        // Kiểm tra nếu $dates đã là array thì không cần decode
+        $datesArray = is_array($dates) ? $dates : json_decode($dates, true);
+        if (!is_array($datesArray)) return '';
         
-        sort($dates);
+        sort($datesArray);
         
         // Group dates by month and year
         $grouped = [];
-        foreach ($dates as $date) {
+        foreach ($datesArray as $date) {
             $carbon = Carbon::parse($date);
             $month = $carbon->format('m');
             $year = $carbon->format('Y');
@@ -54,7 +55,6 @@ class Date
         
         foreach ($grouped as $month => $dates) {
             $days = collect($dates)->pluck('day')->implode(',');
-            // Only add year for the last month
             if ($month === $lastMonth) {
                 $result[] = $days . '/' . $month . '/' . $dates[0]['year'];
             } else {
@@ -67,11 +67,23 @@ class Date
 
     public static function getAvailableDates($dates)
     {
-        if (empty($dates)) return [];
+        if (empty($dates)) {
+            return [];
+        }
         
-        $dates = json_decode($dates, true);
-        if (!is_array($dates)) return [];
+        // Kiểm tra kiểu dữ liệu và xử lý tương ứng
+        $datesArray = is_array($dates) ? $dates : json_decode($dates, true);
         
-        return $dates; // Returns array of available dates in YYYY-MM-DD format
+        if (!is_array($datesArray)) {
+            return [];
+        }
+
+        // Filter và format dates
+        $validDates = array_filter($datesArray, function($date) {
+            return !empty($date) && strtotime($date);
+        });
+
+        sort($validDates);
+        return array_values($validDates);
     }
 }

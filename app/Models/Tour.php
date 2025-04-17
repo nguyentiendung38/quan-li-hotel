@@ -43,6 +43,23 @@ class Tour extends Model
         't_album_images' => 'array'
     ];
 
+    // Add this method to ensure proper date handling
+    protected function setTStartDateAttribute($value)
+    {
+        if (empty($value)) {
+            $this->attributes['t_start_date'] = json_encode([]);
+        } else if (is_string($value) && is_array(json_decode($value, true))) {
+            $this->attributes['t_start_date'] = $value;
+        } else if (is_array($value)) {
+            $this->attributes['t_start_date'] = json_encode(array_values($value));
+        }
+    }
+
+    public function getTStartDateAttribute($value)
+    {
+        return json_decode($value, true) ?? [];
+    }
+
     const STATUS = [
         1 => 'Khởi tạo',
         2 => 'Đang diễn ra',
