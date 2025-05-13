@@ -473,7 +473,7 @@ class HotelController extends Controller
                 Log::error('Failed to send confirmation email: ' . $e->getMessage());
             }
 
-            return redirect()->back()->with('success', 'Đặt phòng thành công! Vui lòng kiểm tra email để xem chi tiết.');
+            return redirect()->back()->with('success', 'Đặt phòng thành công khách sạn thành công!');
         } catch (\Exception $e) {
             Log::error('Booking failed: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Có lỗi xảy ra, vui lòng thử lại!')->withInput();
@@ -601,7 +601,7 @@ class HotelController extends Controller
                         Log::error('Failed to send MOMO success email: ' . $e->getMessage());
                     }
                     
-                    return redirect()->route('page.home')->with('success', 'Thanh toán thành công! Cảm ơn bạn đã đặt phòng.');
+                    return redirect()->route('page.home')->with('success', 'Thanh toán momo thành công !.');
                 }
             } catch (\Exception $e) {
                 Log::error('MOMO callback processing error: ' . $e->getMessage());

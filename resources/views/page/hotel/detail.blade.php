@@ -218,6 +218,81 @@
         color: rgba(255, 255, 255, 0.9);
         text-align: center;
     }
+
+    /* Modern blue button styling */
+    .btn-primary.btn-comment,
+    .btn-primary[type="submit"] {
+        background: linear-gradient(135deg, #0061f2, #0044c2) !important;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0, 97, 242, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary.btn-comment:hover,
+    .btn-primary[type="submit"]:hover {
+        background: linear-gradient(135deg, #0044c2, #0061f2) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 97, 242, 0.3);
+    }
+
+    .btn-primary.btn-comment:active,
+    .btn-primary[type="submit"]:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 10px rgba(0, 97, 242, 0.2);
+    }
+
+    .rating-breakdown {
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 12px;
+    }
+
+    .rating-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .rating-label {
+        min-width: 60px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .rating-star {
+        color: #ffc107;
+        font-size: 14px;
+    }
+
+    .progress {
+        flex: 1;
+        height: 10px;
+        border-radius: 15px;
+        background-color: #e9ecef;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        background: linear-gradient(135deg, #ffd200 0%, #ffa700 100%);
+        border-radius: 15px;
+        transition: width 0.6s ease;
+    }
+
+    .rating-count {
+        min-width: 50px;
+        text-align: right;
+        font-size: 14px;
+        color: #6c757d;
+    }
+
+    .rating-breakdown h4 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #344767;
+        margin-bottom: 20px;
+    }
 </style>
 @endsection
 
@@ -412,15 +487,19 @@
                             $percentage = $hotel->total_ratings > 0 ? ($count / $hotel->total_ratings) * 100 : 0;
                             @endphp
                             <div class="rating-bar">
-                                <span>{{ $i }} sao</span>
+                                <div class="rating-label">
+                                    <span class="rating-star">★</span>{{ $i }}
+                                </div>
                                 <div class="progress">
-                                    <div class="progress-bar bg-warning" role="progressbar"
+                                    <div class="progress-bar" 
+                                        role="progressbar"
                                         style="width: {{ $percentage }}%"
                                         aria-valuenow="{{ $percentage }}"
                                         aria-valuemin="0"
-                                        aria-valuemax="100"></div>
+                                        aria-valuemax="100">
+                                    </div>
                                 </div>
-                                <span>{{ $count }}</span>
+                                <div class="rating-count">{{ $count }}</div>
                             </div>
                             @endfor
                         </div>
@@ -522,24 +601,67 @@
                                         <a href="#" class="btn btn-secondary py-3" style="width:48%; border-radius: 25px;" data-toggle="modal" data-target="#contactModal">
                                             <i class="fas fa-phone-alt"></i> Liên hệ
                                         </a>
-                                        <a href="{{ route('hotel.booking.form', ['id' => $hotel->id, 'slug' => Str::slug($hotel->h_name)]) }}"
-                                            class="btn btn-primary py-3"
-                                            style="width:48%; border-radius: 25px;">
-                                            <i class="fas fa-calendar-check"></i> Đặt phòng
-                                        </a>
+                                        @if(Auth::guard('users')->check())
+                                            <a href="{{ route('hotel.booking.form', ['id' => $hotel->id, 'slug' => Str::slug($hotel->h_name)]) }}"
+                                                class="btn btn-primary py-3"
+                                                style="width:48%; border-radius: 25px;">
+                                                <i class="fas fa-calendar-check"></i> Đặt phòng
+                                            </a>
+                                        @else
+                                            <a href="#" 
+                                               class="btn btn-primary py-3"
+                                               style="width:48%; border-radius: 25px;"
+                                               data-toggle="modal" 
+                                               data-target="#loginAlertModalHotel">
+                                                <i class="fas fa-calendar-check"></i> Đặt phòng
+                                            </a>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     @if ($hotels->count() > 0)
                     <div class="card border-0 rounded-lg shadow-sm mt-4">
                         <div class="card-body">
-                            <h3 class="card-title border-bottom pb-3">Khách sạn liên quan</h3>
+                            <h3 class="section-title mb-4 pb-2 border-bottom">Khách sạn liên quan</h3>
                             <div class="related-hotels">
-                                <?php $itemHotel = 'item-related-tour' ?>
-                                @foreach($hotels as $relatedHotel)
-                                @include('page.common.itemHotel', compact('relatedHotel', 'itemHotel'))
+                                @foreach($hotels as $relatedHotel) 
+                                <div class="related-hotel-item mb-4">
+                                    <div class="d-flex">
+                                        <div class="hotel-thumb" style="width: 100px;">
+                                            <a href="{{ route('hotel.detail', ['id' => $relatedHotel->id, 'slug' => Str::slug($relatedHotel->h_name)]) }}">
+                                                <img src="{{ $relatedHotel->h_image ? asset($relatedHotel->h_image) : asset('admin/dist/img/no-image.png') }}" 
+                                                    alt="{{ $relatedHotel->h_name }}"
+                                                    class="img-fluid rounded"
+                                                    style="width: 100px; height: 70px; object-fit: cover;">
+                                            </a>
+                                        </div>
+                                        <div class="hotel-info pl-3">
+                                            <h4 class="hotel-title mb-2" style="font-size: 14px;">
+                                                <a href="{{ route('hotel.detail', ['id' => $relatedHotel->id, 'slug' => Str::slug($relatedHotel->h_name)]) }}"
+                                                    class="text-dark text-decoration-none">
+                                                    {{ $relatedHotel->h_name }}
+                                                </a>
+                                            </h4>
+                                            <div class="hotel-meta" style="font-size: 13px;">
+                                                <div class="hotel-location mb-1">
+                                                    <i class="fas fa-map-marker-alt text-primary"></i>
+                                                    <span>{{ isset($relatedHotel->location) ? $relatedHotel->location->l_name : '' }}</span>
+                                                </div>
+                                                <div class="hotel-price">
+                                                    @if($relatedHotel->h_sale > 0)
+                                                        <del class="text-muted mr-2">{{ number_format($relatedHotel->h_price, 0, ',','.') }}đ</del>
+                                                        <span class="text-danger">{{ number_format($relatedHotel->h_price - ($relatedHotel->h_price * $relatedHotel->h_sale / 100), 0, ',','.') }}đ</span>
+                                                    @else
+                                                        <span class="text-danger">{{ number_format($relatedHotel->h_price, 0, ',','.') }}đ</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 @endforeach
                             </div>
                         </div>
@@ -576,6 +698,30 @@
                         <small class="contact-description">Phản hồi nhanh</small>
                     </a>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Login Alert Modal -->
+<div class="modal fade" id="loginAlertModalHotel" tabindex="-1" role="dialog" aria-labelledby="loginAlertModalHotelTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 500px;">
+        <div class="modal-content" style="border-radius: 10px;">
+            <div class="modal-header" style="border-bottom: none;">
+                <h5 class="modal-title w-100 text-center" id="loginAlertModalHotelTitle" style="font-size: 1.3rem; font-weight: bold;">
+                    Bạn cần đăng nhập
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="outline: none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 1.5rem; text-align: center; font-size: 1rem;">
+                Vui lòng đăng nhập để đặt phòng khách sạn.
+            </div>
+            <div class="modal-footer" style="justify-content: center;">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" data-toggle="modal" data-target="#loginModal">
+                    Đăng nhập
+                </button>
             </div>
         </div>
     </div>

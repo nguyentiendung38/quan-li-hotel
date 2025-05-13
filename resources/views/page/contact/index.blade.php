@@ -228,6 +228,72 @@
         margin-right: 10px;
         color: #00B2BF;
     }
+
+    .feature-box {
+        background: white;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .feature-box:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    .feature-icon {
+        color: #2196F3;
+    }
+
+    .newsletter-box {
+        background: linear-gradient(135deg, #2196F3, #1976D2);
+        border-radius: 20px;
+        color: white;
+    }
+
+    .newsletter-form .form-control {
+        height: 50px;
+        border-radius: 25px 0 0 25px;
+        border: none;
+        padding: 0 25px;
+    }
+
+    .newsletter-form .btn {
+        border-radius: 0 25px 25px 0;
+        padding: 0 30px;
+        height: 50px;
+    }
+
+    .accordion .card {
+        border: none;
+        margin-bottom: 10px;
+        border-radius: 10px !important;
+        overflow: hidden;
+    }
+
+    .accordion .card-header {
+        background: white;
+        border: none;
+        padding: 0;
+    }
+
+    .accordion .btn-link {
+        width: 100%;
+        text-align: left;
+        color: #333;
+        text-decoration: none;
+        padding: 20px;
+        font-weight: 600;
+    }
+
+    .subheading {
+        color: #2196F3;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 15px;
+        display: block;
+    }
 </style>
 @stop
 
@@ -250,10 +316,43 @@
     <div class="container">
         <div class="row justify-content-center mb-5">
             <div class="col-md-12 text-center">
-                <h2 style="font-size: 2.5rem; font-weight: 600; color: #333;">Thông Tin Liên Hệ</h2>
-                <p style="color: #666;">Hãy liên hệ với chúng tôi nếu bạn cần bất kỳ sự hỗ trợ nào</p>
+                <span class="subheading">Liên hệ với chúng tôi</span>
+                <h2 class="mb-3">Chúng tôi luôn sẵn sàng hỗ trợ bạn</h2>
+                <p>Đội ngũ chăm sóc khách hàng chuyên nghiệp 24/7</p>
             </div>
         </div>
+
+        <!-- Thêm phần Why Choose Us -->
+        <div class="row mb-5">
+            <div class="col-md-4 mb-4">
+                <div class="feature-box text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-headset fa-3x text-primary"></i>
+                    </div>
+                    <h4>Hỗ trợ 24/7</h4>
+                    <p>Đội ngũ tư vấn viên luôn sẵn sàng hỗ trợ bạn mọi lúc mọi nơi</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-box text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-gift fa-3x text-primary"></i>
+                    </div>
+                    <h4>Ưu đãi hấp dẫn</h4>
+                    <p>Nhiều chương trình khuyến mãi và ưu đãi đặc biệt cho khách hàng</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-box text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-shield-alt fa-3x text-primary"></i>
+                    </div>
+                    <h4>Đảm bảo chất lượng</h4>
+                    <p>Cam kết dịch vụ chất lượng cao và giá cả cạnh tranh</p>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-md-3 mb-4">
                 <div class="contact-card p-4 text-center h-100">
@@ -285,10 +384,206 @@
             <div class="col-md-3 mb-4">
                 <div class="contact-card p-4 text-center h-100">
                     <div class="contact-icon">
-                        <i class="fa fa-fw fa-facebook-f"></i>
+                        <i class="fab fa-facebook-f"></i>
                     </div>
                     <h3>Facebook</h3>
                     <p><a href="https://www.facebook.com/congtydulichtourshue">Công Ty Booking Tours Du Lịch Huế</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section bg-light" style="padding: 0 !important;">
+    <div class="container">
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-8 text-center">
+                <h2 class="mb-4">Câu hỏi thường gặp</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="accordion" id="faqAccordion">
+                    <!-- Đặt Tour -->
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne">
+                                    <i class="fas fa-question-circle text-primary mr-2"></i>
+                                    Làm thế nào để đặt tour du lịch?
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseOne" class="collapse show" data-parent="#faqAccordion">
+                            <div class="card-body">
+                                Bạn có thể đặt tour theo các cách sau:
+                                <ul>
+                                    <li>Đặt trực tiếp trên website</li>
+                                    <li>Gọi điện đến hotline để được tư vấn</li>
+                                    <li>Đến văn phòng công ty để được tư vấn trực tiếp</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phương thức thanh toán -->
+                    <div class="card">
+                        <div class="card-header" id="headingTwo">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo">
+                                    <i class="fas fa-credit-card text-primary mr-2"></i>
+                                    Những phương thức thanh toán nào được chấp nhận?
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseTwo" class="collapse" data-parent="#faqAccordion">
+                            <div class="card-body">
+                                Chúng tôi chấp nhận các hình thức thanh toán:
+                                <ul>
+                                    <li>Thanh toán trực tiếp tại văn phòng</li>
+                                    <li>Chuyển khoản ngân hàng</li>
+                                    <li>Thanh toán qua VNPay</li>
+                                    <li>Thanh toán qua ví điện tử MOMO</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chính sách hủy -->
+                    <div class="card">
+                        <div class="card-header" id="headingThree">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree">
+                                    <i class="fas fa-calendar-times text-primary mr-2"></i>
+                                    Chính sách hủy tour như thế nào?
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseThree" class="collapse" data-parent="#faqAccordion">
+                            <div class="card-body">
+                                Chính sách hủy tour:
+                                <ul>
+                                    <li>Trước 7 ngày: Hoàn 100% tiền cọc</li>
+                                    <li>Từ 3-7 ngày: Hoàn 50% tiền cọc</li>
+                                    <li>Dưới 3 ngày: Không hoàn tiền cọc</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Giấy tờ cần thiết -->
+                    <div class="card">
+                        <div class="card-header" id="headingFour">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFour">
+                                    <i class="fas fa-passport text-primary mr-2"></i>
+                                    Cần những giấy tờ gì khi đi tour?
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseFour" class="collapse" data-parent="#faqAccordion">
+                            <div class="card-body">
+                                Giấy tờ cần mang theo:
+                                <ul>
+                                    <li>CMND/CCCD (bắt buộc)</li>
+                                    <li>Hộ chiếu (đối với tour nước ngoài)</li>
+                                    <li>Giấy khai sinh (đối với trẻ em)</li>
+                                    <li>Giấy xác nhận tiêm chủng (nếu có yêu cầu)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Đặt phòng khách sạn -->
+                    <div class="card">
+                        <div class="card-header" id="headingFive">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFive">
+                                    <i class="fas fa-hotel text-primary mr-2"></i>
+                                    Làm sao để đặt phòng khách sạn?
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseFive" class="collapse" data-parent="#faqAccordion">
+                            <div class="card-body">
+                                Quy trình đặt phòng khách sạn:
+                                <ul>
+                                    <li>Chọn khách sạn phù hợp trên website</li>
+                                    <li>Kiểm tra giá và tiện nghi</li>
+                                    <li>Chọn ngày check-in, check-out</li>
+                                    <li>Điền thông tin cá nhân</li>
+                                    <li>Thanh toán và nhận xác nhận đặt phòng</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chính sách đổi lịch -->
+                    <div class="card">
+                        <div class="card-header" id="headingSix">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseSix">
+                                    <i class="fas fa-exchange-alt text-primary mr-2"></i>
+                                    Có thể đổi lịch tour không?
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseSix" class="collapse" data-parent="#faqAccordion">
+                            <div class="card-body">
+                                Chính sách đổi lịch tour:
+                                <ul>
+                                    <li>Đổi lịch trước 7 ngày: Miễn phí</li>
+                                    <li>Đổi lịch từ 3-7 ngày: Phụ thu 10%</li>
+                                    <li>Đổi lịch dưới 3 ngày: Phụ thu 30%</li>
+                                    <li>Chỉ được đổi lịch 1 lần duy nhất</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trẻ em -->
+                    <div class="card">
+                        <div class="card-header" id="headingSeven">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseSeven">
+                                    <i class="fas fa-child text-primary mr-2"></i>
+                                    Chính sách giá cho trẻ em?
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseSeven" class="collapse" data-parent="#faqAccordion">
+                            <div class="card-body">
+                                Chính sách giá vé theo độ tuổi:
+                                <ul>
+                                    <li>Trẻ em dưới 2 tuổi: Miễn phí</li>
+                                    <li>Trẻ em từ 2-6 tuổi: 50% giá người lớn</li>
+                                    <li>Trẻ em từ 6-11 tuổi: 75% giá người lớn</li>
+                                    <li>Từ 11 tuổi trở lên: Tính như người lớn</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section newsletter-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="newsletter-box text-center p-5">
+                    <h3>Đăng ký nhận thông tin</h3>
+                    <p>Nhận ngay thông tin về các ưu đãi và tour mới nhất</p>
+                    <form class="newsletter-form">
+                        <div class="input-group">
+                            <input type="email" class="form-control" placeholder="Nhập email của bạn">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">Đăng ký</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

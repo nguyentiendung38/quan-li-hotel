@@ -86,10 +86,15 @@
                                         </td>
                                         <td style="vertical-align: middle; width: 17%">
                                             @if($tour->b_status != 1)
-                                                <button type="button" class="btn btn-block {{ $classStatus[$tour->b_status] }} btn-sm btn-status-order">{{ $status[$tour->b_status]  }}</button>
+                                                <button type="button" class="btn btn-block {{ $classStatus[$tour->b_status] ?? 'btn-secondary' }} btn-sm btn-status-order">
+                                                    {{ $status[$tour->b_status] ?? 'Unknown Status'  }}
+                                                </button>
                                             @endif
                                             @if($tour->b_status == 1)
-                                                <a class="btn btn-block btn-danger btn-sm btn-cancel-order" href="{{ route('post.cancel.order.tour', ['status' => 5, 'id' => $tour->id]) }}" >Hủy</a>
+                                                <form method="POST" action="{{ route('post.cancel.order.tour', ['status' => 5, 'id' => $tour->id]) }}">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-block btn-danger btn-sm">Hủy</button>
+                                                </form>
                                             @endif
                                         </td>
                                     </tr>

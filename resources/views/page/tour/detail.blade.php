@@ -92,9 +92,25 @@
         position: sticky;
         top: 20px;
         background: #fff;
-        padding: 25px;
         border-radius: 15px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        padding: 25px 0;
+    }
+
+    /* Remove the padding for text-center */
+    .register-tour .text-center {
+        padding: 0;
+        margin-bottom: 25px;
+    }
+
+    /* Add padding only to date-picker-group */
+    .register-tour .date-picker-group {
+        margin: 0 25px 25px;
+    }
+
+    /* Add padding only to buttons container */
+    .register-tour .d-flex {
+        padding: 0 25px;
     }
 
     .price-tour {
@@ -119,6 +135,11 @@
         padding: 25px;
         border-radius: 15px;
         background: #fff !important;
+    }
+
+    .register-tour,
+    .related-tour {
+        border-bottom: 1px solid #eee;
     }
 
     /* More modern touches */
@@ -153,15 +174,6 @@
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         overflow: hidden;
         padding: 25px;
-    }
-
-    .register-tour,
-    .related-tour {
-        padding: 25px;
-    }
-
-    .register-tour {
-        border-bottom: 1px solid #eee;
     }
 
     .booking-section {
@@ -296,7 +308,7 @@
     .contact-modal .modal-content {
         border: none;
         border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     }
 
     .contact-modal .modal-header {
@@ -352,7 +364,314 @@
 
     .contact-option:hover {
         transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Custom submit button style */
+    .btn-comment-submit {
+        background: linear-gradient(135deg, #2196F3, #1976D2) !important;
+        border: none !important;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1) !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .btn-comment-submit:hover {
+        background: linear-gradient(135deg, #1976D2, #2196F3) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    /* Modern Date Input Styling */
+    .date-picker-group {
+        position: relative;
+        margin-bottom: 25px;
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .date-picker-group label {
+        display: block;
+        font-weight: 500;
+        color: #2c3e50;
+        margin-bottom: 12px;
+        font-size: 14px;
+    }
+
+    .date-picker-group .required-star {
+        color: #e74c3c;
+        font-size: 18px;
+        position: absolute;
+        top: 18px;
+        right: 25px;
+    }
+
+    .date-picker-group .form-control {
+        border: 2px solid #e9ecef;
+        padding: 12px 15px;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .date-picker-group .form-control:focus {
+        border-color: #2196F3;
+        box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+    }
+
+    .date-picker-error {
+        color: #e74c3c;
+        font-size: 13px;
+        margin-top: 8px;
+        padding: 8px 12px;
+        background: rgba(231, 76, 60, 0.1);
+        border-radius: 6px;
+        display: none;
+    }
+
+    .date-picker-group .calendar-icon {
+        position: absolute;
+        right: 35px;
+        top: 50%;
+        transform: translateY(-3px);
+        color: #2196F3;
+        pointer-events: none;
+    }
+
+    .price-amount {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #e74c3c;
+    }
+
+    .text-secondary {
+        color: #95a5a6 !important;
+    }
+
+    .badge-danger {
+        background: #e74c3c;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    /* Modern blue button styling */
+    .btn-primary.btn-comment,
+    .btn-primary[type="submit"],
+    .btn-primary {
+        background: linear-gradient(135deg, #0061f2, #0044c2) !important;
+        border: none !important;
+        box-shadow: 0 4px 15px rgba(0, 97, 242, 0.2) !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .btn-primary.btn-comment:hover,
+    .btn-primary[type="submit"]:hover,
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #0044c2, #0061f2) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 97, 242, 0.3) !important;
+    }
+
+    .btn-primary.btn-comment:active,
+    .btn-primary[type="submit"]:active,
+    .btn-primary:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 10px rgba(0, 97, 242, 0.2) !important;
+    }
+
+    /* New modern rating breakdown styles */
+    .rating-breakdown {
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 12px;
+    }
+
+    .rating-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .rating-label {
+        min-width: 60px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .rating-star {
+        color: #ffc107;
+        font-size: 14px;
+    }
+
+    .progress {
+        flex: 1;
+        height: 10px;
+        border-radius: 15px;
+        background-color: #e9ecef;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        background: linear-gradient(135deg, #ffd200 0%, #ffa700 100%);
+        border-radius: 15px;
+        transition: width 0.6s ease;
+    }
+
+    .rating-count {
+        min-width: 50px;
+        text-align: right;
+        font-size: 14px;
+        color: #6c757d;
+    }
+
+    .rating-breakdown h4 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #344767;
+        margin-bottom: 20px;
+    }
+
+    /* Modern Calendar & Date Picker Styling */
+    .flatpickr-calendar {
+        background: #fff !important;
+        border-radius: 15px !important;
+        border: none !important;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+        margin-top: 5px !important;
+        font-family: inherit !important;
+        width: 310px !important;
+    }
+
+    .flatpickr-months {
+        background: linear-gradient(135deg, #0061f2, #0044c2) !important;
+        padding: 15px 0 5px !important;
+        border-radius: 15px 15px 0 0 !important;
+    }
+
+    .flatpickr-month {
+        color: #fff !important;
+    }
+
+    .flatpickr-current-month {
+        padding: 0 !important;
+        font-size: 16px !important;
+    }
+
+    .flatpickr-months .flatpickr-prev-month,
+    .flatpickr-months .flatpickr-next-month {
+        top: 10px !important;
+        padding: 5px !important;
+    }
+
+    .flatpickr-months .flatpickr-prev-month:hover svg,
+    .flatpickr-months .flatpickr-next-month:hover svg {
+        fill: #fff !important;
+    }
+
+    .flatpickr-months .flatpickr-prev-month svg,
+    .flatpickr-months .flatpickr-next-month svg {
+        fill: rgba(255, 255, 255, 0.8) !important;
+    }
+
+    .flatpickr-weekdays {
+        background: transparent !important;
+        padding: 10px 0 5px !important;
+    }
+
+    .flatpickr-weekday {
+        color: #5a6e8c !important;
+        font-weight: 600 !important;
+    }
+
+    .flatpickr-day {
+        border-radius: 8px !important;
+        margin: 2px !important;
+        color: #5a6e8c !important;
+        font-weight: 500 !important;
+    }
+
+    .flatpickr-day.selected {
+        background: #0061f2 !important;
+        border-color: #0061f2 !important;
+        color: #fff !important;
+    }
+
+    .flatpickr-day:hover {
+        background: #f0f3f9 !important;
+        border-color: transparent !important;
+    }
+
+    .flatpickr-day.today {
+        border-color: #0061f2 !important;
+        color: #0061f2 !important;
+    }
+
+    .flatpickr-day.flatpickr-disabled {
+        color: #ddd !important;
+        cursor: not-allowed !important;
+        opacity: 0.5;
+        text-decoration: line-through;
+        background: #f8f8f8 !important;
+    }
+
+    .flatpickr-day.flatpickr-disabled:hover {
+        background: #f8f8f8 !important;
+        cursor: not-allowed !important;
+    }
+
+    .date-picker-group {
+        position: relative;
+        background: #fff !important;
+        padding: 20px !important;
+        border-radius: 15px !important;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05) !important;
+    }
+
+    .date-picker-group label {
+        display: flex;
+        align-items: center;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 12px;
+        font-size: 15px;
+    }
+
+    .date-picker-group label i {
+        margin-right: 8px;
+        color: #0061f2;
+        font-size: 18px;
+    }
+
+    .date-picker-group input {
+        border: 2px solid #e9ecef !important;
+        padding: 12px 15px !important;
+        font-size: 15px !important;
+        border-radius: 10px !important;
+        background: #f8f9fa !important;
+        cursor: pointer !important;
+        color: #2c3e50 !important;
+    }
+
+    .date-picker-group input:focus {
+        border-color: #0061f2 !important;
+        box-shadow: 0 0 0 3px rgba(0, 97, 242, 0.1) !important;
+        outline: none !important;
+    }
+
+    .date-picker-error {
+        margin-top: 8px;
+        padding: 10px 12px;
+        background: #fff1f1;
+        border-radius: 8px;
+        color: #e74c3c;
+        font-size: 13px;
+        display: none;
     }
 </style>
 @stop
@@ -530,15 +849,19 @@
                             $percentage = $tour->total_ratings > 0 ? ($count / $tour->total_ratings) * 100 : 0;
                             @endphp
                             <div class="rating-bar">
-                                <span>{{ $i }} sao</span>
+                                <div class="rating-label">
+                                    <span class="rating-star">★</span>{{ $i }}
+                                </div>
                                 <div class="progress">
-                                    <div class="progress-bar bg-warning" role="progressbar"
+                                    <div class="progress-bar" 
+                                        role="progressbar"
                                         style="width: {{ $percentage }}%"
                                         aria-valuenow="{{ $percentage }}"
                                         aria-valuemin="0"
-                                        aria-valuemax="100"></div>
+                                        aria-valuemax="100">
+                                    </div>
                                 </div>
-                                <span>{{ $count }}</span>
+                                <div class="rating-count">{{ $count }}</div>
                             </div>
                             @endfor
                         </div>
@@ -598,7 +921,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <input type="submit" value="Gửi bình luận" class="btn py-3 px-4 btn-primary">
+                                <input type="submit" value="Gửi bình luận" class="btn py-3 px-4 btn-comment-submit">
                             </div>
                         </form>
                         @endif
@@ -610,82 +933,93 @@
                     <div class="sidebar-container">
                         <div class="register-tour">
                             @if($tour->t_sale > 0)
-                            <p class="price-tour">
-                                Giá Tour:
-                                <span>
-                                    {{ number_format($tour->t_price_adults - ($tour->t_price_adults * $tour->t_sale / 100), 0, ',', '.') }}<small style="font-size: 15px;">vnd</small>
-                                </span>
-                                <del style="margin-left: 10px; font-size: 16px;">
-                                    {{ number_format($tour->t_price_adults, 0, ',', '.') }} vnd
-                                </del>
-                            </p>
+                            <div class="text-center">
+                                <p class="text-muted mb-1">Giá gốc:
+                                    <del class="text-secondary">{{ number_format($tour->t_price_adults, 0, ',', '.') }} vnđ</del>
+                                </p>
+                                <div class="price-amount mb-2">
+                                    {{ number_format($tour->t_price_adults - ($tour->t_price_adults * $tour->t_sale / 100), 0, ',', '.') }} vnđ/người
+                                </div>
+                                <span class="badge badge-danger">Giảm {{ $tour->t_sale }}%</span>
+                            </div>
                             @else
-                            <p class="price-tour">Giá từ : <span>{{ number_format($tour->t_price_adults, 0, ',', '.') }}</span> vnd</p>
+                            <div class="text-center">
+                                <p class="text-muted mb-1">Giá tour:</p>
+                                <div class="price-amount mb-2">{{ number_format($tour->t_price_adults, 0, ',', '.') }} vnđ/người</div>
+                                <small class="text-muted">Đã bao gồm thuế và phí</small>
+                            </div>
                             @endif
                             @if($tour->t_number_registered < $tour->t_number_guests)
                                 @if(Auth::guard('users')->check())
-                                <div class="form-group">
-                                    <label for="departure_date" style="font-size: 14px; position: relative;">
+                                <div class="date-picker-group">
+                                    <label for="departure_date">
+                                        <i class="fas fa-calendar-alt"></i>
                                         Chọn ngày khởi hành
-                                        <span style="color: red; position: absolute; top: -5px; right: -15px;">*</span>
                                     </label>
-                                    <input type="date" id="departure_date" class="form-control" required>
-                                    <div id="departure_date_error" style="color: red; display: none; margin-top: 5px;">
+                                    <input type="text" 
+                                           id="departure_date" 
+                                           class="form-control" 
+                                           placeholder="Vui lòng chọn ngày khởi hành" 
+                                           readonly>
+                                    <div id="departure_date_error" class="date-picker-error">
                                         Vui lòng chọn ngày khởi hành
                                     </div>
                                 </div>
 
+                                <!-- Include Flatpickr assets (these can be placed in the head section if preferred) -->
+                                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+                                <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
                                 <script>
-                                    // Lấy ngày khởi hành của tour hiện tại
-                                    const currentTour = @json($tour); // Lấy thông tin tour hiện tại
+                                document.addEventListener('DOMContentLoaded', function() {
                                     const currentTourDates = @json(\App\Helpers\Date::getAvailableDates($tour->t_start_date));
-                                    console.log("Current Tour ID:", currentTour.id, "Available dates:", currentTourDates);
+                                    
+                                    // Initialize flatpickr (existing configuration)
+                                    flatpickr("#departure_date", {
+                                        enable: currentTourDates,
+                                        dateFormat: "Y-m-d",
+                                        minDate: 'today',
+                                        locale: {
+                                            firstDayOfWeek: 1,
+                                            weekdays: {
+                                                shorthand: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
+                                                longhand: ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7']
+                                            },
+                                            months: {
+                                                shorthand: ['Th1', 'Th2', 'Th3', 'Th4', 'Th5', 'Th6', 'Th7', 'Th8', 'Th9', 'Th10', 'Th11', 'Th12'],
+                                                longhand: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12']
+                                            }
+                                        },
+                                        onReady: function(selectedDates, dateStr, instance) {
+                                            instance.calendarContainer.querySelectorAll(".flatpickr-day").forEach(function(dayElem) {
+                                                dayElem.title = dayElem.classList.contains("flatpickr-disabled")
+                                                    ? "Không có lịch khởi hành"
+                                                    : "Có lịch khởi hành";
+                                            });
+                                        },
+                                        onChange: function(selectedDates, dateStr) {
+                                            document.getElementById('departure_date_error').style.display = "none";
+                                        }
+                                    });
 
-                                    function formatDate(date) {
-                                        return new Date(date).toISOString().split('T')[0];
-                                    }
-
-                                    function bookTour() {
+                                    // Define a globally available bookTour function with slug included
+                                    window.bookTour = function() {
                                         var date = document.getElementById('departure_date').value;
                                         if (!date) {
-                                            document.getElementById('departure_date_error').style.display = "block";
-                                            document.getElementById('departure_date_error').textContent = "Vui lòng chọn ngày khởi hành";
+                                            let errorElem = document.getElementById('departure_date_error');
+                                            errorElem.style.display = "block";
+                                            errorElem.textContent = "Vui lòng chọn ngày khởi hành";
                                             return;
                                         }
-
-                                        const formattedDate = formatDate(date);
-                                        const isValidDate = currentTourDates.includes(formattedDate);
-
-                                        if (!isValidDate) {
-                                            document.getElementById('departure_date_error').style.display = "block";
-                                            document.getElementById('departure_date_error').textContent = "Ngày bạn chọn không phải là ngày khởi hành của tour này";
+                                        if (!currentTourDates.includes(date)) {
+                                            let errorElem = document.getElementById('departure_date_error');
+                                            errorElem.style.display = "block";
+                                            errorElem.textContent = "Ngày bạn chọn không phải là ngày khởi hành của tour này";
                                             return;
                                         }
-
-                                        document.getElementById('departure_date_error').style.display = "none";
-                                        window.location.href = "{{ route('book.tour', ['id' => $tour->id, 'slug' => safeTitle($tour->t_title)]) }}" + "?departure_date=" + encodeURIComponent(formattedDate);
+                                        window.location.href = "{{ route('book.tour', ['id' => $tour->id, 'slug' => Str::slug($tour->t_title)]) }}" + "?departure_date=" + encodeURIComponent(date);
                                     }
-
-                                    // Thiết lập min/max và lắng nghe sự kiện cho input ngày
-                                    document.addEventListener('DOMContentLoaded', function() {
-                                        const dateInput = document.getElementById('departure_date');
-                                        if (currentTourDates.length > 0) {
-                                            dateInput.min = currentTourDates[0];
-                                            dateInput.max = currentTourDates[currentTourDates.length - 1];
-                                        }
-
-                                        dateInput.addEventListener('input', function(e) {
-                                            const selectedDate = formatDate(e.target.value);
-                                            const isValidDate = currentTourDates.includes(selectedDate);
-
-                                            if (!isValidDate) {
-                                                document.getElementById('departure_date_error').style.display = "block";
-                                                document.getElementById('departure_date_error').textContent = "Ngày này không phải là ngày khởi hành của tour này";
-                                            } else {
-                                                document.getElementById('departure_date_error').style.display = "none";
-                                            }
-                                        });
-                                    });
+                                });
                                 </script>
 
                                 <div class="d-flex justify-content-between" style="gap:10px;">
@@ -729,11 +1063,45 @@
                         <!-- Phần tour liên quan -->
                         @if ($tours->count() > 0)
                         <div class="related-tours mt-4">
-                            <h3 class="section-title">Danh Sách Tour Liên Quan</h3>
-                            <?php $itemTour = 'item-related-tour' ?>
-                            @foreach($tours as $relatedTour)
-                            @include('page.common.itemTour', ['tour' => $relatedTour, 'itemTour' => $itemTour])
-                            @endforeach
+                            <h3 class="section-title mb-4 pb-2 border-bottom">Tour Liên Quan</h3>
+                            <div class="related-tours-list">
+                                @foreach($tours as $relatedTour)
+                                <div class="related-tour-item mb-4">
+                                    <div class="d-flex">
+                                        <div class="tour-thumb" style="width: 100px;">
+                                            <a href="{{ route('tour.detail', ['id' => $relatedTour->id, 'slug' => Str::slug($relatedTour->t_title)]) }}">
+                                                <img src="{{ $relatedTour->t_image ? asset($relatedTour->t_image) : asset('admin/dist/img/no-image.png') }}"
+                                                    alt="{{ $relatedTour->t_title }}"
+                                                    class="img-fluid rounded"
+                                                    style="width: 100px; height: 70px; object-fit: cover;">
+                                            </a>
+                                        </div>
+                                        <div class="tour-info pl-3">
+                                            <h4 class="tour-title mb-2" style="font-size: 14px;">
+                                                <a href="{{ route('tour.detail', ['id' => $relatedTour->id, 'slug' => Str::slug($relatedTour->t_title)]) }}"
+                                                    class="text-dark text-decoration-none">
+                                                    {{ $relatedTour->t_title }}
+                                                </a>
+                                            </h4>
+                                            <div class="tour-meta" style="font-size: 13px;">
+                                                <div class="tour-schedule mb-1">
+                                                    <i class="fas fa-calendar-alt text-primary"></i>
+                                                    <span>{{ $relatedTour->t_schedule }}</span>
+                                                </div>
+                                                <div class="tour-price">
+                                                    @if($relatedTour->t_sale > 0)
+                                                    <del class="text-muted mr-2">{{ number_format($relatedTour->t_price_adults, 0, ',','.') }}đ</del>
+                                                    <span class="text-danger">{{ number_format($relatedTour->t_price_adults - ($relatedTour->t_price_adults * $relatedTour->t_sale / 100), 0, ',','.') }}đ</span>
+                                                    @else
+                                                    <span class="text-danger">{{ number_format($relatedTour->t_price_adults, 0, ',','.') }}đ</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
                         </div>
                         @endif
                     </div>

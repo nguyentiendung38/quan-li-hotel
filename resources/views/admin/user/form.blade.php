@@ -27,16 +27,12 @@
                             @endif
                         <div class="form-group">
                             <div class="input-group input-file" name="images">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-default btn-choose" type="button">Chọn tệp</button>
-                                </span>
-                                <input type="text" class="form-control" placeholder='Không có tệp nào ...' />
-                                <span class="input-group-btn"></span>
+                                <input type="file" name="avatar" class="custom-file-input" id="avatar" accept="image/*" onchange="previewImage(this);">
+                                <label class="custom-file-label" for="avatar">Choose file</label>
                             </div>
-                            <span class="text-danger ">
-                                <p class="mg-t-5">{{ $errors->first('images') }}</p>
+                            <span class="text-danger">
+                                <p class="mg-t-5">{{ $errors->first('avatar') }}</p>
                             </span>
-
                         </div>
                     </div>
                     <!-- /.card-body -->
@@ -145,3 +141,17 @@
         </div>
     </form>
 </div>
+
+<!-- Add this JavaScript for image preview -->
+<script>
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            $('#image_render').attr('src', e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
+        $('.custom-file-label').html(input.files[0].name);
+    }
+}
+</script>

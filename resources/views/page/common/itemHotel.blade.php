@@ -77,7 +77,12 @@
             </p>
             <!-- Thay đổi cách tính phòng trống và đã đặt -->
             @php
-            $availableRooms = $hotel->h_rooms - ($hotel->bookRooms->where('status', 1)->sum('rooms'));
+            // Tính số phòng đã đặt không bao gồm các đơn đã hủy
+            $bookedRooms = $hotel->bookRooms
+            ->where('status', '!=', 3) // Loại bỏ đơn đã hủy
+            ->sum('rooms');
+
+            $availableRooms = $hotel->h_rooms - $bookedRooms;
             @endphp
             <p class="location mb-0">
                 <span class="fa fa-check" style="margin-right: 10px;"></span>
@@ -90,7 +95,7 @@
             </p>
             <p class="location mb-0">
                 <span class="fa fa-user" style="margin-right: 10px;"></span>
-                Đã đặt: {{ $hotel->bookRooms->where('status', 1)->sum('rooms') }}
+                Đã đặt: {{ $bookedRooms }}
             </p>
             <!-- Thêm div wrapper cho các nút -->
             <div class="text-center" style="margin-top:20px;">

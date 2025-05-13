@@ -326,7 +326,13 @@
         <div class="booking-content">
             @if(Auth::guard('users')->check() || Auth::guard('web')->check())
             @php
-                $availableRooms = $hotel->h_rooms - ($hotel->bookRooms->where('status', 1)->sum('rooms'));
+                // Tính số phòng đã đặt bao gồm: đang chờ xử lý (0), đã xác nhận (1), đã thanh toán (2)
+                // Không tính các đơn đã hủy (3)
+                $bookedRooms = $hotel->bookRooms
+                    ->whereIn('status', [0, 1, 2]) // Tính cả đơn đang chờ, đã xác nhận và đã thanh toán
+                    ->sum('rooms');
+                
+                $availableRooms = $hotel->h_rooms - $bookedRooms;
             @endphp
             <form action="{{ route('hotel.booking.process', $hotel->id) }}" method="POST">
                 @csrf
@@ -497,6 +503,10 @@
 
         // Calculate nights between two dates
         function calculateNights(checkin, checkout) {
+            // Convert string dates to Date objects if needed
+            if (typeof checkin === 'string') checkin = new Date(checkin);
+            if (typeof checkout === 'string') checkout = new Date(checkout);
+            
             // Set both dates to noon to avoid timezone issues
             checkin.setHours(12, 0, 0, 0);
             checkout.setHours(12, 0, 0, 0);
@@ -509,18 +519,21 @@
 
         // Update nights when dates change
         function updateNights() {
-            let checkinDate = new Date($('#checkin_date').val());
-            let checkoutDate = new Date($('#checkout_date').val());
+            let checkinDate = $('#checkin_date').val();
+            let checkoutDate = $('#checkout_date').val();
             
             if (checkinDate && checkoutDate) {
-                if (checkoutDate <= checkinDate) {
+                const checkinObj = new Date(checkinDate);
+                const checkoutObj = new Date(checkoutDate);
+                
+                if (checkoutObj <= checkinObj) {
                     alert('Ngày trả phòng phải sau ngày nhận phòng');
                     $('#checkout_date').val('');
                     $('#nights').val('');
                     return;
                 }
                 
-                const nights = calculateNights(checkinDate, checkoutDate);
+                const nights = calculateNights(checkinObj, checkoutObj);
                 $('#nights').val(nights);
             }
         }
@@ -530,15 +543,15 @@
 
         // When nights input changes, validate against dates
         $('#nights').on('input', function() {
-            let checkinDate = new Date($('#checkin_date').val());
-            let checkoutDate = new Date($('#checkout_date').val());
+            let checkinDate = $('#checkin_date').val();
+            let checkoutDate = $('#checkout_date').val();
             
             if (checkinDate && checkoutDate) {
                 const correctNights = calculateNights(checkinDate, checkoutDate);
                 const inputNights = parseInt($(this).val());
                 
                 if (inputNights !== correctNights) {
-                    alert(`Số đêm phải là ${correctNights} (tính từ ${$('#checkin_date').val()} đến ${$('#checkout_date').val()})`);
+                    alert(`Số đêm phải là ${correctNights} (tính từ ${checkinDate} đến ${checkoutDate})`);
                     $(this).val(correctNights);
                 }
             }
@@ -546,13 +559,13 @@
 
         // Validate form before submission
         $('form').on('submit', function(e) {
-            let checkinDate = new Date($('#checkin_date').val());
-            let checkoutDate = new Date($('#checkout_date').val());
+            let checkinDate = $('#checkin_date').val();
+            let checkoutDate = $('#checkout_date').val();
             
             if (!checkinDate || !checkoutDate) {
                 alert('Vui lòng chọn ngày nhận phòng và ngày trả phòng');
                 e.preventDefault();
-                return;
+                return false;
             }
 
             const correctNights = calculateNights(checkinDate, checkoutDate);
@@ -561,7 +574,7 @@
             if (inputNights !== correctNights) {
                 alert(`Số đêm không chính xác. Phải là ${correctNights} đêm`);
                 e.preventDefault();
-                return;
+                return false;
             }
         });
     });

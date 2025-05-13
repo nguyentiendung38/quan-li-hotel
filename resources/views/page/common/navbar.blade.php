@@ -2,131 +2,127 @@
     <style>
         .modern-navbar {
             background: linear-gradient(90deg, #007bff, #00c6ff);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 0.5rem 1rem;
+            /* Keep original background */
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
         }
 
         .modern-navbar .navbar-brand {
-            font-weight: bold;
-            font-size: 1.5rem;
+            font-weight: 700;
+            font-size: 1.8rem;
             color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            padding-bottom: 5px;
         }
 
-        .modern-navbar .navbar-brand span {
-            font-size: 0.9rem;
-            margin-left: 8px;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .modern-navbar .navbar-toggler {
-            border: none;
-        }
-
-        .modern-navbar .navbar-toggler-icon {
-            filter: invert(100%);
-        }
-
-        .modern-navbar .navbar-nav {
-            align-items: center;
-            /* Align all nav items vertically */
+        .modern-navbar .navbar-brand:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.5);
         }
 
         .modern-navbar .nav-link {
-            display: flex;
-            align-items: center;
-            height: 100%;
-            padding: 0.5rem 1rem !important;
-            font-size: 0.9rem;
-            color: #fff !important;
-            text-transform: uppercase;
-            margin: 0 10px;
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.7rem 1.2rem !important;
+            border-radius: 25px;
+            transition: all 0.3s ease;
             position: relative;
-            transition: color 0.3s, border-bottom 0.3s;
-            border-bottom: 2px solid transparent;
+            margin: 0 5px;
         }
 
-        .modern-navbar .navbar-nav .nav-link:hover,
-        .modern-navbar .navbar-nav .nav-item.active .nav-link {
-            color: #fff;
-            border-bottom: 2px solid #fff;
+        .modern-navbar .nav-link:hover,
+        .modern-navbar .nav-item.active .nav-link {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
         }
 
         .modern-navbar .dropdown-menu {
             border: none;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-top: 0;
-            background: white;
-            min-width: 200px;
-            animation: fadeIn 0.3s ease;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+            margin-top: 10px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
             position: absolute;
-            right: -60px; /* Thêm vào để lùi menu sang phải */
-            left: -25px; /* Đảm bảo không bị ảnh hưởng bởi căn trái */
+            right: auto;
+            left: -50px;
         }
 
         .modern-navbar .dropdown-item {
-            font-size: 0.9rem;
-            padding: 0.5rem 1.5rem;
-            color: #333;
-            transition: all 0.3s ease;
+            padding: 0.8rem 1.5rem;
+            font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 10px;
+            color: #2a5298;
+            transition: all 0.3s ease;
         }
 
         .modern-navbar .dropdown-item i {
+            margin-right: 12px;
             font-size: 1.1rem;
-            color: #007bff;
-            width: 20px;
-            text-align: center;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            background: rgba(42, 82, 152, 0.1);
+            color: #2a5298;
+            transition: all 0.3s ease;
         }
 
         .modern-navbar .dropdown-item:hover {
-            background: #f8f9fa;
-            color: #007bff;
+            background: rgba(42, 82, 152, 0.05);
             transform: translateX(5px);
         }
 
-        .modern-navbar .nav-item.dropdown:hover .dropdown-menu {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .modern-navbar .dropdown-item:hover i {
+            background: #2a5298;
+            color: white;
         }
 
         .user-avatar-wrapper {
-            display: flex;
-            align-items: center;
-            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 3px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
         }
 
         .user-avatar {
-            width: 35px;
-            height: 35px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin: 0;
-            /* Remove any margin */
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
         }
 
-        .modern-navbar .navbar-nav .nav-item {
-            display: flex;
-            align-items: center;
+        .user-avatar-wrapper:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
         }
 
-        .modern-navbar .dropdown-toggle::after {
-            margin-left: 0.5rem;
+        @media (max-width: 991.98px) {
+            .modern-navbar .nav-link {
+                padding: 0.5rem 1rem !important;
+                margin: 5px 0;
+            }
+
+            .modern-navbar .dropdown-menu {
+                background: rgba(255, 255, 255, 0.05);
+                backdrop-filter: none;
+            }
+
+            .modern-navbar .dropdown-item {
+                color: rgba(255, 255, 255, 0.9);
+            }
         }
     </style>
 
@@ -153,9 +149,6 @@
                 </li>
                 <li class="nav-item {{ request()->is('tin-tuc.html') || request()->is('tin-tuc/*') ? 'active' : '' }}">
                     <a href="{{ route('articles.index') }}" class="nav-link">TIN TỨC</a>
-                </li>
-                <li class="nav-item {{ request()->is('ve-chung-toi.html') ? 'active' : '' }}">
-                    <a href="{{ route('about.us') }}" class="nav-link">GIỚI THIỆU</a>
                 </li>
                 <li class="nav-item {{ request()->is('lien-he.html') ? 'active' : '' }}">
                     <a href="{{ route('contact.index') }}" class="nav-link">LIÊN HỆ</a>
@@ -191,16 +184,27 @@
 
 <script>
     $(document).ready(function() {
-        // Initialize Bootstrap dropdowns
         $('.dropdown-toggle').dropdown();
 
-        // Add hover functionality for dropdowns
+        // Enhanced dropdown animation
         $('.nav-item.dropdown').hover(
             function() {
-                $(this).find('.dropdown-menu').stop(true, true).delay(200).fadeIn(300);
+                $(this).find('.dropdown-menu')
+                    .stop(true, true)
+                    .animate({
+                        opacity: 1,
+                        marginTop: '0'
+                    }, 300);
             },
             function() {
-                $(this).find('.dropdown-menu').stop(true, true).delay(200).fadeOut(300);
+                $(this).find('.dropdown-menu')
+                    .stop(true, true)
+                    .animate({
+                        opacity: 0,
+                        marginTop: '10px'
+                    }, 300, function() {
+                        $(this).css('display', 'none');
+                    });
             }
         );
     });

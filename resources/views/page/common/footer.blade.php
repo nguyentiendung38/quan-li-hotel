@@ -1,5 +1,5 @@
 <footer class="modern-footer">
-    <div class="container py-5">
+    <div class="container pt-5"> <!-- Changed from py-5 to pt-5 to only keep top padding -->
         <div class="row g-4">
             <!-- Thông Tin Chung -->
             <div class="col-lg-3 col-md-6">
@@ -128,7 +128,6 @@
         }
 
         .footer-bottom {
-            margin-top: 40px;
             padding-top: 20px;
             border-top: 1px solid rgba(255,255,255,0.1);
             text-align: center;

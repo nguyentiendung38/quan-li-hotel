@@ -28,21 +28,28 @@ class TourController extends Controller
         if ($request->key_tour) {
             $tours->where('t_title', 'like', '%' . $request->key_tour . '%');
         }
-        if ($request->t_start_date) {
-            $startDate = date('Y-m-d', strtotime($request->t_start_date));
-            $tours->where('t_start_date', '>=', $startDate);
+
+        if ($request->filled('t_start_date')) {
+            try {
+                $searchDate = Carbon::createFromFormat('d/m/Y', $request->t_start_date)->format('Y-m-d');
+                Log::info('Searching date: ' . $searchDate);
+
+                $tours->where(function ($query) use ($searchDate) {
+                    $query->whereRaw("JSON_CONTAINS(t_start_date, '\"$searchDate\"')");
+                });
+            } catch (\Exception $e) {
+                Log::error('Date parsing error: ' . $e->getMessage());
+            }
         }
-        if ($request->t_end_date) {
-            $endDate = date('Y-m-d', strtotime($request->t_end_date));
-            $tours->where('t_end_date', '<=', $endDate);
-        }
+
         if ($request->price) {
             $price = explode('-', $request->price);
             $tours->whereBetween('t_price_adults', [$price[0], $price[1]]);
         }
 
-        $tours = $tours->orderBy('t_start_date')->paginate(NUMBER_PAGINATION_PAGE);
-        return view('page.tour.index', ['tours' => $tours]);
+        $tours = $tours->orderBy('id', 'DESC')->paginate(NUMBER_PAGINATION_PAGE);
+
+        return view('page.tour.index', compact('tours'));
     }
 
     public function detail(Request $request, $id)
@@ -149,7 +156,7 @@ class TourController extends Controller
                 // Cập nhật số lượng người đã đăng ký của tour
                 $tour->t_follow += $numberUser;
                 $tour->save();
-                
+
                 // Gửi email
                 $mailuser = $user->email;
                 Mail::send('emailtiepnhan', [
@@ -172,7 +179,6 @@ class TourController extends Controller
 
             // Nếu là nút "Thanh toán online"
             return redirect()->route('get.from.payment', $book->id);
-
         } catch (Exception $exception) {
             DB::rollBack();
             Log::error('Error booking tour: ' . $exception->getMessage());
@@ -306,47 +312,113 @@ class TourController extends Controller
 
     public function vnPayReturn(Request $request)
     {
-        // 1. Lấy các tham số từ URL
-        $vnp_TxnRef = $request->get('vnp_TxnRef'); // Mã giao dịch của bạn
-        $vnp_ResponseCode = $request->get('vnp_ResponseCode'); // Mã phản hồi VNPay
-        $vnp_TransactionStatus = $request->get('vnp_TransactionStatus'); // Trạng thái giao dịch
-        $vnp_BankCode = $request->get('vnp_BankCode');
-        $vnp_PayDate = $request->get('vnp_PayDate'); // YYYYmmddHHiiss
+        DB::transaction(function () use ($request) {
+            $vnp_TxnRef = $request->get('vnp_TxnRef');
+            $vnp_ResponseCode = $request->get('vnp_ResponseCode');
+            $vnp_TransactionStatus = $request->get('vnp_TransactionStatus');
 
-        // 2. Tìm payment dựa trên p_transaction_code
-        $payment = Payment::where('p_transaction_code', $vnp_TxnRef)->first();
-        if (!$payment) {
-            return redirect()->route('page.home')->with('error', 'Không tìm thấy giao dịch để cập nhật.');
-        }
-
-        // 3. Cập nhật các thông tin từ VNPay
-        $payment->p_vnp_response_code = $vnp_ResponseCode;
-        $payment->p_code_vnpay = $request->get('vnp_TransactionNo'); // Mã giao dịch VNPay
-        $payment->p_transaction_code = $vnp_TxnRef; // Mã thanh toán
-        $payment->p_code_bank = $vnp_BankCode;
-        $payment->p_bank_name = $this->getBankName($vnp_BankCode);
-        $payment->p_time = date('Y-m-d H:i:s', strtotime($vnp_PayDate));
-        $payment->save();
-
-        // 4. Kiểm tra giao dịch thành công
-        // - vnp_ResponseCode == '00' và vnp_TransactionStatus == '00' => thanh toán thành công
-        if ($vnp_ResponseCode == '00' && $vnp_TransactionStatus == '00') {
-            $book = BookTour::find($payment->p_transaction_id);
-            if ($book) {
-                $book->b_status = 3; // Đã thanh toán
-                $book->save();
+            $payment = Payment::where('p_transaction_code', $vnp_TxnRef)->first();
+            if (!$payment) {
+                return redirect()->route('page.home')->with('error', 'Không tìm thấy giao dịch để cập nhật.');
             }
 
-            // Retrieve user's email (assuming the user is logged in)
-            $user = Auth::guard('users')->user();
-            if ($user && $user->email) {
-                \Mail::to($user->email)->send(new \App\Mail\PaymentSuccess($payment));
-            }
+            // Cập nhật thông tin payment
+            $payment->p_vnp_response_code = $vnp_ResponseCode;
+            $payment->p_code_vnpay = $request->get('vnp_TransactionNo');
+            $payment->p_code_bank = $request->get('vnp_BankCode');
+            $payment->p_bank_name = $this->getBankName($request->get('vnp_BankCode'));
+            $payment->p_time = date('Y-m-d H:i:s', strtotime($request->get('vnp_PayDate')));
+            $payment->save();
 
-            return redirect()->route('page.home')->with('success', 'Thanh toán Tour Vnpay thành công !');
-        } else {
-            return redirect()->route('page.home')->with('error', 'Thanh toán không thành công hoặc bị hủy.');
+            if ($vnp_ResponseCode == '00' && $vnp_TransactionStatus == '00') {
+                $book = BookTour::find($payment->p_transaction_id);
+                if ($book) {
+                    $tour = Tour::find($book->b_tour_id);
+                    $numberUser = $book->b_number_adults + $book->b_number_children +
+                        $book->b_number_child6 + $book->b_number_child2;
+
+                    // Cập nhật số người đã đăng ký và giảm số người trong t_follow
+                    $tour->t_number_registered += $numberUser;
+                    $tour->t_follow -= $numberUser;
+                    $tour->save();
+
+                    $book->b_status = 3; // Đã thanh toán
+                    $book->save();
+
+                    // Thêm phần gửi email xác nhận
+                    try {
+                        $user = Auth::guard('users')->user();
+                        if ($user && $book->b_email) {
+                            Mail::to($book->b_email)->send(new \App\Mail\PaymentSuccess($payment));
+                        }
+                    } catch (\Exception $e) {
+                        Log::error('Failed to send VNPAY confirmation email: ' . $e->getMessage());
+                    }
+                }
+            }
+        });
+
+        return redirect()->route('page.home')->with('success', 'Thanh toán Tour Vnpay thành công !');
+    }
+
+    public function momoTourCallback(Request $request)
+    {
+        Log::info('MOMO callback received:', $request->all());
+
+        if ($request->resultCode == '0') {
+            try {
+                DB::transaction(function () use ($request) {
+                    $orderId = explode('_', $request->orderId)[0];
+                    $booking = BookTour::with(['tour', 'user'])->find($orderId);
+
+                    if ($booking) {
+                        $existingPayment = Payment::where('p_transaction_code', $request->orderId)->first();
+
+                        if (!$existingPayment) {
+                            // Create payment record
+                            $payment = Payment::create([
+                                'p_transaction_id' => $booking->id,
+                                'p_user_id' => $booking->b_user_id,
+                                'p_money' => $request->amount,
+                                'p_transaction_code' => $request->orderId,
+                                'p_code_bank' => 'MOMO',
+                                'p_bank_name' => 'Ví điện tử MOMO',
+                                'p_code_momo' => $request->transId,
+                                'p_time' => date('Y-m-d H:i:s'),
+                                'p_note' => 'Thanh toán MOMO thành công cho booking Tour #' . $booking->id,
+                                'p_status' => 1
+                            ]);
+
+                            // Cập nhật số người đã đăng ký và giảm số người trong t_follow
+                            $tour = Tour::find($booking->b_tour_id);
+                            $numberUser = $booking->b_number_adults + $booking->b_number_children +
+                                $booking->b_number_child6 + $booking->b_number_child2;
+
+                            // Chuyển số lượng người từ t_follow sang t_number_registered
+                            $tour->t_number_registered += $numberUser;
+                            $tour->t_follow -= $numberUser;
+                            $tour->save();
+
+                            // Update booking status
+                            $booking->b_status = 3; // Đã thanh toán
+                            $booking->save();
+
+                            // Send confirmation email
+                            $this->sendPaymentConfirmationEmail($booking, $payment);
+                        }
+                    }
+                });
+
+                return redirect()->route('page.home')->with('success', 'Thanh toán Tour MOMO thành công !');
+            } catch (\Exception $e) {
+                Log::error('MOMO Payment Error:', [
+                    'message' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+                throw $e;
+            }
         }
+        return redirect()->route('page.home')->with('error', 'Thanh toán không thành công');
     }
 
     // Add helper method to get bank name
@@ -431,56 +503,6 @@ class TourController extends Controller
         }
     }
 
-    public function momoTourCallback(Request $request)
-    {
-        Log::info('MOMO callback received:', $request->all());
-        
-        if ($request->resultCode == '0') {
-            try {
-                $orderId = explode('_', $request->orderId)[0];
-                $booking = BookTour::with(['tour', 'user'])->find($orderId);
-
-                if ($booking) {
-                    // Kiểm tra xem đã có payment chưa
-                    $existingPayment = Payment::where('p_transaction_code', $request->orderId)->first();
-                    
-                    if (!$existingPayment) {
-                        // Chỉ tạo payment mới nếu chưa tồn tại
-                        $payment = Payment::create([
-                            'p_transaction_id' => $booking->id,
-                            'p_user_id' => $booking->b_user_id,
-                            'p_money' => $request->amount,
-                            'p_transaction_code' => $request->orderId,
-                            'p_code_bank' => 'MOMO',
-                            'p_bank_name' => 'Ví điện tử MOMO',
-                            'p_code_momo' => $request->transId,
-                            'p_time' => date('Y-m-d H:i:s'),
-                            'p_note' => 'Thanh toán MOMO thành công cho booking Tour #' . $booking->id,
-                            'p_status' => 1
-                        ]);
-
-                        // Cập nhật trạng thái booking
-                        $booking->b_status = 3; // Đã thanh toán
-                        $booking->save();
-
-                        // Gửi email xác nhận
-                        $this->sendPaymentConfirmationEmail($booking, $payment);
-                    }
-                }
-
-                return redirect()->route('page.home')->with('success', 'Thanh toán Tour MOMO thành công !');
-            } catch (\Exception $e) {
-                Log::error('MOMO Payment Error:', [
-                    'message' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
-                ]);
-                throw $e;
-            }
-        }
-        return redirect()->route('page.home')->with('error', 'Thanh toán không thành công');
-    }
-
-    // Add alias method for backward compatibility
     public function momoCallback(Request $request)
     {
         return $this->momoTourCallback($request);
@@ -542,13 +564,13 @@ class TourController extends Controller
             if ($request->hasFile('comment_image')) {
                 $image = $request->file('comment_image');
                 $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-                
+
                 // Create comments directory if it doesn't exist
                 $uploadPath = public_path('uploads/comments');
                 if (!File::exists($uploadPath)) {
                     File::makeDirectory($uploadPath, 0777, true);
                 }
-                
+
                 // Move uploaded file
                 $image->move($uploadPath, $imageName);
                 $commentData['cm_image'] = 'uploads/comments/' . $imageName;

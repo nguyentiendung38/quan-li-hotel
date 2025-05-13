@@ -47,13 +47,14 @@ class BookRoomController extends Controller
             0 => 'Tiếp nhận',
             1 => 'Đã xác nhận',
             2 => 'Đã thanh toán',
-            3 => 'Đã hủy',
+            3 => 'Đã hủy'
         ];
+        
         $classStatus = [
-            0 => 'btn-default',
-            1 => 'btn-success',
-            2 => 'btn-primary',
-            3 => 'btn-danger',
+            0 => 'btn-warning',
+            1 => 'btn-info',
+            2 => 'btn-success',
+            3 => 'btn-danger'
         ];
 
         return view('admin.book_room.index', compact('bookRooms', 'status', 'classStatus'));
@@ -122,6 +123,10 @@ class BookRoomController extends Controller
         }
 
         try {
+            // Xóa payment nếu có
+            if ($bookRoom->payment) {
+                $bookRoom->payment->delete();
+            }
             $bookRoom->delete();
             return redirect()->back()->with('success', 'Xóa thành công');
         } catch (\Exception $exception) {
@@ -132,43 +137,94 @@ class BookRoomController extends Controller
     /**
      * Cập nhật trạng thái đặt phòng
      *
+     * @param Request $request
      * @param int $status  Trạng thái mới (ví dụ: 0 - chưa duyệt, 1 - đã duyệt, 2 - hủy)
      * @param int $id      ID của đặt phòng
      */
-    public function updateStatus($status, $id)
+    public function updateStatus(Request $request, $status, $id)
     {
-        $bookRoom = BookRoom::with(['hotel'])->find($id);
-        if (!$bookRoom) {
-            return response()->json(['success' => false, 'message' => 'Dữ liệu không tồn tại']);
-        }
-
-        DB::beginTransaction();
         try {
-            $bookRoom->status = $status;
-            $bookRoom->save();
-            DB::commit();
-
-            try {
-                // When status becomes 1 (Đã xác nhận)
-                if ($status == 1) {
-                    Mail::to($bookRoom->email)->send(new BookingConfirmed($bookRoom));
-                    Log::info('Confirmation email sent to: ' . $bookRoom->email);
-                } elseif ($status == 2) {
-                    Mail::to($bookRoom->email)->send(new BookingPaid($bookRoom));
-                    Log::info('Payment confirmation email sent to: ' . $bookRoom->email);
-                } elseif ($status == 3) {
-                    Mail::to($bookRoom->email)->send(new BookingCancelled($bookRoom));
-                    Log::info('Cancellation email sent to: ' . $bookRoom->email);
-                }
-            } catch (\Exception $e) {
-                Log::error('Failed to send email: ' . $e->getMessage());
+            $bookRoom = BookRoom::find($id);
+            if (!$bookRoom) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy đơn đặt phòng'
+                ]);
             }
 
-            return response()->json(['success' => true, 'message' => 'Cập nhật trạng thái thành công']);
-        } catch (\Exception $exception) {
-            DB::rollBack();
-            Log::error('Error updating status: ' . $exception->getMessage());
-            return response()->json(['success' => false, 'message' => 'Đã xảy ra lỗi khi cập nhật trạng thái: ' . $exception->getMessage()]);
+            // Nếu đã thanh toán online thì chỉ cho phép hủy
+            if ($bookRoom->payment && ($bookRoom->payment->p_code_momo || $bookRoom->payment->p_code_vnpay)) {
+                if ($status != 3) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Đơn đã thanh toán online chỉ có thể hủy'
+                    ]);
+                }
+            } else {
+                // Logic cho thanh toán thường
+                $validFlow = [
+                    0 => [1], // Tiếp nhận -> Đã xác nhận
+                    1 => [2], // Đã xác nhận -> Đã thanh toán
+                    2 => [3], // Đã thanh toán -> Đã hủy
+                    3 => []   // Đã hủy là trạng thái cuối
+                ];
+
+                if (!isset($validFlow[$bookRoom->status]) || !in_array($status, $validFlow[$bookRoom->status])) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Không thể chuyển sang trạng thái này!'
+                    ]);
+                }
+            }
+
+            DB::beginTransaction();
+            try {
+                $bookRoom->status = $status;
+                $bookRoom->save();
+                
+                // Gửi email thông báo
+                if (!empty($bookRoom->email)) {
+                    $emailData = [
+                        'booking' => $bookRoom,
+                        'hotel' => $bookRoom->hotel,
+                        'user' => $bookRoom->user,
+                        'bookRoom' => $bookRoom
+                    ];
+
+                    switch ($status) {
+                        case 1:
+                            Mail::send('emails.booking_confirmed', $emailData, function ($message) use ($bookRoom) {
+                                $message->to($bookRoom->email)->subject('Xác nhận đặt phòng thành công');
+                            });
+                            break;
+                        case 2:
+                            Mail::send('emails.booking_paid', $emailData, function ($message) use ($bookRoom) {
+                                $message->to($bookRoom->email)->subject('Xác nhận thanh toán thành công');
+                            });
+                            break;
+                        case 3:
+                            Mail::send('emails.booking_cancelled', $emailData, function ($message) use ($bookRoom) {
+                                $message->to($bookRoom->email)
+                                    ->subject('Thông báo hủy đặt phòng' . 
+                                        ($bookRoom->payment ? ' và hoàn tiền' : ''));
+                            });
+                            break;
+                    }
+                }
+
+                DB::commit();
+                return response()->json(['success' => true]);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                Log::error('Email sending error: ' . $e->getMessage());
+                throw $e;
+            }
+        } catch (\Exception $e) {
+            Log::error('Status update error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã xảy ra lỗi khi cập nhật trạng thái'
+            ]);
         }
     }
 }
