@@ -195,12 +195,11 @@ class HotelController extends Controller
      */
     public function delete($id)
     {
-        //
         $hotel = Hotel::find($id);
         if (!$hotel) {
             return redirect()->back()->with('error', 'Dữ liệu không tồn tại');
         }
-
+        // For admin, allow deletion regardless of booking status.
         try {
             $hotel->delete();
             return redirect()->back()->with('success', 'Xóa thành công');

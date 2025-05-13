@@ -42,7 +42,7 @@ class AccountController extends Controller
                 $file = $request->file('images');
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $path_upload = 'uploads/users/';
-                
+
                 // Create directory if it doesn't exist
                 if (!file_exists(public_path($path_upload))) {
                     mkdir(public_path($path_upload), 0755, true);
@@ -156,10 +156,15 @@ class AccountController extends Controller
     public function updateStatus(Request $request, $status, $id)
     {
         $bookTour = BookTour::find($id);
-        $numberUser = $bookTour->b_number_adults + $bookTour->b_number_children;
         if (!$bookTour) {
             return redirect()->back()->with('error', 'Dữ liệu không tồn tại');
         }
+
+        // Calculate total number of people
+        $numberUser = $bookTour->b_number_adults +
+            $bookTour->b_number_children +
+            $bookTour->b_number_child6 +
+            $bookTour->b_number_child2;
 
         DB::beginTransaction();
         if ($status != $bookTour->b_status) {
@@ -168,11 +173,16 @@ class AccountController extends Controller
                 if ($bookTour->save()) {
                     if ($status == 5) {
                         $tour = Tour::find($bookTour->b_tour_id);
-                        $numberRegistered = $tour->t_number_registered - $numberUser;
-                        $tour->t_number_registered = $numberRegistered > 0 ? $numberRegistered : 0;
-                        $tour->save();
+                        if ($tour) {
+                            // Update both registered and follow counts
+                            $numberRegistered = $tour->t_number_registered - $numberUser;
+                            $tour->t_number_registered = $numberRegistered > 0 ? $numberRegistered : 0;
+                            $tour->t_follow = $tour->t_follow - $numberUser;
+                            $tour->save();
+                        }
                     }
                 }
+
                 $tour = Tour::find($bookTour->b_tour_id);
                 $user = User::find($bookTour->b_user_id);
                 $mailuser = $user->email;
@@ -180,19 +190,12 @@ class AccountController extends Controller
                     $email->subject('Xác nhận HUỶ BOOKING');
                     $email->to($mailuser);
                 });
-                DB::commit();
 
-                return response([
-                    'status_code' => 200,
-                    'message' => 'Hủy thành công đơn hàngg',
-                ]);
+                DB::commit();
+                return redirect()->back()->with('success', 'Hủy thành công đơn hàng');
             } catch (\Exception $exception) {
                 DB::rollBack();
-                $code = 404;
-                return response([
-                    'status_code' => $code,
-                    'message' => 'Không thể hủy đơn hàng',
-                ]);
+                return redirect()->back()->with('error', 'Không thể hủy đơn hàng');
             }
         } else {
             return redirect()->back()->with('error', 'Trạng thái đã tồn tại');

@@ -79,11 +79,15 @@ class UserController extends Controller
             $user->phone = $request->phone;
             $user->password = bcrypt($request->password);
             $user->status = $request->status;
-            if (isset($request->images) && !empty($request->images)) {
-                $image = upload_image('images');
-                if ($image['code'] == 1)
-                    $user->avatar = $image['name'];
+
+            if ($request->hasFile('avatar')) {
+                $file = $request->file('avatar');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path_upload = 'uploads/user/';
+                $file->move(public_path($path_upload), $filename);
+                $user->avatar = $path_upload . $filename;
             }
+
             if ($user->save()) {
                 \DB::table('role_user')->insert(['role_id'=> $request->role, 'user_id'=> $user->id]);
             }
@@ -142,11 +146,14 @@ class UserController extends Controller
             $user->phone = $request->phone;
             $user->status = $request->status;
 
-            if (isset($request->images) && !empty($request->images)) {
-                $image = upload_image('images');
-                if ($image['code'] == 1)
-                    $user->avatar = $image['name'];
+            if ($request->hasFile('avatar')) {
+                $file = $request->file('avatar');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path_upload = 'uploads/user/';
+                $file->move(public_path($path_upload), $filename);
+                $user->avatar = $path_upload . $filename;
             }
+
             if ($user->save()) {
                 \DB::table('role_user')->where('user_id', $id)->delete();
                 \DB::table('role_user')->insert(['role_id'=> $request->role, 'user_id'=> $user->id]);

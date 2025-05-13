@@ -52,6 +52,11 @@
             background: #007bff;
         }
 
+        /* Add new phone icon style */
+        .phone-chat-icon {
+            background: #28a745;
+        }
+
         /* Modern chatbot container styling */
         #gemini-chatbot-container {
             position: fixed;
@@ -270,6 +275,9 @@
 
     <!-- New structure for chat icons -->
     <div class="chat-icons-container">
+        <div class="chat-icon phone-chat-icon" onclick="openPhoneCall()">
+            <img src="https://cdn-icons-png.flaticon.com/512/3059/3059457.png" alt="Phone Call">
+        </div>
         <div class="chat-icon zalo-chat-icon" onclick="openZaloChat()">
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1024px-Icon_of-Zalo.svg.png" alt="Chat Zalo">
         </div>
@@ -286,6 +294,10 @@
     <script src="https://sp.zalo.me/plugins/sdk.js"></script>
 
     <script>
+        function openPhoneCall() {
+            window.location.href = "tel:0773398244";
+        }
+        
         function openZaloChat() {
             window.open("https://zalo.me/0773398244", "_blank");
         }

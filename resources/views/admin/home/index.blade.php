@@ -1,18 +1,242 @@
 @extends('admin.layouts.main')
 @section('title', 'Quản lý du lịch')
 @section('style-css')
-    <!-- fullCalendar -->
-    <style>
-    .highcharts-background {
-        fill: #ffffff !important;
-    }
+<style>
+/* Modern Dashboard Styling */
+.content-header {
+    padding: 25px 0;
+    background: linear-gradient(135deg, #2193b0, #6dd5ed);
+    margin-bottom: 30px;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
 
-    .highcharts-title,
-    .highcharts-subtitle,
-    .highcharts-axis-title,
-    .highcharts-axis-labels {
-        fill: #000000 !important;
+.content-header h1 {
+    color: #fff;
+    font-weight: 600;
+    font-size: 28px;
+    margin: 0;
+}
+
+.breadcrumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 30px;
+    padding: 8px 20px;
+}
+
+.breadcrumb-item a {
+    color: #fff !important;
+}
+
+/* Card Styling */
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+}
+
+.card-header {
+    background: #fff;
+    border-bottom: 1px solid #f1f1f1;
+    padding: 20px;
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.card-body {
+    padding: 25px;
+}
+
+/* Info Box Styling */
+.info-box {
+    border-radius: 15px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.info-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.info-box-icon {
+    border-radius: 12px;
+    width: 70px;
+    height: 70px;
+    line-height: 70px;
+}
+
+.info-box-content {
+    padding: 15px 10px;
+}
+
+.info-box-text {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.info-box-number {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Table Styling */
+table {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0,0,0,0.05);
+}
+
+table thead th {
+    background: #f8f9fa;
+    border: none;
+    padding: 15px;
+    font-weight: 600;
+    color: #2d3436;
+}
+
+table tbody td {
+    padding: 15px;
+    border-bottom: 1px solid #f1f1f1;
+    vertical-align: middle;
+}
+
+/* Filter Section */
+.filter-section {
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    padding: 10px 15px;
+    height: auto;
+}
+
+.form-control:focus {
+    border-color: #2193b0;
+    box-shadow: 0 0 0 0.2rem rgba(33,147,176,0.25);
+}
+
+/* Chart Containers */
+.highcharts-figure {
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+}
+
+/* Custom Colors for Info Boxes */
+.bg-info {
+    background: linear-gradient(135deg, #2193b0, #6dd5ed) !important;
+}
+
+.bg-success {
+    background: linear-gradient(135deg, #11998e, #38ef7d) !important;
+}
+
+.bg-warning {
+    background: linear-gradient(135deg, #f2994a, #f2c94c) !important;
+}
+
+.bg-danger {
+    background: linear-gradient(135deg, #eb3349, #f45c43) !important;
+}
+
+/* Button Styling */
+.btn-success {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(17,153,142,0.3);
+}
+
+/* Highcharts Customization */
+.highcharts-background {
+    fill: #ffffff !important;
+}
+
+/* Chart Container Styles */
+.highcharts-container {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+/* Text Colors */
+.highcharts-title,
+.highcharts-subtitle,
+.highcharts-axis-title,
+.highcharts-axis-labels text {
+    fill: #333333 !important;
+}
+
+/* Grid Lines */
+.highcharts-grid-line {
+    stroke: #e0e0e0;
+    stroke-width: 1px;
+}
+
+/* Series Colors */
+.highcharts-color-0 {
+    fill: #2196F3;
+    stroke: #2196F3;
+}
+
+.highcharts-color-1 {
+    fill: #4CAF50;
+    stroke: #4CAF50;
+}
+
+/* Point Markers */
+.highcharts-point {
+    fill: #2196F3;
+}
+
+/* Tooltip */
+.highcharts-tooltip {
+    fill: #ffffff;
+    stroke: #e0e0e0;
+}
+
+/* Legend */
+.highcharts-legend-item text {
+    fill: #333333 !important;
+}
+
+/* Pie Chart Specific */
+.highcharts-pie-series .highcharts-point {
+    stroke: #ffffff;
+    stroke-width: 2px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .content-header {
+        border-radius: 0;
     }
+    
+    .info-box {
+        margin-bottom: 20px;
+    }
+    
+    .card-body {
+        padding: 15px;
+    }
+}
 </style>
 @stop
 @section('content')
@@ -282,8 +506,6 @@
 @section('script')
     <link rel="stylesheet" href="https://code.highcharts.com/css/highcharts.css">
     <script src="https://code.highcharts.com/highcharts.js"></script>
-    {{-- <script src="https://code.highcharts.com/modules/exporting.js"></script> --}}
-    {{-- <script src="https://code.highcharts.com/modules/export-data.js"></script> --}}
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <script type="text/javascript">
         let dataTransaction = $("#container").attr('data-json');
@@ -304,34 +526,43 @@
         let listMoneyMonth2 = $("#container3").attr('data-money');
         listMoneyMonth2 = JSON.parse(listMoneyMonth2);
 
-
-
         Highcharts.chart('container', {
-
             chart: {
-                styledMode: true
+                type: 'pie',
+                backgroundColor: '#ffffff'
             },
-
             title: {
-                text: 'Trạng thái các tour du lịch'
+                text: 'Trạng thái các tour du lịch',
+                style: {
+                    color: '#333333',
+                    fontSize: '18px'
+                }
             },
-
             xAxis: {
                 categories: ['Jan', 'Feb', 'Mar', 'Apr']
             },
-
             series: [{
                 type: 'pie',
                 allowPointSelect: true,
                 keys: ['name', 'y', 'selected', 'sliced'],
                 data: dataTransaction,
                 showInLegend: true
-            }]
+            }],
+            plotOptions: {
+                pie: {
+                    colors: ['#2196F3', '#4CAF50', '#FFC107', '#FF5722'],
+                    dataLabels: {
+                        enabled: true,
+                        color: '#333333'
+                    }
+                }
+            }
         });
 
         Highcharts.chart('container2', {
             chart: {
-                type: 'spline'
+                type: 'spline',
+                backgroundColor: '#ffffff'
             },
             title: {
                 text: 'Thống kê lượng khách hàng đặt tour trong tháng'
@@ -358,10 +589,11 @@
             },
             plotOptions: {
                 spline: {
+                    lineWidth: 3,
                     marker: {
-                        radius: 4,
-                        lineColor: '#666666',
-                        lineWidth: 1
+                        enabled: true,
+                        symbol: 'circle',
+                        radius: 6
                     }
                 }
             },
@@ -384,7 +616,8 @@
         });
         Highcharts.chart('container3', {
             chart: {
-                type: 'spline'
+                type: 'spline',
+                backgroundColor: '#ffffff'
             },
             title: {
                 text: 'Thống kê Doanh thu trong tháng'
@@ -399,7 +632,6 @@
                 title: {
                     text: 'Tiền'
                 },
-                // number_format($totalPrice, 0,',','.') 
                 labels: {
                     formatter: function() {
                         return this.value;
@@ -412,10 +644,11 @@
             },
             plotOptions: {
                 spline: {
+                    lineWidth: 3,
                     marker: {
-                        radius: 4,
-                        lineColor: '#666666',
-                        lineWidth: 1
+                        enabled: true,
+                        symbol: 'circle',
+                        radius: 6
                     }
                 }
             },

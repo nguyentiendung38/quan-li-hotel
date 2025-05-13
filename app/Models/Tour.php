@@ -98,7 +98,13 @@ class Tour extends Model
     {
         return $this->hasMany(Comment::class, 'cm_tour_id', 'id');
     }
+
     public function booktour()
+    {
+        return $this->hasMany(BookTour::class, 'b_tour_id', 'id');
+    }
+
+    public function bookTours()
     {
         return $this->hasMany(BookTour::class, 'b_tour_id', 'id');
     }

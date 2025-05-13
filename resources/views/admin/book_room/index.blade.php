@@ -164,12 +164,12 @@
                                         @if($bookRoom->payment)
                                         <ul>
                                             @if($bookRoom->payment->p_code_momo)
-                                                <li>Phương thức: MOMO</li>
-                                                <li>Mã giao dịch MOMO: {{ $bookRoom->payment->p_code_momo }}</li>
+                                            <li>Phương thức: MOMO</li>
+                                            <li>Mã giao dịch MOMO: {{ $bookRoom->payment->p_code_momo }}</li>
                                             @elseif($bookRoom->payment->p_code_vnpay)
-                                                <li>Phương thức: VNPay</li>
-                                                <li>Ngân hàng: {{ $bookRoom->payment->p_code_bank }}</li>
-                                                <li>Mã thanh toán VNPay: {{ $bookRoom->payment->p_code_vnpay }}</li>
+                                            <li>Phương thức: VNPay</li>
+                                            <li>Ngân hàng: {{ $bookRoom->payment->p_code_bank }}</li>
+                                            <li>Mã thanh toán VNPay: {{ $bookRoom->payment->p_code_vnpay }}</li>
                                             @endif
                                             <li>Mã giao dịch: {{ $bookRoom->payment->p_transaction_code }}</li>
                                             <li>Tổng tiền: {{ number_format($bookRoom->payment->p_money, 0, ',', '.') }} VNĐ</li>
@@ -181,31 +181,55 @@
                                         @endif
                                     </td>
                                     <td class="text-center" style="vertical-align: middle;">
-                                        <!-- Áp dụng classStatus và status để hiển thị nút -->
-                                        <button type="button"
-                                            class="btn btn-block btn-xs {{ $classStatus[$bookRoom->status] ?? 'btn-default' }}">
-                                            {{ $status[$bookRoom->status] ?? 'Chưa duyệt' }}
+                                        <button type="button" class="btn btn-block btn-xs {{ $classStatus[$bookRoom->status] ?? 'btn-default' }}">
+                                            @if($bookRoom->payment && ($bookRoom->payment->p_code_momo || $bookRoom->payment->p_code_vnpay))
+                                                @if($bookRoom->status == 3)
+                                                    Đã hủy
+                                                @else
+                                                    Đã thanh toán
+                                                @endif
+                                            @else
+                                                {{ $status[$bookRoom->status] ?? 'Chưa duyệt' }}
+                                            @endif
                                         </button>
                                     </td>
                                     <td style="vertical-align: middle;" class="text-center">
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-success btn-sm">Action</button>
-                                            <button type="button" class="btn btn-success btn-sm dropdown-toggle"
-                                                data-toggle="dropdown" aria-expanded="false">
+                                            <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown">
                                                 <span class="caret"></span>
                                                 <span class="sr-only">Toggle Dropdown</span>
                                             </button>
                                             <ul class="dropdown-menu action-transaction" role="menu">
                                                 <li>
                                                     <a href="{{ route('book.room.delete', $bookRoom->id) }}" class="btn-confirm-delete">
-                                                        <i class="fa fa-trash"></i> Delete
+                                                        <i class="fa fa-trash"></i> Delete 
                                                     </a>
                                                 </li>
-                                                @foreach($status as $key => $item)
-                                                <li class="update_book_room" url="{{ route('book.room.update.status', ['status' => $key, 'id' => $bookRoom->id]) }}">
-                                                    <a><i class="fas fa-check"></i> {{ $item }}</a>
-                                                </li>
-                                                @endforeach
+                                                
+                                                @if($bookRoom->payment && ($bookRoom->payment->p_code_momo || $bookRoom->payment->p_code_vnpay))
+                                                    <li class="update_book_room" url="{{ route('book.room.update.status', ['status' => 3, 'id' => $bookRoom->id]) }}">
+                                                        <a><i class="fas fa-ban"></i> Hủy</a>
+                                                    </li>
+                                                @else
+                                                    @php
+                                                        $validFlow = [
+                                                            0 => [1], // Tiếp nhận -> Đã xác nhận
+                                                            1 => [2], // Đã xác nhận -> Đã thanh toán
+                                                            2 => [3], // Đã thanh toán -> Đã hủy
+                                                            3 => []   // Đã hủy (không có next status)
+                                                        ];
+                                                        $nextStatuses = $validFlow[$bookRoom->status] ?? [];
+                                                    @endphp
+
+                                                    @foreach($status as $key => $item)
+                                                        @if(in_array($key, $nextStatuses))
+                                                            <li class="update_book_room" url="{{ route('book.room.update.status', ['status' => $key, 'id' => $bookRoom->id]) }}">
+                                                                <a><i class="fas fa-check"></i> {{ $item }}</a>
+                                                            </li>
+                                                        @endif
+                                                    @endforeach
+                                                @endif
                                             </ul>
                                         </div>
                                     </td>
@@ -235,8 +259,10 @@
 @section('script')
 <script>
     $(document).ready(function() {
-        // Clear search input fields on page load to hide previous search criteria
+        // Clear search input fields on page load
         $('form[action="{{ route("book.room.index") }}"] input[type="text"]').val('');
+
+        // Handle status update clicks
         $('.update_book_room').on('click', function() {
             var url = $(this).attr('url');
             $.ajax({
@@ -246,7 +272,7 @@
                     if (response.success) {
                         location.reload();
                     } else {
-                        alert('Đã xảy ra lỗi khi cập nhật trạng thái');
+                        alert(response.message || 'Đã xảy ra lỗi khi cập nhật trạng thái');
                     }
                 },
                 error: function() {

@@ -152,9 +152,9 @@
                                     </td>
                                     <td style="vertical-align: middle; width: 11%">
                                         @php
-                                            $currentStatus = $book->b_status ?? 1;
-                                            $btnClass = $classStatus[$currentStatus] ?? 'btn-secondary';
-                                            $statusText = $status[$currentStatus] ?? 'Tiếp nhận';
+                                        $currentStatus = $book->b_status ?? 1;
+                                        $btnClass = $classStatus[$currentStatus] ?? 'btn-secondary';
+                                        $statusText = $status[$currentStatus] ?? 'Tiếp nhận';
                                         @endphp
                                         <button type="button" class="btn btn-block {{ $btnClass }} btn-xs">{{ $statusText }}</button>
                                     </td>
@@ -169,11 +169,11 @@
                                             <ul class="dropdown-menu action-transaction" role="menu">
                                                 <li><a href="{{ route('book.tour.delete', $book->id) }}" class="btn-confirm-delete"><i class="fa fa-trash"></i> Delete</a></li>
                                                 @foreach($status as $key => $item)
-                                                    @if(is_numeric($key) && !empty($item))
-                                                    <li class="update_book_tour" url='{{ route('book.tour.update.status', ['status' => $key, 'id' => $book->id]) }}'>
-                                                        <a><i class="fas fa-check"></i> {{ $item }}</a>
-                                                    </li>
-                                                    @endif
+                                                @if(is_numeric($key) && !empty($item))
+                                                <li class="update_book_tour" url='{{ route('book.tour.update.status', ['status' => $key, 'id' => $book->id]) }}'>
+                                                    <a><i class="fas fa-check"></i> {{ $item }}</a>
+                                                </li>
+                                                @endif
                                                 @endforeach
                                             </ul>
                                         </div>

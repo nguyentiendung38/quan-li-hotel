@@ -17,14 +17,14 @@
     }
 
     .hero-wrap-2::after {
-        background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.6));
+        background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.6));
     }
 
     /* Modern Card Styling */
     .booking-card {
         background: #fff;
         border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
         overflow: hidden;
         transition: transform 0.3s ease;
     }
@@ -94,7 +94,7 @@
 
     .tour-info-item:hover {
         background: #fff;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         transform: translateY(-3px);
     }
 
@@ -103,7 +103,7 @@
         border-radius: 12px;
         overflow: hidden;
         border: none;
-        box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
     }
 
     .price-table th {
@@ -134,7 +134,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
+        background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), transparent);
     }
 
     /* Hotline Wrapper Enhancement */
@@ -166,10 +166,26 @@
         .booking-card .card-body {
             padding: 20px;
         }
-        
+
         .tour-info-grid {
             grid-template-columns: 1fr;
         }
+    }
+
+    .btn-modern {
+        background: linear-gradient(45deg, #00c6ff, #0072ff);
+        /* Xanh hiện đại */
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 114, 255, 0.3);
+    }
+
+    .btn-modern:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 114, 255, 0.5);
     }
 </style>
 @stop
@@ -221,56 +237,56 @@
                                 <label>Họ và tên <sup class="text-danger">(*)</sup></label>
                                 <input type="text" name="b_name" value="{{ old('b_name', isset($user) ? $user->name : '') }}" class="form-control" placeholder="Họ và tên">
                                 @if ($errors->first('b_name'))
-                                    <span class="text-danger">{{ $errors->first('b_name') }}</span>
+                                <span class="text-danger">{{ $errors->first('b_name') }}</span>
                                 @endif
                             </div>
                             <div class="form-group">
                                 <label>Email <sup class="text-danger">(*)</sup></label>
                                 <input type="text" name="b_email" value="{{ old('b_email', isset($user) ? $user->email : '') }}" class="form-control" placeholder="Email">
                                 @if ($errors->first('b_email'))
-                                    <span class="text-danger">{{ $errors->first('b_email') }}</span>
+                                <span class="text-danger">{{ $errors->first('b_email') }}</span>
                                 @endif
                             </div>
                             <div class="form-group">
                                 <label>Số điện thoại <sup class="text-danger">(*)</sup></label>
                                 <input type="text" name="b_phone" value="{{ old('b_phone', isset($user) ? $user->phone : '') }}" class="form-control" placeholder="Số điện thoại">
                                 @if ($errors->first('b_phone'))
-                                    <span class="text-danger">{{ $errors->first('b_phone') }}</span>
+                                <span class="text-danger">{{ $errors->first('b_phone') }}</span>
                                 @endif
                             </div>
                             <div class="form-group">
                                 <label>Địa chỉ <sup class="text-danger">(*)</sup></label>
                                 <input type="text" name="b_address" value="{{ old('b_address', isset($user) ? $user->address : '') }}" class="form-control" placeholder="Địa chỉ">
                                 @if ($errors->first('b_address'))
-                                    <span class="text-danger">{{ $errors->first('b_address') }}</span>
+                                <span class="text-danger">{{ $errors->first('b_address') }}</span>
                                 @endif
                             </div>
                             <div class="form-group">
                                 <label>Số người lớn <sup class="text-danger">(*)</sup></label>
                                 <input type="number" min="0" onkeydown="return event.keyCode !== 69" name="b_number_adults" class="form-control number-input" placeholder="Số người lớn">
                                 @if ($errors->first('b_number_adults'))
-                                    <span class="text-danger">{{ $errors->first('b_number_adults') }}</span>
+                                <span class="text-danger">{{ $errors->first('b_number_adults') }}</span>
                                 @endif
                             </div>
                             <div class="form-group">
                                 <label>Số trẻ em (6 - 12 tuổi) <sup class="text-danger">(*)</sup></label>
                                 <input type="number" min="0" onkeydown="return event.keyCode !== 69" name="b_number_children" class="form-control number-input" value="0" placeholder="Số trẻ em">
                                 @if ($errors->first('b_number_children'))
-                                    <span class="text-danger">{{ $errors->first('b_number_children') }}</span>
+                                <span class="text-danger">{{ $errors->first('b_number_children') }}</span>
                                 @endif
                             </div>
                             <div class="form-group">
                                 <label>Số trẻ em (2-6 tuổi) <sup class="text-danger">(*)</sup></label>
                                 <input type="number" min="0" onkeydown="return event.keyCode !== 69" name="b_number_child6" class="form-control number-input" value="0" placeholder="Số trẻ em">
                                 @if ($errors->first('b_number_children'))
-                                    <span class="text-danger">{{ $errors->first('b_number_children') }}</span>
+                                <span class="text-danger">{{ $errors->first('b_number_children') }}</span>
                                 @endif
                             </div>
                             <div class="form-group">
                                 <label>Số trẻ em (Dưới 2 tuổi) <sup class="text-danger">(*)</sup></label>
                                 <input type="number" min="0" onkeydown="return event.keyCode !== 69" name="b_number_child2" class="form-control number-input a" value="0" placeholder="Số trẻ em">
                                 @if ($errors->first('b_number_children'))
-                                    <span class="text-danger">{{ $errors->first('b_number_children') }}</span>
+                                <span class="text-danger">{{ $errors->first('b_number_children') }}</span>
                                 @endif
                             </div>
                             <div class="form-group">
@@ -278,12 +294,14 @@
                                 <textarea name="b_note" placeholder="Thông tin chi tiết để chúng tôi liên hệ nhanh chóng..." id="message" cols="20" rows="5" class="form-control"></textarea>
                             </div>
                             <div class="form-group d-flex justify-content-between">
-                                <button type="submit" name="submit" value="book_tour" class="btn btn-primary py-3 px-5">
+                                <button type="submit" name="submit" value="book_tour" class="btn btn-modern py-3 px-5">
                                     <i class="fas fa-calendar-check"></i> Đặt Tour
                                 </button>
-                                <button type="submit" name="submit" value="Thanh toán online" class="btn btn-primary py-3 px-5">
+                                <button type="submit" name="submit" value="Thanh toán online" class="btn btn-modern py-3 px-5">
                                     <i class="fas fa-credit-card"></i> Thanh toán online
                                 </button>
+
+
                             </div>
                         </form>
                     </div>
@@ -294,7 +312,7 @@
                 <div class="info-card">
                     <h2 class="tour-title">{{ $tour->t_title }}</h2>
                     <h4 class="tour-location">
-                        <i class="fa fa-map-marker"></i> 
+                        <i class="fa fa-map-marker"></i>
                         {{ isset($tour->location) ? $tour->location->l_name : '' }}
                     </h4>
                     <div class="tour-info-grid">
@@ -358,7 +376,7 @@
                                 <th>Người lớn (>12)</th>
                                 <th>Trẻ em (6-12)</th>
                                 <th>Trẻ em (2-6)</th>
-                                <th>Sơ sinh (<2)</th>
+                                <th>Sơ sinh (<2)< /th>
                             </tr>
                         </thead>
                         <tbody>

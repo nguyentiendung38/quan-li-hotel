@@ -18,7 +18,7 @@
             </div>
         </div>
     </section>
-    <section class="ftco-section ftco-no-pb" style="margin-top: -50px;">
+    <section class="ftco-section ftco-no-pb" style="margin-top: -50px; padding: 0.5em 0;"> <!-- Reduced padding -->
         <div class="container-fluid px-0" style="max-width: 1600px; margin: 0 auto;">
             <div class="row">
                 <div class="col-md-12 tab-wrap">
@@ -40,7 +40,7 @@
             </div>
         </div>
     </section>
-    <section class="ftco-section">
+    <section class="ftco-section" style="padding: 2em 0;"> <!-- Reduced padding -->
         <div class="container">
             <div class="row">
                 @if($tours->count() > 0)

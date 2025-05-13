@@ -31,7 +31,25 @@ class GeminiController extends Controller
                 'contents' => [
                     [
                         'parts' => [
-                            ['text' => $responseData]
+                            [
+                                'text' => <<<EOT
+Bạn là trợ lý AI du lịch.
+
+Yêu cầu của khách: "{$message}"
+
+Dữ liệu phù hợp truy xuất từ hệ thống:
+
+{$responseData}
+
+👉 Hãy:
+- Chỉ liệt kê đúng các khách sạn hoặc tour phù hợp với yêu cầu.
+- Không giải thích thêm, không chào hỏi.
+- Trình bày ngắn gọn, đúng trọng tâm, bằng tiếng Việt.
+
+Không cần tư vấn mở rộng hoặc giới thiệu thêm nếu không được yêu cầu.
+EOT
+                            ]
+
                         ]
                     ]
                 ]
@@ -68,12 +86,14 @@ class GeminiController extends Controller
 
             Log::info('Parsed response', ['result' => $result]);
 
-            if (!isset($result['candidates']) ||
+            if (
+                !isset($result['candidates']) ||
                 !is_array($result['candidates']) ||
                 empty($result['candidates']) ||
                 !isset($result['candidates'][0]['content']) ||
                 !isset($result['candidates'][0]['content']['parts']) ||
-                !isset($result['candidates'][0]['content']['parts'][0]['text'])) {
+                !isset($result['candidates'][0]['content']['parts'][0]['text'])
+            ) {
 
                 Log::error('Invalid response structure', ['result' => $result]);
                 return response()->json([
@@ -87,7 +107,6 @@ class GeminiController extends Controller
                 'success' => true,
                 'response' => $result['candidates'][0]['content']['parts'][0]['text']
             ]);
-
         } catch (\Exception $e) {
             Log::error('Gemini controller error', [
                 'message' => $e->getMessage(),
@@ -103,55 +122,165 @@ class GeminiController extends Controller
 
     private function processMessageAndGetData($message)
     {
-        if (strpos($message, 'khách sạn') !== false) {
-            return $this->handleHotelRequest($message);
-        } elseif (strpos($message, 'tour') !== false) {
-            return $this->handleTourRequest($message);
+        $promptPrefix = $this->getPromptPrefix($message);
+        $data = '';
+
+        if (strpos(strtolower($message), 'khách sạn') !== false) {
+            $data = $this->handleHotelRequest($message);
+        } elseif (strpos(strtolower($message), 'tour') !== false) {
+            $data = $this->handleTourRequest($message);
         } else {
-            return $message; // Nếu không khớp, gửi lại tin nhắn gốc
+            return "Xin chào! Tôi có thể giúp bạn:\n" .
+                "1. Tìm khách sạn (vd: 'tìm khách sạn giá dưới 500000')\n" .
+                "2. Tìm tour du lịch (vd: 'có tour nào đi Huế không?')\n" .
+                "3. Xem đánh giá (vd: 'đánh giá khách sạn ABC')\n" .
+                "4. Kiểm tra giá (vd: 'giá khách sạn từ 500000 đến 1000000')\n" .
+                "Bạn cần hỗ trợ gì?";
         }
+
+        return $promptPrefix . $data;
+    }
+
+    private function getPromptPrefix($message)
+    {
+        $message = strtolower($message);
+
+        if (strpos($message, 'giá') !== false) {
+            return "Bạn đang tìm thông tin về giá. Dựa trên dữ liệu có sẵn:\n\n";
+        }
+
+        if (strpos($message, 'đánh giá') !== false) {
+            return "Dựa trên đánh giá của khách hàng trước đây:\n\n";
+        }
+
+        if (strpos($message, 'khách sạn') !== false) {
+            if (strpos($message, 'phòng') !== false) {
+                return "Về thông tin phòng tại các khách sạn:\n\n";
+            }
+            if (strpos($message, 'tiện nghi') !== false) {
+                return "Các tiện nghi có sẵn tại khách sạn:\n\n";
+            }
+            return "Thông tin chi tiết về khách sạn:\n\n";
+        }
+
+        if (strpos($message, 'tour') !== false) {
+            if (strpos($message, 'lịch trình') !== false) {
+                return "Chi tiết lịch trình tour du lịch:\n\n";
+            }
+            if (strpos($message, 'giá') !== false) {
+                return "Bảng giá tour du lịch:\n\n";
+            }
+            return "Thông tin về các tour du lịch:\n\n";
+        }
+
+        return "Tôi là trợ lý du lịch, tôi có thể giúp bạn:\n\n";
     }
 
     private function handleHotelRequest($message)
     {
         $query = Hotel::with(['location', 'ratings'])->active();
 
-        // Kiểm tra xem có yêu cầu tìm kiếm theo khoảng giá không
-        if (preg_match('/giá từ (\d+) đến (\d+)/i', $message, $matches)) {
-            $minPrice = $matches[1];
-            $maxPrice = $matches[2];
-            $query->whereBetween('h_price', [$minPrice, $maxPrice]);
-        }
-        else if(preg_match('/giá dưới (\d+)/i', $message, $matches)) {
-            $maxPrice = $matches[1];
-            $query->where('h_price', '<=', $maxPrice);
-        }
-        else if(preg_match('/giá trên (\d+)/i', $message, $matches)) {
-            $minPrice = $matches[1];
-            $query->where('h_price', '>=', $minPrice);
+        if (strpos(strtolower($message), 'đánh giá cao') !== false) {
+            $query->orderBy('average_rating', 'desc');
         }
 
-        $hotels = $query->get();
+        if (strpos(strtolower($message), 'giá rẻ') !== false) {
+            $query->orderBy('h_price', 'asc');
+        }
+
+        if (preg_match('/giá từ (\d+) đến (\d+)/i', $message, $matches)) {
+            $query->whereBetween('h_price', [$matches[1], $matches[2]]);
+        } elseif (preg_match('/giá dưới (\d+)/i', $message, $matches)) {
+            $query->where('h_price', '<=', $matches[1]);
+        } elseif (preg_match('/giá trên (\d+)/i', $message, $matches)) {
+            $query->where('h_price', '>=', $matches[1]);
+        }
+
+        $hotels = $query->limit(5)->get();
 
         if ($hotels->isEmpty()) {
-            return "Không tìm thấy khách sạn nào phù hợp.";
+            return "Rất tiếc, không tìm thấy khách sạn nào phù hợp với yêu cầu của bạn.";
         }
 
-        $formattedData = "";
+        $formattedData = "🏨 **Danh sách khách sạn phù hợp:**\n\n";
+
         foreach ($hotels as $hotel) {
-            $formattedData .= "Tên: " . $hotel->h_name . ", Địa chỉ: " . $hotel->h_address . ", Giá: " . $hotel->h_price . ", Phòng: " . $hotel->roomTypeName . ", Tiện nghi: " . implode(', ', $hotel->translatedFacilities) . ", Đánh giá trung bình: " . $hotel->averageRating . "/5, Số lượng đánh giá: " . $hotel->totalRatings . ", Vị trí: " . ($hotel->location ? $hotel->location->l_name : 'Không xác định') . "\n";
+            $facilities = is_array($hotel->translatedFacilities ?? [])
+                ? implode(', ', $hotel->translatedFacilities)
+                : 'Không rõ';
+
+            $hotelLink = url('/hotel/' . $hotel->id); // 🔥 tạo link chi tiết khách sạn
+
+            $formattedData .= <<<EOT
+    ---
+    
+    🏨 {$hotel->h_name}
+    📍 Địa chỉ: {$hotel->h_address}  
+    📞 Điện thoại: {$hotel->h_phone}  
+    💰 Giá: {number_format($hotel->h_price, 0, ',', '.')} VNĐ  
+    🛏️ Loại phòng: {$hotel->roomTypeName}  
+    🛠️ Tiện nghi: {$facilities}  
+    👁️ Lượt xem: {$hotel->h_view}  
+    ⭐ Đánh giá: {$hotel->averageRating}/5 ({$hotel->totalRatings} đánh giá)  
+    📸 Ảnh: [Xem ảnh]({$hotel->h_image})  
+    
+    👉 [🛎️ **Đặt phòng ngay**]({$hotelLink})
+    
+    EOT;
         }
+
         return $formattedData;
     }
-
     private function handleTourRequest($message)
     {
-        $tours = Tour::with(['location', 'ratings'])->where('t_status', 1)->get(); // Lấy tour đã khởi tạo
+        $query = Tour::with(['location', 'ratings'])->where('t_status', 1);
 
-        $formattedData = "";
-        foreach ($tours as $tour) {
-            $formattedData .= "Tên tour: " . $tour->t_title . ", Lịch trình: " . $tour->t_schedule . ", Giá người lớn: " . $tour->t_price_adults . ", Giá trẻ em: " . $tour->t_price_children . ", Đánh giá trung bình: " . $tour->averageRating . "/5, Số lượng đánh giá: " . $tour->totalRatings . ", Vị trí: " . ($tour->location ? $tour->location->l_name : 'Không xác định') . "\n";
+        if (preg_match('/ngày (khởi hành|bắt đầu)?\s*(\d{1,2}\/\d{1,2}\/\d{4})/i', $message, $matches)) {
+            $date = \DateTime::createFromFormat('d/m/Y', $matches[2]);
+            if ($date) {
+                $searchDate = $date->format('Y-m-d');
+                $query->whereJsonContains('t_start_date', $searchDate); // ✅ Sửa đúng
+            }
         }
+
+        $tours = $query->limit(5)->get();
+
+        if ($tours->isEmpty()) {
+            return isset($matches[2])
+                ? "Hiện tại chưa có tour nào khởi hành vào ngày {$matches[2]}."
+                : "Hiện tại chưa có tour nào phù hợp với yêu cầu.";
+        }
+
+        $formattedData = "🧳 **Danh sách tour phù hợp:**\n\n";
+
+        foreach ($tours as $tour) {
+            $dates = is_string($tour->t_start_date) ? json_decode($tour->t_start_date, true) : [];
+            $formattedDates = is_array($dates) ? implode(', ', $dates) : $tour->t_start_date;
+
+            $note = strip_tags($tour->t_notes ?? 'Không có');
+            $imageLink = $tour->t_image ? "[Xem ảnh]({$tour->t_image})" : 'Không có';
+            $tourLink = url('/tour/' . $tour->id);
+
+            $formattedData .= <<<EOT
+    ---
+    🧭{$tour->t_title}**  
+    🛣️ Lịch trình:** {$tour->t_schedule}  
+    📍 Nơi khởi hành: {$tour->t_starting_gate}  
+    🚗 Phương tiện: {$tour->t_move_method}  
+    🏨 Khách sạn:{$tour->t_hotel_star} sao  
+    📅 Ngày khởi hành: {$formattedDates}  
+    👥 Số khách: {$tour->t_number_guests}  
+    💰 Giá người lớn: {number_format($tour->t_price_adults, 0, ',', '.')} VNĐ  
+    👶 Giá trẻ em:** {number_format($tour->t_price_children, 0, ',', '.')} VNĐ  
+    🔖 Ưu đãi: {$tour->t_sale}%  
+    ⭐ Đánh giá: {$tour->averageRating}/5 ({$tour->totalRatings} đánh giá)  
+    👁️ Lượt xem:{$tour->t_view}  
+    📝 Ghi chú: {$note}  
+    👉 [🌟 **Đặt tour ngay**]({$tourLink})
+    
+    EOT;
+        }
+
         return $formattedData;
     }
 

@@ -214,6 +214,8 @@ Route::group(['namespace' => 'Page'], function () {
         Route::get('thay-doi-mat-khau.html', [AccountController::class, 'changePassword'])->name('change.password');
         Route::post('change/password', [AccountController::class, 'postChangePassword'])->name('post.change.password');
         Route::post('cancel/order/tour/{status}/{id}', [AccountController::class, 'updateStatus'])->name('post.cancel.order.tour');
+        Route::post('cancel/tour/{id}/{slug}', [PageTourController::class, 'cancelOrderTour'])->name('tour.cancel.order');
+        Route::post('cancel/order/room/{status}/{id}', [App\Http\Controllers\Page\BookRoomController::class, 'updateStatus'])->name('post.cancel.order.room');
     });
 
     Route::group(['prefix' => 'account', 'middleware' => 'auth:users'], function() {
