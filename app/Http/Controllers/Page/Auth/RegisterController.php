@@ -46,7 +46,8 @@ class RegisterController extends Controller
 
     public function register()
     {
-        if (Auth::guard('users')->check()) {
+        // Đã cập nhật: sử dụng Auth::check() thay vì Auth::guard('users')->check()
+        if (Auth::check()) { 
             return redirect()->back();
         }
 
@@ -55,7 +56,10 @@ class RegisterController extends Controller
 
     public function postRegister(RegisterRequest $request)
     {
-        // Validate CAPTCHA
+        // Debug dữ liệu request (đã comment)
+        // dd($request->all());
+
+        // Bật kiểm tra reCAPTCHA
         $captchaResponse = $request->get('g-recaptcha-response');
         if(!$captchaResponse) {
             return redirect()->back()
@@ -77,12 +81,17 @@ class RegisterController extends Controller
             $user->address = $request->address;
             $user->password = bcrypt($request->password);
             $user->save();
-            Auth::guard('users')->loginUsingId($user->id, true);
+
+            // Debug: hiển thị id của user sau khi lưu (đã comment)
+            // dd('User saved with id: ' . $user->id);
+
+            // Đăng nhập người dùng bằng guard mặc định
+            Auth::loginUsingId($user->id, true);
             \DB::commit();
-            // Attach success flash message
             return redirect()->route('page.home')
                 ->with('success', 'Bạn đã đăng ký tài khoản thành công');
         } catch (\Exception $exception) {
+            \Log::error('Đăng ký không lưu: ' . $exception->getMessage());
             \DB::rollBack();
             return redirect()->back()->with('error', 'Đã xảy ra lỗi không thể đăng ký tài khoản');
         }

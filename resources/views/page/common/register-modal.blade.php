@@ -135,7 +135,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <div class="g-recaptcha" data-sitekey="6LcUvAMrAAAAAFQscgydc1bLv9MPA89pCZGlt74L"></div>
+                        <div class="g-recaptcha" data-sitekey="6Ldd9DkrAAAAABAatxUoxJ3a17Le9PtQKaS_8JBo"></div>
                     </div>
                 </form>
             </div>
