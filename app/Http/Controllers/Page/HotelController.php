@@ -396,7 +396,7 @@ class HotelController extends Controller
         return view('page.hotel.booking', compact('hotel'));
     }
 
-    public function processBooking(Request $request, $id)
+    public function processBooking(Request $request, $id, $slug = null)
     {
         $hotel = Hotel::findOrFail($id);
         
@@ -408,11 +408,13 @@ class HotelController extends Controller
             $userId = Auth::guard('users')->check() ? Auth::guard('users')->id() : Auth::guard('web')->id();
             $user = Auth::guard('users')->check() ? Auth::guard('users')->user() : Auth::guard('web')->user();
             
-            // Add validation for dates
+            // Normalize dates: set time to midnight
             $checkinDate = new \DateTime($request->checkin_date);
             $checkoutDate = new \DateTime($request->checkout_date);
+            $checkinDate->setTime(0, 0, 0);
             $today = new \DateTime();
-            
+            $today->setTime(0, 0, 0);
+
             if ($checkinDate < $today) {
                 return redirect()->back()->with('error', 'Ngày nhận phòng không thể là ngày trong quá khứ');
             }
@@ -428,7 +430,7 @@ class HotelController extends Controller
                 return redirect()->back()->with('error', 'Số đêm không khớp với khoảng thời gian đã chọn');
             }
 
-            // Rest of validation
+            // Validation
             $data = $request->validate([
                 'name'         => 'required|string|max:255',
                 'phone'        => 'required|string|max:15',
@@ -444,18 +446,43 @@ class HotelController extends Controller
                 'coupon'       => 'nullable|string'
             ]);
 
+            // Calculate total price
             $totalPrice = $hotel->h_price * $data['nights'] * $data['rooms'];
             if ($hotel->h_sale > 0) {
                 $totalPrice = $totalPrice - ($totalPrice * $hotel->h_sale / 100);
             }
 
-            // Add the coupon field to the booking data:
-            $data['hotel_id']   = $hotel->id;
-            $data['user_id']    = $userId;
-            $data['total_price']= $totalPrice;
-            $data['status']     = 0;
-            // Ensure coupon is stored even if null
-            $data['coupon']     = $request->coupon;
+            // Hard-coded valid coupon codes (coupon code => discount percentage)
+            $coupons = [
+                "KHUYENMAI5" => 5,
+                "KHUYENMAI10" => 10,
+                "KHUYENMAI15" => 15,
+                "KHUYENMAI20" => 20,
+                "VIP5" => 5,
+                "VIP10" => 10,
+                "VIP15" => 15,
+                "VIP20" => 20,
+            ];
+
+            // Validate coupon if provided
+            if (!empty($data['coupon'])) {
+                $code = strtoupper(trim($data['coupon']));
+                if (!isset($coupons[$code])) {
+                    return redirect()->back()->with('error', 'Mã giảm giá không hợp lệ');
+                }
+                $discountPercent = $coupons[$code];
+                $discountAmount = $totalPrice * ($discountPercent / 100);
+                $totalPrice -= $discountAmount;
+                // Store the validated coupon and discount percent
+                $data['coupon'] = $code;
+                $data['coupon_discount'] = $discountPercent;
+            }
+
+            // Prepare booking data
+            $data['hotel_id']    = $hotel->id;
+            $data['user_id']     = $userId;
+            $data['total_price'] = $totalPrice;
+            $data['status']      = 0;
 
             $booking = BookRoom::create($data);
             
